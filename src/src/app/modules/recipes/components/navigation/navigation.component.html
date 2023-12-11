@@ -1,0 +1,14 @@
+<mat-toolbar>
+  <recipes-navigation-item [menuItem]='menuItems.get(menuNames.all)' class='w-25'></recipes-navigation-item>
+  <recipes-navigation-item [menuItem]='menuItems.get(menuNames.create)' class='w-25'></recipes-navigation-item>
+  <recipes-navigation-item
+    [disabled]='(favouritesDisabled$ | async) ?? false'
+    [menuItem]='menuItems.get(menuNames.favourite)'
+    class='w-25'>
+  </recipes-navigation-item>
+  <recipes-navigation-item
+    [disabled]='(toDoDisabled$ | async) ?? false'
+    [menuItem]='menuItems.get(menuNames.toDo)'
+    class='w-25'>
+  </recipes-navigation-item>
+</mat-toolbar>

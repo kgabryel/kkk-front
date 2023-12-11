@@ -1,0 +1,37 @@
+<div [formGroup]='formGroup'>
+  <div>
+    <mat-form-field class='name-input d-inline-block'>
+      <mat-label>
+        Nazwa
+      </mat-label>
+      <input [formControlName]='formNames.name' [maxlength]='maxNameLength' matInput />
+      <mat-hint align='end'>
+        {{nameLength$ | async}} / {{maxNameLength}}
+      </mat-hint>
+    </mat-form-field>
+    <button (click)='deleteGroup()' class='glassmorphism-red-button delete-button pa-0 ml-1' mat-button type='button'>
+      <mat-icon>
+        delete
+      </mat-icon>
+    </button>
+  </div>
+  <span *ngIf='formGroup.get(formNames.name)?.invalid && formGroup.get(formNames.name)?.touched'>
+    <shared-errors-container [errors]='errors.groupName' [input]='formGroup.get(formNames.name)'>
+    </shared-errors-container>
+  </span>
+  <div [formArrayName]='formNames.positions'>
+    <recipes-positions-part
+      (delete)='removePosition(i)'
+      *ngFor='let e of positions.controls; let i = index;'
+      [formPart]='e'
+      [usedIngredients]='usedIngredients'
+      [usedRecipes]='usedRecipes'>
+    </recipes-positions-part>
+    <button (click)='addPosition()' class='glassmorphism-button w-100' mat-button type='button'>
+      <mat-icon>
+        add_circle_outline
+      </mat-icon>
+      Dodaj kolejną pozycję
+    </button>
+  </div>
+</div>

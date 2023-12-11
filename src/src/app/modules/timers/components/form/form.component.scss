@@ -1,0 +1,28 @@
+@media screen and (min-width: 451px) {
+  .buttons > *:not(:only-child):first-child {
+    margin-right: 5px;
+  }
+
+  .buttons > *:not(:only-child):nth-child(2) {
+    margin-left: 5px;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  .buttons {
+    display: block !important;
+  }
+}
+
+@media screen and (min-width: 410px) {
+  .form-container {
+    display: flex;
+    align-items: center;
+  }
+}
+
+@media screen and (max-width: 409px) {
+  .right-column {
+    padding: 0 !important;
+  }
+}

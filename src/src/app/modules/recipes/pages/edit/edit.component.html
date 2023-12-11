@@ -1,0 +1,10 @@
+<div *ngIf='(recipe$ | async) as recipe' class='glassmorphism-form'>
+  <mat-tab-group dynamicHeight mat-align-tabs='center' mat-stretch-tabs>
+    <mat-tab label='Edycja'>
+      <recipes-edit [recipe]='recipe'></recipes-edit>
+    </mat-tab>
+    <mat-tab label='Galeria'>
+      <recipes-gallery [recipe]='recipe'></recipes-gallery>
+    </mat-tab>
+  </mat-tab-group>
+</div>

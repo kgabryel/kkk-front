@@ -1,0 +1,39 @@
+:host {
+  display: block;
+  padding: 5px;
+}
+
+.ingredient-input {
+  width: calc(100% - 370px);
+}
+
+.month-input:nth-child(2) {
+  margin-right: 5px;
+}
+
+@media screen and (max-width: 700px) {
+  .ingredient-input {
+    width: 100%;
+    margin-right: 0;
+  }
+
+  .month-input {
+    width: calc(50% - 3px);
+  }
+
+  .month-input:nth-child(2) {
+    margin-right: 6px;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .ingredient-input {
+    width: 100%;
+    margin-right: 0;
+  }
+
+  .month-input {
+    width: 100%;
+    margin-right: 0;
+  }
+}

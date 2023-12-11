@@ -1,0 +1,58 @@
+<mat-list-item>
+  <div class='alert-container'>
+    <span [ngSwitch]='seasonStep'>
+      <button *ngSwitchCase='1' class='season-btn green-glass' mat-button type='button'>
+        <mat-icon>
+          trending_up
+        </mat-icon>
+      </button>
+      <button *ngSwitchCase='2' class='season-btn yellow-glass' mat-button type='button'>
+        <mat-icon>
+          trending_flat
+        </mat-icon>
+      </button>
+      <button *ngSwitchCase='3' class='season-btn red-glass' mat-button type='button'>
+        <mat-icon>
+          trending_down
+        </mat-icon>
+      </button>
+    </span>
+  </div>
+  <p class='mb-0 w-100 ml-2'>
+    <span>
+      {{(ingredient$ | async)?.name}}
+    </span>
+    {{ startMonth }} - {{ stopMonth }}
+  </p>
+  <button [matMenuTriggerFor]='menu' mat-icon-button type='button'>
+    <mat-icon>
+      menu
+    </mat-icon>
+  </button>
+  <mat-menu #menu='matMenu'>
+    <button *ngIf='recipesCount' [routerLink]='href' mat-menu-item type='button'>
+      <mat-icon>
+        menu_book
+      </mat-icon>
+      <span>
+        Przepisy ({{recipesCount}})
+      </span>
+    </button>
+    <button (click)='startEdit()' mat-menu-item>
+      <mat-icon>
+        edit
+      </mat-icon>
+      <span>
+        Edytuj
+      </span>
+    </button>
+    <button (click)='delete()' mat-menu-item>
+      <mat-icon>
+        delete
+      </mat-icon>
+      <span>
+        Usuń
+      </span>
+    </button>
+  </mat-menu>
+</mat-list-item>

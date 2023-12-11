@@ -1,0 +1,11 @@
+<div
+  (click)='hide()'
+  *ngIf='(photo$ | async) !== null'
+  class='overlay pa-2 d-flex justify-center align-center c-pointer'>
+  <div *ngIf='photoData$ | async as image; else unloaded' [style]='style$ | async'>
+    <div [style]='image' class='image w-100 h-100'></div>
+  </div>
+  <ng-template #unloaded>
+    <shared-loader class='w-100 h-100'></shared-loader>
+  </ng-template>
+</div>

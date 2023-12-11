@@ -1,0 +1,5 @@
+<div *ngIf='(seasons$ | async) as seasons'>
+  <mat-list *ngIf='seasons.length > 0' class='glassmorphism-list'>
+    <seasons-season-container *ngFor='let season of seasons' [season]='season'></seasons-season-container>
+  </mat-list>
+</div>

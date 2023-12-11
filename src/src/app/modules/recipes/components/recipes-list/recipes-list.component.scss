@@ -1,0 +1,20 @@
+recipes-recipe-preview {
+  width: 450px;
+}
+
+@media screen and (max-width: 900px) {
+  recipes-recipe-preview {
+    width: calc(50vw - 10px);
+  }
+}
+
+@media screen and (max-width: 600px) {
+  recipes-recipe-preview {
+    width: calc(100vw - 10px);
+  }
+}
+
+.masonry-wrapper {
+  display: flex;
+  justify-content: space-around;
+}

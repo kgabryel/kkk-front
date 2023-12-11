@@ -1,0 +1,11 @@
+<div *ngIf='(key$ | async) as keys'>
+  <div *ngIf='keys.length > 0' class='glassmorphism-form'>
+    <h2 class='text-center'>
+      KLUCZE API
+    </h2>
+    <ng-container *ngFor='let key of keys; let last = last'>
+      <account-api-key [apiKey]='key'></account-api-key>
+      <hr *ngIf='!last' />
+    </ng-container>
+  </div>
+</div>

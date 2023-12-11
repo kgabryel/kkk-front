@@ -1,0 +1,99 @@
+<div [formGroup]='formGroup'>
+  <div>
+    <mat-form-field class='amount-input mr-2'>
+      <mat-label>
+        Ilość
+      </mat-label>
+      <input [formControlName]='formNames.amount' matInput min='0' step='any' type='number' />
+      <mat-hint align='start'>
+        <span *ngIf='formGroup.get(formNames.amount)?.invalid && formGroup.get(formNames.amount)?.touched'>
+          <shared-errors-container [errors]='errors.amount' [input]='formGroup.get(formNames.amount)'>
+          </shared-errors-container>
+        </span>
+      </mat-hint>
+    </mat-form-field>
+    <mat-form-field class='measure-input d-inline-block'>
+      <mat-label>
+        Jednostka
+      </mat-label>
+      <input
+        [formControlName]='formNames.measure'
+        [matAutocomplete]='auto2'
+        [maxLength]='maxMeasureLength'
+        matInput
+        type='text' />
+      <mat-autocomplete #auto2='matAutocomplete'>
+        <mat-option
+          (click)='selectMeasure(measure)'
+          *ngFor='let measure of filteredMeasures'
+          [value]='measure'>
+          {{measure}}
+        </mat-option>
+      </mat-autocomplete>
+      <mat-hint align='start'>
+        <span *ngIf='formGroup.get(formNames.measure)?.invalid && formGroup.get(formNames.measure)?.touched'>
+          <shared-errors-container [errors]='errors.measure' [input]='formGroup.get(formNames.measure)'>
+          </shared-errors-container>
+        </span>
+      </mat-hint>
+      <mat-hint align='end'>
+        {{measureLength$ | async}} / {{maxMeasureLength}}
+      </mat-hint>
+    </mat-form-field>
+    <button
+      (click)='deletePosition()'
+      class='glassmorphism-red-button delete-button pa-0 ml-1'
+      mat-button
+      type='button'>
+      <mat-icon>
+        delete
+      </mat-icon>
+    </button>
+  </div>
+  <div>
+    <mat-slide-toggle [formControlName]='formNames.additional' color='primary'>
+      Składnik opcjonalny
+    </mat-slide-toggle>
+    <mat-form-field class='ingredient-input ml-2'>
+      <mat-label>
+        Składnik
+      </mat-label>
+      <input [formControlName]='formNames.ingredient' type='hidden' />
+      <input
+        [formControlName]='formNames.ingredientSearch'
+        [matAutocomplete]='auto'
+        [maxlength]='maxIngredientNameLength'
+        matInput
+        type='text' />
+      <mat-autocomplete #auto='matAutocomplete'>
+        <ng-container *ngIf='(filteredIngredients$ | async) as ingredients'>
+          <mat-optgroup *ngIf='ingredients.length > 0' label='Składniki'>
+            <mat-option
+              (click)='selectIngredient(ingredient.id)'
+              *ngFor='let ingredient of ingredients'
+              [value]='ingredient.name'>
+              [Składnik] {{ingredient.name}}
+            </mat-option>
+          </mat-optgroup>
+        </ng-container>
+        <ng-container *ngIf='(filteredRecipes$ | async) as recipes'>
+          <mat-optgroup *ngIf='recipes.length > 0' label='Przepisy'>
+            <mat-option
+              (click)='selectRecipe(recipe.id)'
+              *ngFor='let recipe of recipes'
+              [value]='recipe.name'>
+              [Przepis] {{recipe.name}}
+            </mat-option>
+          </mat-optgroup>
+        </ng-container>
+      </mat-autocomplete>
+      <mat-hint align='start'>
+        <span
+          *ngIf='formGroup.get(formNames.ingredientSearch)?.invalid && formGroup.get(formNames.ingredientSearch)?.touched'>
+          <shared-errors-container [errors]='errors.ingredient' [input]='formGroup.get(formNames.ingredientSearch)'>
+          </shared-errors-container>
+        </span>
+      </mat-hint>
+    </mat-form-field>
+  </div>
+</div>

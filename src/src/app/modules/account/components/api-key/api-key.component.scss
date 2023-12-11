@@ -1,0 +1,17 @@
+p {
+  overflow-wrap: break-word;
+}
+
+.small-switch {
+  display: none;
+}
+
+@media screen and (max-width: 340px) {
+  .big-switch {
+    display: none;
+  }
+
+  .small-switch {
+    display: block;
+  }
+}

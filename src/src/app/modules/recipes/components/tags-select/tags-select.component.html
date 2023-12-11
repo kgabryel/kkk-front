@@ -1,0 +1,26 @@
+<mat-form-field [formGroup]='formGroup' class='d-block w-100'>
+  <mat-label>
+    Tagi
+  </mat-label>
+  <mat-chip-list #chipList>
+    <mat-chip (removed)='remove(tag)' *ngFor='let tag of selectedTags'>
+      {{tag}}
+      <mat-icon matChipRemove>
+        cancel
+      </mat-icon>
+    </mat-chip>
+    <input
+      #searchInput
+      (matChipInputTokenEnd)='add($event)'
+      [formControlName]='formNames.search'
+      [matAutocomplete]='auto'
+      [matChipInputFor]='chipList'
+      [matChipInputSeparatorKeyCodes]='separatorKeysCodes'
+      [maxlength]='maxTagNameLength' />
+  </mat-chip-list>
+  <mat-autocomplete #auto='matAutocomplete' (optionSelected)='selected($event)'>
+    <mat-option *ngFor='let tag of filteredTags' [value]='tag.name'>
+      {{tag.name}}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>
