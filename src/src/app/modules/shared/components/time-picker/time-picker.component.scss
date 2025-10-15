@@ -1,0 +1,39 @@
+:host ::ng-deep ngb-timepicker input {
+  background: unset;
+  border: unset;
+  border-bottom: 1px solid rgb(0 0 0 / 50%);
+  margin: 6px 0;
+  padding: 4px 2px 2px;
+  width: 100%;
+}
+
+:host ::ng-deep ngb-timepicker fieldset {
+  background: unset;
+  border: unset;
+}
+
+:host ::ng-deep ngb-timepicker button {
+  background: unset;
+  border: unset;
+  color: rgb(0 0 0 / 50%);
+  cursor: pointer;
+}
+
+:host ::ng-deep ngb-timepicker .visually-hidden {
+  display: none !important;
+}
+
+:host ::ng-deep ngb-timepicker .ngb-tp-hour,
+:host ::ng-deep ngb-timepicker .ngb-tp-minute,
+:host ::ng-deep ngb-timepicker .ngb-tp-second {
+  width: 20px;
+}
+
+:host ::ng-deep ngb-timepicker input:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+:host ::ng-deep .ngb-tp-input-container:hover button {
+  color: black;
+}

@@ -9,9 +9,9 @@ export interface AuthMessages {
 
 export const messages: AuthMessages = {
   authenticationError: 'Wystąpił błąd podczas uwierzytelniania.',
+  emailInUse: 'Podany adres E-mail jest już w użyciu.',
+  emailSent: 'E-mail został wysłany.',
   invalidData: 'Podano błędne dane.',
   passwordChanged: 'Hasło zostało zmienione.',
-  emailSent: 'E-mail został wysłany.',
-  serverError: 'Podany adres E-mail jest już w użyciu.',
-  emailInUse: 'Wystąpił błąd po stronie serwera.'
+  serverError: 'Wystąpił błąd po stronie serwera.',
 };

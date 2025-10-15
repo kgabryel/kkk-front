@@ -10,10 +10,10 @@ export interface TimersTooltips {
 
 export const tooltips: TimersTooltips = {
   add: 'Dodaj minutnik',
+  addTimer: 'Dodaj minutnik',
+  hidden: 'Ukryte',
+  onlyTime: 'Widoczny czas',
+  open: 'Otwarte',
   start: 'Uruchom',
   stop: 'Zatrzymaj',
-  addTimer: 'Dodaj minutnik',
-  open: 'Otwarte',
-  hidden: 'Ukryte',
-  onlyTime: 'Widoczny czas'
 };

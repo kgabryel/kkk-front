@@ -1,65 +1,89 @@
-<div *ngIf='ingredients$ | async as ingredients'>
-  <form
-    (ngSubmit)='submit()'
-    *ngIf='ingredients.length > 0'
-    [autocomplete]='null | autocomplete'
-    [formGroup]='form'
-    class='glassmorphism-form'>
-    <mat-form-field class='ingredient-input mr-1'>
-      <mat-label>
-        Składnik
-      </mat-label>
-      <input [formControlName]='formNames.ingredient' [matAutocomplete]='auto' matInput type='text' />
-      <mat-autocomplete #auto='matAutocomplete' autoActiveFirstOption>
-        <mat-option *ngFor='let ingredient of filteredIngredients$ | async' [value]='ingredient.name'>
-          {{ingredient.name}}
-        </mat-option>
-      </mat-autocomplete>
-      <mat-hint align='start'>
-        <span *ngIf='form.get(formNames.ingredient)?.invalid && form.get(formNames.ingredient)?.touched'>
-          <shared-errors-container [errors]='errors.ingredient' [input]='form.get(formNames.ingredient)'>
-          </shared-errors-container>
-        </span>
-      </mat-hint>
-    </mat-form-field>
-    <mat-form-field class='month-input'>
-      <mat-label>
-        Start sezonu
-      </mat-label>
-      <mat-select [formControlName]='formNames.startMonth'>
-        <mat-option *ngFor='let month of startMonths' [disabled]='month.disabled' [value]='month.value'>
-          {{month.key}}
-        </mat-option>
-      </mat-select>
-      <mat-hint align='start'>
-        <span *ngIf='form.get(formNames.startMonth)?.invalid && form.get(formNames.startMonth)?.touched'>
-          <shared-errors-container [errors]='errors.startMonth' [input]='form.get(formNames.startMonth)'>
-          </shared-errors-container>
-        </span>
-      </mat-hint>
-    </mat-form-field>
-    <mat-form-field class='month-input'>
-      <mat-label>
-        Koniec sezonu
-      </mat-label>
-      <mat-select [formControlName]='formNames.endMonth'>
-        <mat-option *ngFor='let month of endMonths' [disabled]='month.disabled' [value]='month.value'>
-          {{month.key}}
-        </mat-option>
-      </mat-select>
-      <mat-hint align='start'>
-        <span *ngIf='form.get(formNames.endMonth)?.invalid && form.get(formNames.endMonth)?.touched'>
-          <shared-errors-container [errors]='errors.endMonth' [input]='form.get(formNames.endMonth)'>
-          </shared-errors-container>
-        </span>
-      </mat-hint>
-    </mat-form-field>
-    <button [disabled]='form.invalid' class='glassmorphism-button w-100' mat-button type='submit'>
-      <mat-icon>
-        add_circle_outline
-      </mat-icon>
-      Utwórz
-    </button>
-  </form>
+<div>
+  @if (ingredients().length > 0) {
+    <form
+      class="glassmorphism-form"
+      [autocomplete]="null | autocomplete"
+      [formGroup]="form"
+      (ngSubmit)="submit()"
+    >
+      <mat-form-field class="ingredient-input mr-1">
+        <mat-label>Składnik</mat-label>
+        <input
+          [formControlName]="formNames.ingredient"
+          [matAutocomplete]="auto"
+          matInput
+          type="text"
+        />
+        <mat-autocomplete
+          #auto="matAutocomplete"
+          autoActiveFirstOption
+        >
+          @for (ingredient of filteredIngredients(); track ingredient) {
+            <mat-option [value]="ingredient.name">
+              {{ ingredient.name }}
+            </mat-option>
+          }
+        </mat-autocomplete>
+        <mat-hint align="start">
+          @if (form.get(formNames.ingredient)?.invalid && form.get(formNames.ingredient)?.touched) {
+            <shared-errors-container
+              [errors]="errors.ingredient"
+              [input]="form.get(formNames.ingredient)"
+            ></shared-errors-container>
+          }
+        </mat-hint>
+      </mat-form-field>
+      <mat-form-field class="month-input">
+        <mat-label>Start sezonu</mat-label>
+        <mat-select [formControlName]="formNames.startMonth">
+          @for (month of startMonths; track month) {
+            <mat-option
+              [disabled]="month.disabled"
+              [value]="month.value"
+            >
+              {{ month.key }}
+            </mat-option>
+          }
+        </mat-select>
+        <mat-hint align="start">
+          @if (form.get(formNames.startMonth)?.invalid && form.get(formNames.startMonth)?.touched) {
+            <shared-errors-container
+              [errors]="errors.startMonth"
+              [input]="form.get(formNames.startMonth)"
+            ></shared-errors-container>
+          }
+        </mat-hint>
+      </mat-form-field>
+      <mat-form-field class="month-input">
+        <mat-label>Koniec sezonu</mat-label>
+        <mat-select [formControlName]="formNames.endMonth">
+          @for (month of endMonths; track month) {
+            <mat-option
+              [disabled]="month.disabled"
+              [value]="month.value"
+            >
+              {{ month.key }}
+            </mat-option>
+          }
+        </mat-select>
+        <mat-hint align="start">
+          @if (form.get(formNames.endMonth)?.invalid && form.get(formNames.endMonth)?.touched) {
+            <shared-errors-container
+              [errors]="errors.endMonth"
+              [input]="form.get(formNames.endMonth)"
+            ></shared-errors-container>
+          }
+        </mat-hint>
+      </mat-form-field>
+      <button
+        class="glassmorphism-button w-100 mt-1"
+        [disabled]="form.invalid"
+        mat-button
+        type="submit"
+      >
+        <mat-icon>add_circle_outline</mat-icon>
+        Utwórz
+      </button>
+    </form>
+  }
 </div>
-

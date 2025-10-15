@@ -1,2 +1,12 @@
-<tags-tag-edit (edit)='changeEdit($event)' *ngIf='edit' [tag]='tag'></tags-tag-edit>
-<tags-tag-preview (edit)='changeEdit($event)' *ngIf='!edit' [tag]='tag'></tags-tag-preview>
+@if (edit) {
+  <tags-tag-edit
+    [tag]="tag()"
+    (edit)="changeEdit($event)"
+  ></tags-tag-edit>
+}
+@if (!edit) {
+  <tags-tag-preview
+    [tag]="tag()"
+    (edit)="changeEdit($event)"
+  ></tags-tag-preview>
+}

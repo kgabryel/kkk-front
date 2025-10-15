@@ -6,6 +6,6 @@ export interface TagsMessages {
 
 export const messages: TagsMessages = {
   tagAdded: 'Tag został dodany.',
-  tagUpdated: 'Tag został zaktualizowny.',
-  tagDeleted: 'Tag został usunięty.'
+  tagDeleted: 'Tag został usunięty.',
+  tagUpdated: 'Tag został zaktualizowany.',
 };

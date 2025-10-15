@@ -1,45 +1,80 @@
-import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
-import {AbstractControl, FormControl, FormGroup} from '@angular/forms';
-import {ingredientErrors, IngredientErrors} from '../../../../core/errors/ingredient.error';
-import {Store} from '@ngrx/store';
-import {State as IngredientsState} from '../../../../core/store/ingredients/reducers';
-import {State as SuppliesState} from '../../../../core/store/oza-supplies/reducers';
-import {formNames, IngredientFormFactory, IngredientsFormNames} from '../../../../core/factories/ingredient.factory';
-import {ingredientAdd} from '../../../../core/store/ingredients/actions';
-import {IngredientRequest} from '../../../../core/requests/ingredient.request';
-import {Length} from '../../../../config/form.config';
-import {Observable, Subscription} from 'rxjs';
-import {OzaSupply} from '../../../../core/models/oza-supply';
-import {map, startWith, switchMap} from 'rxjs/operators';
-import {StringUtils} from '../../../../core/utils/string.utils';
-import {selectSupplies} from '../../../../core/store/oza-supplies/selectors';
-import {FormUtils} from '../../../../core/utils/form.utils';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  signal,
+  Signal,
+  WritableSignal,
+} from '@angular/core';
+import { AbstractControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MatAutocomplete, MatAutocompleteTrigger, MatOption } from '@angular/material/autocomplete';
+import { MatButton } from '@angular/material/button';
+import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { Store } from '@ngrx/store';
+import { EMPTY } from 'rxjs';
+
+import { Length } from '../../../../config/form.config';
+import { ingredientErrors, IngredientErrors } from '../../../../core/errors/ingredient.error';
+import {
+  formNames,
+  IngredientFormFactory,
+  IngredientsFormNames,
+} from '../../../../core/factories/ingredient.factory';
+import { OzaSupply } from '../../../../core/models/oza-supply';
+import { IngredientRequest } from '../../../../core/requests/ingredient.request';
+import { ingredientAdd } from '../../../../core/store/ingredients/actions';
+import { State as IngredientsState } from '../../../../core/store/ingredients/reducers';
+import { State as SuppliesState } from '../../../../core/store/oza-supplies/reducers';
+import { selectSupplies } from '../../../../core/store/oza-supplies/selectors';
+import { FormUtils } from '../../../../core/utils/form.utils';
+import { StringUtils } from '../../../../core/utils/string.utils';
+import { BaseComponent } from '../../../base.component';
+import { ErrorsContainerComponent } from '../../../shared/components/errors-container/errors-container.component';
+import { AutocompletePipe } from '../../../shared/pipes/autocomplete.pipe';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    AutocompletePipe,
+    MatInput,
+    MatHint,
+    ErrorsContainerComponent,
+    MatSlideToggle,
+    MatAutocompleteTrigger,
+    MatAutocomplete,
+    MatOption,
+    MatButton,
+    MatIcon,
+  ],
+  providers: [IngredientFormFactory],
   selector: 'ingredients-create',
-  templateUrl: './create.component.html',
+  standalone: true,
   styleUrls: ['./create.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './create.component.html',
 })
-export class CreateComponent implements OnInit, OnDestroy {
-
-  public form: FormGroup;
-  public formNames: IngredientsFormNames;
+export class CreateComponent extends BaseComponent implements OnInit {
   public errors: IngredientErrors;
-  public nameLength$: Observable<number>;
+  public filteredSupplies: WritableSignal<OzaSupply[]> = signal<OzaSupply[]>([]);
+  public form!: FormGroup;
+  public formNames: IngredientsFormNames;
   public maxNameLength: number;
-  public supplies$: Observable<OzaSupply[]>;
-  public filteredSupplies$: Observable<OzaSupply[]>;
+  public nameLength!: Signal<number>;
+  public supplies!: Signal<OzaSupply[]>;
+  private ingredientFormFactory: IngredientFormFactory;
   private ingredientsStore: Store<IngredientsState>;
   private suppliesStore: Store<SuppliesState>;
-  private subscription: Subscription | undefined;
-  private ingredientFormFactory: IngredientFormFactory;
-
   public constructor(
     ingredientsStore: Store<IngredientsState>,
     ingredientFormFactory: IngredientFormFactory,
-    suppliesStore: Store<SuppliesState>
+    suppliesStore: Store<SuppliesState>,
   ) {
+    super();
     this.ingredientFormFactory = ingredientFormFactory;
     this.formNames = formNames;
     this.errors = ingredientErrors;
@@ -50,32 +85,33 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this.form = this.ingredientFormFactory.getCreateForm();
-    this.supplies$ = this.suppliesStore.select(selectSupplies);
-    this.nameLength$ = (this.form.get(this.formNames.name) as FormControl).valueChanges.pipe(
-      startWith(''),
-      map(value => value.length)
-    );
-    this.subscription = this.form.get(this.formNames.supplySearch)?.valueChanges
-      .subscribe(() => this.form.get(this.formNames.supply)?.setValue(null));
-    const supplyInput = this.form.get(this.formNames.supplySearch) as AbstractControl;
-    this.filteredSupplies$ = supplyInput.valueChanges.pipe(
-      startWith(''),
-      switchMap((value: string) => this.supplies$.pipe(
-        map(supplies => supplies.filter(supply => StringUtils.stringIncludes(supply.name, value)))
-      )));
-  }
+    this.supplies = this.suppliesStore.selectSignal(selectSupplies);
+    this.nameLength = FormUtils.getLength(this.injector, this.form, this.formNames.name);
 
-  public submit(): void {
-    if (this.form.invalid) {
-      return;
-    }
-    const ingredient: IngredientRequest = {
-      name: this.form.get(this.formNames.name)?.value,
-      available: this.form.get(this.formNames.available)?.value,
-      ozaId: this.form.get(this.formNames.supply)?.value
-    };
-    this.ingredientsStore.dispatch(ingredientAdd({ingredient}));
-    this.clearForm();
+    const supplyInput = this.form.get(this.formNames.supplySearch) as AbstractControl;
+    this.onObservableValue(
+      (search: string) =>
+        this.filteredSupplies.set(
+          this.supplies().filter((supply: OzaSupply) =>
+            StringUtils.stringIncludes(supply.name, search),
+          ),
+        ),
+      supplyInput.valueChanges,
+      '',
+    );
+    this.onObservableValue(
+      (supplyValue: number | null) => {
+        const availableControl = this.form.get(this.formNames.available);
+
+        if (supplyValue !== null) {
+          availableControl?.disable({ emitEvent: false });
+        } else {
+          availableControl?.enable({ emitEvent: false });
+        }
+      },
+      this.form.get(this.formNames.supply)?.valueChanges ?? EMPTY,
+      null,
+    );
   }
 
   public clearForm(): void {
@@ -89,9 +125,16 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.form.get(this.formNames.available)?.setValue(supply.available);
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription !== undefined) {
-      this.subscription.unsubscribe();
+  public submit(): void {
+    if (this.form.invalid) {
+      return;
     }
+    const ingredient: IngredientRequest = {
+      available: this.form.get(this.formNames.available)?.value,
+      name: this.form.get(this.formNames.name)?.value,
+      ozaId: this.form.get(this.formNames.supply)?.value,
+    };
+    this.ingredientsStore.dispatch(ingredientAdd({ ingredient }));
+    this.clearForm();
   }
 }

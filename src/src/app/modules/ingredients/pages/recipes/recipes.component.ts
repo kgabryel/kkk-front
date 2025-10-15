@@ -1,36 +1,40 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {Observable, of} from 'rxjs';
-import {Recipe} from '../../../../core/models/recipe';
-import {Store} from '@ngrx/store';
-import {State as RecipesState} from '../../../../core/store/recipes/reducers';
-import {State as IngredientsState} from '../../../../core/store/ingredients/reducers';
-import {selectById} from '../../../../core/store/ingredients/selectors';
-import {switchMap, tap} from 'rxjs/operators';
-import {PathUtils} from '../../../../core/utils/path.utils';
-import {RoutingConfig} from '../../../../config/routing.config';
-import {selectRecipesForIngredient} from '../../../../core/store/recipes/selectors';
+import { ChangeDetectionStrategy, Component, OnInit, Signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+
+import { Ingredient } from '../../../../core/models/ingredient';
+import { Recipe } from '../../../../core/models/recipe';
+import { State as IngredientsState } from '../../../../core/store/ingredients/reducers';
+import { selectById } from '../../../../core/store/ingredients/selectors';
+import { State as RecipesState } from '../../../../core/store/recipes/reducers';
+import { selectRecipesForIngredient } from '../../../../core/store/recipes/selectors';
+import { RouterUtils } from '../../../../core/utils/router.utils';
+import { SignalUtils } from '../../../../core/utils/signal.utils';
+import { BaseComponent } from '../../../base.component';
+import { DividerComponent } from '../../../layout/components/divider/divider.component';
+import { RecipesListComponent } from '../../../recipes/components/recipes-list/recipes-list.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RecipesListComponent, DividerComponent],
   selector: 'ingredients-pages-recipes',
-  templateUrl: './recipes.component.html',
+  standalone: true,
   styleUrls: [],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './recipes.component.html',
 })
-export class RecipesComponent implements OnInit {
-
-  public recipes$: Observable<Recipe[]>;
-  private route: ActivatedRoute;
-  private recipesStore: Store<RecipesState>;
+export class RecipesComponent extends BaseComponent implements OnInit {
+  public recipes!: Signal<Recipe[]>;
   private ingredientsStore: Store<IngredientsState>;
-  private router: Router;
-
+  private recipesStore: Store<RecipesState>;
+  private route: ActivatedRoute;
+  private readonly router: Router;
   public constructor(
     route: ActivatedRoute,
     recipesStore: Store<RecipesState>,
     ingredientsStore: Store<IngredientsState>,
-    router: Router
+    router: Router,
   ) {
+    super();
     this.route = route;
     this.recipesStore = recipesStore;
     this.ingredientsStore = ingredientsStore;
@@ -39,13 +43,18 @@ export class RecipesComponent implements OnInit {
 
   public ngOnInit(): void {
     const ingredientId = parseInt(this.route.snapshot.paramMap.get('id') ?? '') || 0;
-    this.recipes$ = this.ingredientsStore.select(selectById(ingredientId)).pipe(
-      tap(ingredient => {
+    const ingredient = this.ingredientsStore.selectSignal(selectById(ingredientId));
+    RouterUtils.redirectIfMissing<Ingredient>(this.injector, ingredient, this.router);
+
+    this.recipes = SignalUtils.map<Ingredient | undefined, Recipe[]>(
+      ingredient,
+      (ingredient: Ingredient | undefined) => {
         if (ingredient === undefined) {
-          this.router.navigateByUrl(PathUtils.concatPath(RoutingConfig.notFound), {skipLocationChange: true});
+          return [];
         }
-      }),
-      switchMap(ingredient => ingredient === undefined ? of([]) : this.recipesStore.select(selectRecipesForIngredient(ingredient)))
+
+        return this.recipesStore.selectSignal(selectRecipesForIngredient(ingredient))();
+      },
     );
   }
 }

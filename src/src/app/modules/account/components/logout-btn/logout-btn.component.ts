@@ -1,21 +1,24 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {AuthService} from '../../../../core/services/auth/auth.service';
-import {PathUtils} from '../../../../core/utils/path.utils';
-import {RoutingConfig} from '../../../../config/routing.config';
-import {StoreService} from '../../../../core/services/store/store.service';
-import {Router} from '@angular/router';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { Router } from '@angular/router';
+
+import { RoutingConfig } from '../../../../config/routing.config';
+import { AuthService } from '../../../../core/services/auth.service';
+import { StoreService } from '../../../../core/services/store.service';
+import { PathUtils } from '../../../../core/utils/path.utils';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatIcon, MatButton],
   selector: 'account-logout-btn',
-  templateUrl: './logout-btn.component.html',
+  standalone: true,
   styleUrls: [],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './logout-btn.component.html',
 })
 export class LogoutBtnComponent {
-
-  private readonly storeService: StoreService;
   private router: Router;
-
+  private readonly storeService: StoreService;
   public constructor(router: Router, storeService: StoreService) {
     this.router = router;
     this.storeService = storeService;
@@ -23,6 +26,6 @@ export class LogoutBtnComponent {
 
   public logout(): void {
     AuthService.clearTokens(this.storeService);
-    this.router.navigateByUrl(PathUtils.concatPath(RoutingConfig.login));
+    void this.router.navigateByUrl(PathUtils.concatPath(RoutingConfig.login));
   }
 }

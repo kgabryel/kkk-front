@@ -1,72 +1,75 @@
-<div [ngClass]="{'only-time': step === 1, 'all': step === 0}" class='timers d-flex'>
-  <div class='activator'>
-    <button class='glassmorphism-button' mat-button type='button'>
-      <mat-icon>
-        schedule
-      </mat-icon>
+<div
+  class="timers d-flex"
+  [ngClass]="{ 'only-time': step === 1, all: step === 0, 'on-recipe': onRecipesPage() }"
+>
+  <div class="activator">
+    <button
+      class="glassmorphism-button"
+      mat-button
+      type="button"
+    >
+      <mat-icon>schedule</mat-icon>
     </button>
   </div>
-  <div class='glassmorphism-content pa-1'>
+  <div class="glassmorphism-content pa-1">
     <div>
-      <div class='buttons d-flex justify-content-between'>
+      <div class="buttons d-flex justify-content-between">
         <button
-          (click)='openAddDialog()'
-          [matTooltip]='tooltips.addTimer'
-          class='glassmorphism-button mr-2'
+          class="glassmorphism-button mr-2"
+          [matTooltip]="tooltips.addTimer"
+          (click)="openAddDialog()"
           mat-button
-          type='button'>
-          <mat-icon>
-            add
-          </mat-icon>
+          type="button"
+        >
+          <mat-icon>add</mat-icon>
         </button>
         <div>
           <button
-            (click)='setStep(0)'
-            [matTooltip]='tooltips.open'
-            [ngClass]="{'active-step': step === 0}"
-            class='glassmorphism-button'
+            class="glassmorphism-button"
+            [matTooltip]="tooltips.open"
+            [ngClass]="{ 'active-step': step === 0 }"
+            (click)="setStep(0)"
             mat-button
-            type='button'>
-            <mat-icon>
-              rectangle
-            </mat-icon>
+            type="button"
+          >
+            <mat-icon>rectangle</mat-icon>
           </button>
           <button
-            (click)='setStep(1)'
-            [matTooltip]='tooltips.onlyTime'
-            [ngClass]="{'active-step': step === 1}"
-            class='glassmorphism-button'
+            class="glassmorphism-button"
+            [matTooltip]="tooltips.onlyTime"
+            [ngClass]="{ 'active-step': step === 1 }"
+            (click)="setStep(1)"
             mat-button
-            type='button'>
-            <mat-icon>
-              schedule
-            </mat-icon>
+            type="button"
+          >
+            <mat-icon>schedule</mat-icon>
           </button>
           <button
-            (click)='setStep(2)'
-            [matTooltip]='tooltips.hidden'
-            [ngClass]="{'active-step': step === 2}"
-            class='glassmorphism-button'
+            class="glassmorphism-button"
+            [matTooltip]="tooltips.hidden"
+            [ngClass]="{ 'active-step': step === 2 }"
+            (click)="setStep(2)"
             mat-button
-            type='button'>
-            <mat-icon>
-              close
-            </mat-icon>
+            type="button"
+          >
+            <mat-icon>close</mat-icon>
           </button>
         </div>
       </div>
     </div>
-    <ng-container *ngFor='let timer of timers$ | async; let last = last; let index = index'>
+    @for (timer of timers(); track timer; let last = $last; let index = $index) {
       <timers-timer
-        (delete)='delete(index)'
-        (nameUpdate)='updateName(index, $event)'
-        (restart)='restart(index)'
-        (switch)='switch(index)'
-        (timeUpdate)='updateTime(index, $event)'
-        [leftTime]='timer.leftTime'
-        [timer]='timer'>
-      </timers-timer>
-      <hr *ngIf='!last' />
-    </ng-container>
+        [leftTime]="timer.leftTime"
+        [timer]="timer"
+        (delete)="delete(index)"
+        (nameUpdate)="updateName(index, $event)"
+        (restart)="restart(index)"
+        (switch)="switch(index)"
+        (timeUpdate)="updateTime(index, $event)"
+      ></timers-timer>
+      @if (!last) {
+        <hr />
+      }
+    }
   </div>
 </div>

@@ -1,6 +1,7 @@
-import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
-import {Tag} from '../../models/tag';
-import {createReducer, on} from '@ngrx/store';
+import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
+import { createReducer, on } from '@ngrx/store';
+
+import { Tag } from '../../models/tag';
 import {
   tagAdd,
   tagAddError,
@@ -15,7 +16,7 @@ import {
   tagsReset,
   tagUpdate,
   tagUpdateError,
-  tagUpdateSuccess
+  tagUpdateSuccess,
 } from './actions';
 
 export interface State {
@@ -28,37 +29,37 @@ export const TAGS_KEY = 'tags';
 export const adapter: EntityAdapter<Tag> = createEntityAdapter<Tag>();
 
 const initialState: State = {
+  loaded: false,
   tags: adapter.getInitialState(),
-  loaded: false
 };
 
 export const tagsReducer = createReducer(
   initialState,
-  on(tagsLoad, state => state),
-  on(tagsLoadError, state => state),
-  on(tagsLoadSuccess, (state, action) => ({
+  on(tagsLoad, (state: State) => state),
+  on(tagsLoadError, (state: State) => state),
+  on(tagsLoadSuccess, (state: State, action: ReturnType<typeof tagsLoadSuccess>) => ({
     ...state,
     loaded: true,
-    tags: adapter.addMany(action.tags, state.tags)
+    tags: adapter.addMany(action.tags, state.tags),
   })),
-  on(tagAdd, state => state),
-  on(tagAddFromRecipe, state => state),
-  on(tagAddError, state => state),
-  on(tagAddSuccess, (state, action) => ({
+  on(tagAdd, (state: State) => state),
+  on(tagAddFromRecipe, (state: State) => state),
+  on(tagAddError, (state: State) => state),
+  on(tagAddSuccess, (state: State, action: ReturnType<typeof tagAddSuccess>) => ({
     ...state,
-    tags: adapter.addOne(action.tag, state.tags)
+    tags: adapter.addOne(action.tag, state.tags),
   })),
-  on(tagDelete, state => state),
-  on(tagDeleteError, state => state),
-  on(tagDeleteSuccess, (state, action) => ({
+  on(tagDelete, (state: State) => state),
+  on(tagDeleteError, (state: State) => state),
+  on(tagDeleteSuccess, (state: State, action: ReturnType<typeof tagDeleteSuccess>) => ({
     ...state,
-    tags: adapter.removeOne(action.id, state.tags)
+    tags: adapter.removeOne(action.id, state.tags),
   })),
-  on(tagUpdate, state => state),
-  on(tagUpdateError, state => state),
-  on(tagUpdateSuccess, (state, action) => ({
+  on(tagUpdate, (state: State) => state),
+  on(tagUpdateError, (state: State) => state),
+  on(tagUpdateSuccess, (state: State, action: ReturnType<typeof tagUpdateSuccess>) => ({
     ...state,
-    tags: adapter.updateOne(action.tag, state.tags)
+    tags: adapter.updateOne(action.tag, state.tags),
   })),
-  on(tagsReset, () => initialState)
+  on(tagsReset, () => initialState),
 );

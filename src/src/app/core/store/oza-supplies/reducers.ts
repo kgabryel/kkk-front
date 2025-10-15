@@ -1,7 +1,14 @@
-import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
-import {createReducer, on} from '@ngrx/store';
-import {keyNotExists, suppliesLoad, suppliesLoadError, suppliesLoadSuccess, suppliesReset} from './actions';
-import {OzaSupply} from '../../models/oza-supply';
+import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
+import { createReducer, on } from '@ngrx/store';
+
+import { OzaSupply } from '../../models/oza-supply';
+import {
+  keyNotExists,
+  suppliesLoad,
+  suppliesLoadError,
+  suppliesLoadSuccess,
+  suppliesReset,
+} from './actions';
 
 export interface State {
   supplies: EntityState<OzaSupply>;
@@ -14,31 +21,31 @@ export const SUPPLIES_KEY = 'supplies';
 export const adapter: EntityAdapter<OzaSupply> = createEntityAdapter<OzaSupply>();
 
 const initialState: State = {
-  supplies: adapter.getInitialState(),
   loaded: false,
-  success: false
+  success: false,
+  supplies: adapter.getInitialState(),
 };
 
 export const suppliesReducer = createReducer(
   initialState,
-  on(suppliesLoad, state => state),
-  on(keyNotExists, state => ({
+  on(suppliesLoad, (state: State) => state),
+  on(keyNotExists, (state: State) => ({
     ...state,
     loaded: true,
     success: false,
-    supplies: adapter.addMany([], state.supplies)
+    supplies: adapter.addMany([], state.supplies),
   })),
-  on(suppliesLoadError, state => ({
+  on(suppliesLoadError, (state: State) => ({
     ...state,
     loaded: true,
     success: false,
-    supplies: adapter.addMany([], state.supplies)
+    supplies: adapter.addMany([], state.supplies),
   })),
-  on(suppliesLoadSuccess, (state, action) => ({
+  on(suppliesLoadSuccess, (state: State, action: ReturnType<typeof suppliesLoadSuccess>) => ({
     ...state,
     loaded: true,
     success: true,
-    supplies: adapter.addMany(action.supplies, state.supplies)
+    supplies: adapter.addMany(action.supplies, state.supplies),
   })),
-  on(suppliesReset, () => initialState)
+  on(suppliesReset, () => initialState),
 );

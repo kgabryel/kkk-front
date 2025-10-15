@@ -1,9 +1,10 @@
-import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {Store} from '@ngrx/store';
-import {State} from '../store/ingredients/reducers';
-import {IngredientsValidator} from '../validators/ingredients.validator';
-import {Injectable} from '@angular/core';
-import {Length} from '../../config/form.config';
+import { Injectable } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Store } from '@ngrx/store';
+
+import { Length } from '../../config/form.config';
+import { State } from '../store/ingredients/reducers';
+import { IngredientsValidator } from '../validators/ingredients.validator';
 
 export interface IngredientsFormNames {
   name: string;
@@ -13,30 +14,29 @@ export interface IngredientsFormNames {
 }
 
 export const formNames: IngredientsFormNames = {
-  name: 'name',
   available: 'available',
+  name: 'name',
   supply: 'supply',
-  supplySearch: 'supplySearch'
+  supplySearch: 'supplySearch',
 };
 
 @Injectable()
 export class IngredientFormFactory {
-
   private readonly store: Store<State>;
-
   public constructor(store: Store<State>) {
     this.store = store;
   }
 
   public getCreateForm(): FormGroup {
     return new FormGroup({
-      [formNames.name]: new FormControl('',
-        [Validators.required, Validators.maxLength(Length.maxIngredientNameLength)],
-        [IngredientsValidator.unique(this.store)]
-      ),
       [formNames.available]: new FormControl(false, [Validators.required]),
+      [formNames.name]: new FormControl(
+        '',
+        [Validators.required, Validators.maxLength(Length.maxIngredientNameLength)],
+        [IngredientsValidator.unique(this.store)],
+      ),
       [formNames.supply]: new FormControl(null),
-      [formNames.supplySearch]: new FormControl(null)
+      [formNames.supplySearch]: new FormControl(null),
     });
   }
 
@@ -45,8 +45,8 @@ export class IngredientFormFactory {
       [formNames.name]: new FormControl(
         '',
         [Validators.required, Validators.maxLength(Length.maxIngredientNameLength)],
-        [IngredientsValidator.unique(this.store, expect)]
-      )
+        [IngredientsValidator.unique(this.store, expect)],
+      ),
     });
   }
 }

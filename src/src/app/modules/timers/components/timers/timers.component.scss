@@ -1,40 +1,45 @@
 .timers {
+  backdrop-filter: blur(5px);
+  position: fixed;
+  right: -310px;
+  top: 69px;
   transition-duration: 1s;
   z-index: 100;
-  position: fixed;
-  top: 133px;
-  right: -310px;
-  backdrop-filter: blur(5px);
 }
 
 .activator > button {
-  border-top-right-radius: 0 !important;
   border-bottom-right-radius: 0 !important;
+  border-top-right-radius: 0 !important;
 }
 
-.buttons button, .activator > button {
+.buttons button,
+.activator > button {
   min-width: 36px;
   padding: 0;
 }
 
 .buttons > div > button:first-child {
-  border-top-right-radius: 0 !important;
   border-bottom-right-radius: 0 !important;
+  border-top-right-radius: 0 !important;
 }
 
 .buttons > div > button:nth-child(2) {
-  border-radius: 0 !important;
   border-left: 1px solid black;
+  border-radius: 0 !important;
   border-right: 1px solid black;
 }
 
 .buttons > div > .active-step {
-  background-color: rgba(252, 231, 78, 0.8);
+  background-color: rgb(252 231 78 / 80%) !important;
 }
 
 .buttons > div > button:nth-child(3) {
-  border-top-left-radius: 0 !important;
   border-bottom-left-radius: 0 !important;
+  border-top-left-radius: 0 !important;
+}
+
+.buttons > div {
+  min-height: 37px;
 }
 
 .timers:hover {
@@ -50,10 +55,16 @@
 }
 
 .glassmorphism-content {
-  width: 300px;
-  box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2);
-  background-color: rgba(255, 255, 255, .3);
+  background-color: rgb(255 255 255 / 30%);
   border-radius: 0 0 0 5px !important;
-  overflow-y: auto;
+  box-shadow: 0 0 1rem 0 rgb(0 0 0 / 20%);
   max-height: calc(100vh - 212px);
+  overflow-y: auto;
+  width: 300px;
+}
+
+@media screen and (width <= 947px) {
+  .on-recipe {
+    top: 133px;
+  }
 }

@@ -1,0 +1,1 @@
+docker exec -it angular sh -c 'ng serve --host 0.0.0.0 --ssl'

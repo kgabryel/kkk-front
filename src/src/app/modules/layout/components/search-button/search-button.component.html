@@ -1,5 +1,8 @@
-<button (click)='openModal()' [ngClass]="{'filtered': filtered | async}" mat-fab type='button'>
-  <mat-icon>
-    search
-  </mat-icon>
+<button
+  [ngClass]="{ filtered: filtered() }"
+  (click)="openModal()"
+  mat-fab
+  type="button"
+>
+  <mat-icon>search</mat-icon>
 </button>

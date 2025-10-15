@@ -1,43 +1,56 @@
-<h2 class='d-flex justify-content-between' mat-dialog-title>
-  <button (click)='clear()' class='glassmorphism-button' mat-button type='button'>
+<h2 class="d-flex justify-content-between">
+  <button
+    class="glassmorphism-button"
+    (click)="clear()"
+    mat-button
+    type="button"
+  >
     Wyczyść
   </button>
-  <button [mat-dialog-close]='true' class='glassmorphism-button close-btn' mat-button type='button'>
-    <mat-icon>
-      close
-    </mat-icon>
+  <button
+    class="glassmorphism-button close-btn"
+    [mat-dialog-close]="true"
+    mat-button
+    type="button"
+  >
+    <mat-icon>close</mat-icon>
   </button>
 </h2>
 <div>
   <mat-form-field>
-    <mat-label>
-      Składniki
-    </mat-label>
-    <mat-select [formControl]='selectedIngredients' [multiple]='true'>
+    <mat-label>Składniki</mat-label>
+    <mat-select
+      [formControl]="selectedIngredients"
+      [multiple]="true"
+    >
       <mat-option>
         <ngx-mat-select-search
-          (ngModelChange)='filterIngredients($event)'
+          (ngModelChange)="filterIngredients($event)"
           ngModel
-          noEntriesFoundLabel='Brak wyników'
-          placeholderLabel='Szukaj...'>
-        </ngx-mat-select-search>
+          noEntriesFoundLabel="Brak wyników"
+          placeholderLabel="Szukaj..."
+        ></ngx-mat-select-search>
       </mat-option>
-      <mat-option *ngFor='let ingredient of ingredients$ | async' [value]='ingredient.id'>
-        {{ingredient.name}}
-      </mat-option>
+      @for (ingredient of ingredients(); track ingredient) {
+        <mat-option [value]="ingredient.id">
+          {{ ingredient.name }}
+        </mat-option>
+      }
     </mat-select>
   </mat-form-field>
 </div>
 <div>
-  <mat-form-field>
-    <mat-label>
-      Miesiące
-    </mat-label>
-    <mat-select [formControl]='selectedMonths' [multiple]='true'>
-      <mat-option *ngFor='let month of months' value='{{month.value}}'>
-        {{month.key}}
-      </mat-option>
+  <mat-form-field class="no-subscript">
+    <mat-label>Miesiące</mat-label>
+    <mat-select
+      [formControl]="selectedMonths"
+      [multiple]="true"
+    >
+      @for (month of months; track month) {
+        <mat-option value="{{ month.value }}">
+          {{ month.key }}
+        </mat-option>
+      }
     </mat-select>
   </mat-form-field>
 </div>
-

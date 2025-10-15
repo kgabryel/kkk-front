@@ -1,80 +1,128 @@
-<div class='container d-inline-block pa-1'>
-  <div class='preview pa-1'>
+<div class="container d-inline-block pa-1">
+  <div class="preview pa-1">
     <div>
-      <h3 class='mb-0 ma-1 text-uppercase'>
-        {{recipe.name}}
+      <h3 class="mb-0 ma-1 text-uppercase">
+        {{ recipe().name }}
       </h3>
-      <div class='mb-1 d-flex'>
-        <a *ngIf='!(recipe.url | emptyString)' [href]='recipe.url' target='_blank'>
-          <button class='glassmorphism-button' mat-raised-button type='button'>
-            Link
-          </button>
-        </a>
+      <div class="mb-1 d-flex">
+        @if (!(recipe().url | emptyString)) {
+          <a
+            [href]="recipe().url"
+            target="_blank"
+          >
+            <button
+              class="glassmorphism-button"
+              mat-raised-button
+              type="button"
+            >
+              Link
+            </button>
+          </a>
+        }
       </div>
     </div>
-    <div class='mt-1 mb-1'>
-      <mat-carousel
-        (change)='changedPhoto($event)'
-        (click)='showPhoto($event)'
-        *ngIf='recipe.photos.length > 0'
-        [autoplay]='false'
-        [hideArrows]='recipe.photos.length === 1'
-        [hideIndicators]='recipe.photos.length === 1'
-        [proportion]='75'
-        [useKeyboard]='true'
-        color='primary'>
-        <ng-container *ngFor='let photo of recipe.photos'>
-          <mat-carousel-slide [image]='getPhoto(photo.id)'></mat-carousel-slide>
-        </ng-container>
-      </mat-carousel>
+    <div class="mt-1 mb-1">
+      @if (recipe().photos.length > 0) {
+        <swiper-container
+          slides-per-view="1"
+          navigation="true"
+          pagination="true"
+          centered-slides="true"
+          zoom="true"
+        >
+          @for (photo of recipe().photos; track photo) {
+            <swiper-slide>
+              @if (getPhoto(photo)(); as image) {
+                <div class="swiper-zoom-container">
+                  <img
+                    [src]="image"
+                    (click)="showPhoto(photo)"
+                    alt="photo"
+                  />
+                </div>
+              } @else {
+                <div class="swiper-zoom-container">
+                  <img
+                    [src]="loadingGif"
+                    height="150"
+                    width="200"
+                    alt="loading"
+                  />
+                </div>
+              }
+            </swiper-slide>
+          }
+        </swiper-container>
+      }
     </div>
-    <div class='pb-1 ml--1'>
-      <button *ngFor='let tag of recipe.tags' class='glassmorphism-button ma-1' mat-button type='button'>
-        {{tag}}
-      </button>
+    <div class="pb-1 ml--1">
+      @for (tag of recipe().tags; track tag) {
+        <button
+          class="glassmorphism-button ma-1"
+          mat-button
+          type="button"
+        >
+          {{ tag }}
+        </button>
+      }
     </div>
     <mat-accordion multi>
-      <mat-expansion-panel *ngIf='!(recipe.description | emptyString)' expanded hideToggle>
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            Przepis
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-        <p [innerHTML]='recipe.description'></p>
-      </mat-expansion-panel>
-      <mat-expansion-panel *ngIf='recipe.groups.length > 0' expanded hideToggle>
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            Składniki
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-        <div class='w-100 text-center'>
-          <span>
-            ilość porcji: {{recipe.portions}}
-          </span>
-        </div>
-        <div *ngFor='let group of recipe.groups; first as isFirst;'>
-          <br *ngIf='!isFirst' />
-          <h2 class='mb-0'>
-            {{group.name}}
-          </h2>
-          <mat-list class='pt-0' role='list'>
-            <mat-list-item *ngFor='let position of group.positions' role='listitem'>
-              <div mat-line>
-                {{position.ingredient}}
-                <span *ngIf='position.additional' class='additional'>
-                  (opcjonalne)
-                </span>
-              </div>
-              <div mat-line>
-                ({{position.measure}}
-                <ng-container *ngIf='position.amount !== null'> -</ng-container>
-                {{position.amount}})
-              </div>
-            </mat-list-item>
-          </mat-list>
-        </div>
-      </mat-expansion-panel>
+      @if (!(recipe().description | emptyString)) {
+        <mat-expansion-panel
+          expanded
+          hideToggle
+        >
+          <mat-expansion-panel-header>
+            <mat-panel-title>Przepis</mat-panel-title>
+          </mat-expansion-panel-header>
+          <p [innerHTML]="recipe().description"></p>
+        </mat-expansion-panel>
+      }
+      @if (recipe().groups.length > 0) {
+        <mat-expansion-panel
+          expanded
+          hideToggle
+        >
+          <mat-expansion-panel-header>
+            <mat-panel-title>Składniki</mat-panel-title>
+          </mat-expansion-panel-header>
+          <div class="w-100 text-center">
+            <span>ilość porcji: {{ recipe().portions }}</span>
+          </div>
+          @for (group of recipe().groups; track group; let isFirst = $first) {
+            <div>
+              @if (!isFirst) {
+                <br />
+              }
+              <h2 class="mb-0">
+                {{ group.name }}
+              </h2>
+              <mat-list
+                class="pt-0"
+                role="list"
+              >
+                @for (position of group.positions; track position) {
+                  <mat-list-item role="listitem">
+                    <div mat-line>
+                      {{ position.ingredient }}
+                      @if (position.additional) {
+                        <span class="additional">(opcjonalne)</span>
+                      }
+                    </div>
+                    <div mat-line>
+                      ({{ position.measure }}
+                      @if (position.amount !== null) {
+                        -
+                      }
+                      {{ position.amount }})
+                    </div>
+                  </mat-list-item>
+                }
+              </mat-list>
+            </div>
+          }
+        </mat-expansion-panel>
+      }
     </mat-accordion>
   </div>
 </div>

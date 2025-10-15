@@ -1,30 +1,21 @@
-import {Injectable} from '@angular/core';
-import {Resolve} from '@angular/router';
-import {Store} from '@ngrx/store';
-import {State} from '../store/ingredients/reducers';
-import {Observable} from 'rxjs';
-import {ingredientsLoad} from '../store/ingredients/actions';
-import {selectIsLoaded} from '../store/ingredients/selectors';
-import {filter, take, tap} from 'rxjs/operators';
+import { inject } from '@angular/core';
+import { ResolveFn } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { filter, take, tap } from 'rxjs/operators';
 
-@Injectable()
-export class IngredientsResolver implements Resolve<boolean> {
+import { ingredientsLoad } from '../store/ingredients/actions';
+import { selectIsLoaded } from '../store/ingredients/selectors';
 
-  private readonly store: Store<State>;
+export const ingredientsResolver: ResolveFn<boolean> = () => {
+  const store = inject(Store);
 
-  constructor(store: Store<State>) {
-    this.store = store;
-  }
-
-  resolve(): Observable<boolean> {
-    return this.store.select(selectIsLoaded).pipe(
-      tap(loaded => {
-        if (!loaded) {
-          this.store.dispatch(ingredientsLoad());
-        }
-      }),
-      filter(loaded => loaded),
-      take(1)
-    );
-  }
-}
+  return store.select(selectIsLoaded).pipe(
+    tap((loaded: boolean) => {
+      if (!loaded) {
+        store.dispatch(ingredientsLoad());
+      }
+    }),
+    filter(Boolean),
+    take(1),
+  );
+};

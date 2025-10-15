@@ -1,34 +1,39 @@
-import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {Observable, Subscription} from 'rxjs';
-import {ModalService} from '../../../../core/services/modal/modal.service';
-import {SearchComponent} from '../../components/search/search.component';
-import {filter} from 'rxjs/operators';
+import { ChangeDetectionStrategy, Component, OnInit, Signal } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+
+import { ModalService } from '../../../../core/services/modal.service';
+import { BaseComponent } from '../../../base.component';
+import { DividerComponent } from '../../../layout/components/divider/divider.component';
+import { CreateComponent } from '../../components/create/create.component';
+import { IngredientsListComponent } from '../../components/ingredients-list/ingredients-list.component';
+import { SearchComponent } from '../../components/search/search.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CreateComponent, IngredientsListComponent, DividerComponent],
   selector: 'ingredients-pages-index',
-  templateUrl: './index.component.html',
+  standalone: true,
   styleUrls: [],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './index.component.html',
 })
-export class IndexComponent implements OnInit, OnDestroy {
-
+export class IndexComponent extends BaseComponent implements OnInit {
   private dialog: MatDialog;
-  private modal: Observable<boolean>;
-  private subscription: Subscription;
-
+  private readonly modal: Signal<boolean>;
+  private modalService: ModalService;
   public constructor(dialog: MatDialog, modalService: ModalService) {
+    super();
     this.dialog = dialog;
     this.modal = modalService.getState();
+    this.modalService = modalService;
   }
 
   public ngOnInit(): void {
-    this.subscription = this.modal.pipe(filter(data => data))
-      .subscribe(() => this.dialog.open(SearchComponent));
+    this.onSignalValue((data: boolean) => {
+      if (data) {
+        this.dialog.open(SearchComponent);
+        this.modalService.reset();
+      }
+    }, this.modal);
     this.dialog.closeAll();
-  }
-
-  public ngOnDestroy(): void {
-    this.subscription.unsubscribe();
   }
 }

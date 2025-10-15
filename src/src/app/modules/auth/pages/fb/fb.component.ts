@@ -1,33 +1,34 @@
-import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {LoginService} from '../../../../core/services/login/login.service';
-import {PathUtils} from '../../../../core/utils/path.utils';
-import {RoutingConfig} from '../../../../config/routing.config';
-import {AuthService} from '../../../../core/services/auth/auth.service';
-import {NotificationService} from '../../../../core/services/notification/notification.service';
-import {Subscription} from 'rxjs';
-import {messages} from '../../../../core/messages/auth.messages';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { take } from 'rxjs/operators';
+
+import { RoutingConfig } from '../../../../config/routing.config';
+import { messages } from '../../../../core/messages/auth.messages';
+import { TokensData } from '../../../../core/models/auth';
+import { AuthService } from '../../../../core/services/auth.service';
+import { LoginService } from '../../../../core/services/login.service';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { PathUtils } from '../../../../core/utils/path.utils';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'auth-pages-fb',
-  templateUrl: './fb.component.html',
+  standalone: true,
   styleUrls: [],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './fb.component.html',
 })
-export class FbComponent implements OnInit, OnDestroy {
-  private route: ActivatedRoute;
-  private loginService: LoginService;
+export class FbComponent implements OnInit {
   private authService: AuthService;
-  private router: Router;
+  private loginService: LoginService;
   private notificationService: NotificationService;
-  private subscription: Subscription | undefined;
-
+  private route: ActivatedRoute;
+  private router: Router;
   public constructor(
     route: ActivatedRoute,
     loginService: LoginService,
     authService: AuthService,
     router: Router,
-    notificationService: NotificationService
+    notificationService: NotificationService,
   ) {
     this.route = route;
     this.loginService = loginService;
@@ -37,24 +38,22 @@ export class FbComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    let authToken = this.route.snapshot.queryParams.code;
+    const authToken = this.route.snapshot.queryParams['code'];
+
     if (authToken === undefined) {
       return;
     }
-    this.subscription = this.loginService.loginViaFb(authToken).subscribe(data => {
-      if (data.isCorrect) {
-        this.authService.storeToken(data);
-        this.router.navigateByUrl(PathUtils.concatPath(RoutingConfig.home));
-      } else {
-        this.router.navigateByUrl(PathUtils.concatPath(RoutingConfig.login));
-        this.notificationService.showErrorMessage(messages.authenticationError);
-      }
-    });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription !== undefined) {
-      this.subscription.unsubscribe();
-    }
+    this.loginService
+      .loginViaFb(authToken)
+      .pipe(take(1))
+      .subscribe((data: TokensData) => {
+        if (data.isCorrect) {
+          this.authService.storeToken(data);
+          void this.router.navigateByUrl(PathUtils.concatPath(RoutingConfig.home));
+        } else {
+          void this.router.navigateByUrl(PathUtils.concatPath(RoutingConfig.login));
+          this.notificationService.showErrorMessage(messages.authenticationError);
+        }
+      });
   }
 }

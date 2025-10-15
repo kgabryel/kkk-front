@@ -1,28 +1,29 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {Observable} from 'rxjs';
-import {Recipe} from '../../../../core/models/recipe';
-import {Store} from '@ngrx/store';
-import {State} from '../../../../core/store/recipes/reducers';
-import {tap} from 'rxjs/operators';
-import {PathUtils} from '../../../../core/utils/path.utils';
-import {RoutingConfig} from '../../../../config/routing.config';
-import {selectById} from '../../../../core/store/recipes/selectors';
+import { ChangeDetectionStrategy, Component, OnInit, Signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+
+import { Recipe } from '../../../../core/models/recipe';
+import { State } from '../../../../core/store/recipes/reducers';
+import { selectById } from '../../../../core/store/recipes/selectors';
+import { RouterUtils } from '../../../../core/utils/router.utils';
+import { BaseComponent } from '../../../base.component';
+import { RecipePreviewComponent } from '../../components/recipe-preview/recipe-preview.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RecipePreviewComponent],
   selector: 'recipes-pages-recipe',
-  templateUrl: './recipe.component.html',
+  standalone: true,
   styleUrls: ['./recipe.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './recipe.component.html',
 })
-export class RecipeComponent implements OnInit {
-
-  public recipe$: Observable<Recipe | undefined>;
+export class RecipeComponent extends BaseComponent implements OnInit {
+  public recipe!: Signal<Recipe | undefined>;
   private route: ActivatedRoute;
+  private readonly router: Router;
   private store: Store<State>;
-  private router: Router;
-
   public constructor(route: ActivatedRoute, recipesStore: Store<State>, router: Router) {
+    super();
     this.route = route;
     this.store = recipesStore;
     this.router = router;
@@ -30,12 +31,7 @@ export class RecipeComponent implements OnInit {
 
   public ngOnInit(): void {
     const recipeId = parseInt(this.route.snapshot.paramMap.get('id') ?? '') || 0;
-    this.recipe$ = this.store.select(selectById(recipeId)).pipe(
-      tap(recipe => {
-        if (recipe === undefined) {
-          this.router.navigateByUrl(PathUtils.concatPath(RoutingConfig.notFound), {skipLocationChange: true});
-        }
-      })
-    );
+    this.recipe = this.store.selectSignal(selectById(recipeId));
+    RouterUtils.redirectIfMissing<Recipe>(this.injector, this.recipe, this.router);
   }
 }

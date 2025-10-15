@@ -1,38 +1,61 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import {FormGroup} from '@angular/forms';
-import {formNames, TimerFactory, TimerFormNames} from '../../../../core/factories/timer.factory';
-import {TimersListService} from '../../../../core/services/timers-list/timers-list.service';
-import {TimeUtils} from '../../../../core/utils/time.utils';
-import {NotificationService} from '../../../../core/services/notification/notification.service';
-import {MatDialogRef} from '@angular/material/dialog';
-import {Observable} from 'rxjs';
-import {Timer} from '../../../../core/models/timer';
-import {Store} from '@ngrx/store';
-import {State} from '../../../../core/store/timers/reducers';
-import {selectTimers} from '../../../../core/store/timers/selectors';
-import {messages} from '../../../../core/messages/timers.messages';
+import { ChangeDetectionStrategy, Component, OnInit, Signal } from '@angular/core';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatDialogClose, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatOption, MatSelect } from '@angular/material/select';
+import { Store } from '@ngrx/store';
+
+import { formNames, TimerFactory, TimerFormNames } from '../../../../core/factories/timer.factory';
+import { messages } from '../../../../core/messages/timers.messages';
+import { Timer } from '../../../../core/models/timer';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { TimersListService } from '../../../../core/services/timers-list.service';
+import { State } from '../../../../core/store/timers/reducers';
+import { selectTimers } from '../../../../core/store/timers/selectors';
+import { TimeUtils } from '../../../../core/utils/time.utils';
+import { AutocompletePipe } from '../../../shared/pipes/autocomplete.pipe';
+import { TimerTimePipe } from '../../../shared/pipes/timer-time.pipe';
+import { FormComponent } from '../form/form.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatDialogTitle,
+    MatDialogClose,
+    MatIcon,
+    MatButton,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    AutocompletePipe,
+    TimerTimePipe,
+    MatOption,
+    MatSelect,
+    FormComponent,
+    MatSelect,
+    MatOption,
+  ],
   selector: 'timers-add-dialog',
-  templateUrl: './add-dialog.component.html',
+  standalone: true,
   styleUrls: [],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './add-dialog.component.html',
 })
 export class AddDialogComponent implements OnInit {
-  public addForm: FormGroup;
-  public selectForm: FormGroup;
+  public addForm!: FormGroup;
   public formNames: TimerFormNames;
-  public timers$: Observable<Timer[]>;
-  private timersListService: TimersListService;
-  private notificationService: NotificationService;
+  public selectForm!: FormGroup;
+  public timers!: Signal<Timer[]>;
   private dialogRef: MatDialogRef<AddDialogComponent>;
+  private notificationService: NotificationService;
   private store: Store<State>;
-
+  private timersListService: TimersListService;
   public constructor(
     timersListService: TimersListService,
     notificationService: NotificationService,
     dialogRef: MatDialogRef<AddDialogComponent>,
-    store: Store<State>
+    store: Store<State>,
   ) {
     this.timersListService = timersListService;
     this.notificationService = notificationService;
@@ -44,7 +67,7 @@ export class AddDialogComponent implements OnInit {
   public ngOnInit(): void {
     this.addForm = TimerFactory.getCreateForm();
     this.selectForm = TimerFactory.getAddForm();
-    this.timers$ = this.store.select(selectTimers);
+    this.timers = this.store.selectSignal(selectTimers);
   }
 
   public submitAdd(): void {
@@ -53,14 +76,14 @@ export class AddDialogComponent implements OnInit {
     }
     this.timersListService.addTimer({
       id: 0,
+      name: this.addForm.get(this.formNames.name)?.value,
       time: TimeUtils.dateToTime(this.addForm.get(this.formNames.time)?.value),
-      name: this.addForm.get(this.formNames.name)?.value
     });
     this.notificationService.showMessage(messages.timerAdded);
     this.dialogRef.close();
   }
 
-  public submitSelect() {
+  public submitSelect(): void {
     if (this.selectForm.invalid) {
       return;
     }

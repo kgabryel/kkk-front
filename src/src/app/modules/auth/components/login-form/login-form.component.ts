@@ -1,40 +1,71 @@
-import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
-import {AuthFormFactory, AuthFormNames, formNames} from '../../../../core/factories/auth-form.factory';
-import {LoginService} from '../../../../core/services/login/login.service';
-import {AuthService} from '../../../../core/services/auth/auth.service';
-import {Router} from '@angular/router';
-import {PathUtils} from '../../../../core/utils/path.utils';
-import {RoutingConfig} from '../../../../config/routing.config';
-import {authErrors, AuthErrors} from '../../../../core/errors/auth.error';
-import {BehaviorSubject, Observable, Subscription} from 'rxjs';
-import {Length} from '../../../../config/form.config';
-import {messages} from '../../../../core/messages/auth.messages';
-import {map, startWith} from 'rxjs/operators';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  signal,
+  Signal,
+  WritableSignal,
+} from '@angular/core';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { Router, RouterLink } from '@angular/router';
+import { take } from 'rxjs/operators';
+
+import { Length } from '../../../../config/form.config';
+import { RoutingConfig } from '../../../../config/routing.config';
+import { authErrors, AuthErrors } from '../../../../core/errors/auth.error';
+import {
+  AuthFormFactory,
+  AuthFormNames,
+  formNames,
+} from '../../../../core/factories/auth-form.factory';
+import { messages } from '../../../../core/messages/auth.messages';
+import { TokensData } from '../../../../core/models/auth';
+import { AuthService } from '../../../../core/services/auth.service';
+import { LoginService } from '../../../../core/services/login.service';
+import { FormUtils } from '../../../../core/utils/form.utils';
+import { PathUtils } from '../../../../core/utils/path.utils';
+import { BaseComponent } from '../../../base.component';
+import { ErrorsContainerComponent } from '../../../shared/components/errors-container/errors-container.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatFormField,
+    ReactiveFormsModule,
+    MatLabel,
+    MatHint,
+    MatInput,
+    ErrorsContainerComponent,
+    MatButton,
+    MatIcon,
+    RouterLink,
+  ],
+  providers: [LoginService],
   selector: 'auth-login-form',
-  templateUrl: './login-form.component.html',
+  standalone: true,
   styleUrls: ['./login-form.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './login-form.component.html',
 })
-export class LoginFormComponent implements OnInit, OnDestroy {
-  public form: FormGroup;
-  public formNames: AuthFormNames;
-  public errorMessage$: BehaviorSubject<string>;
+export class LoginFormComponent extends BaseComponent implements OnInit {
+  public emailLength!: Signal<number>;
+  public errorMessage: WritableSignal<string> = signal<string>('');
   public errors: AuthErrors;
-  public registerPath: string;
-  public maxPasswordLength: number;
+  public form!: FormGroup;
+  public formNames: AuthFormNames;
   public maxEmailLength: number;
-  public emailLength$: Observable<number>;
-  public passwordLength$: Observable<number>;
+  public maxPasswordLength: number;
+  public passwordLength!: Signal<number>;
+  public registerPath: string;
   public resetPasswordPath: string;
-  private loginService: LoginService;
   private authService: AuthService;
+  private loginService: LoginService;
   private router: Router;
-  private subscriptions: Subscription[];
-
   public constructor(loginService: LoginService, authService: AuthService, router: Router) {
+    super();
     this.loginService = loginService;
     this.authService = authService;
     this.router = router;
@@ -44,50 +75,35 @@ export class LoginFormComponent implements OnInit, OnDestroy {
     this.errors = authErrors;
     this.registerPath = PathUtils.concatPath(RoutingConfig.registration);
     this.resetPasswordPath = PathUtils.concatPath(RoutingConfig.resetPassword);
-    this.subscriptions = [];
   }
 
   public ngOnInit(): void {
-    this.errorMessage$ = new BehaviorSubject<string>('');
+    this.errorMessage.set('');
     this.form = AuthFormFactory.getLoginForm();
-    this.errorMessage$.next('');
-    this.emailLength$ = (this.form.get(this.formNames.username) as FormControl).valueChanges.pipe(
-      startWith(''),
-      map(value => value.length)
-    );
-    this.passwordLength$ = (this.form.get(this.formNames.password) as FormControl).valueChanges.pipe(
-      startWith(''),
-      map(value => value.length)
-    );
-    this.subscriptions.push(
-      this.form.valueChanges.subscribe(() => this.errorMessage$.next(''))
-    );
+    this.emailLength = FormUtils.getLength(this.injector, this.form, this.formNames.username);
+    this.passwordLength = FormUtils.getLength(this.injector, this.form, this.formNames.password);
+    this.onObservable(() => this.errorMessage.set(''), this.form.valueChanges);
+  }
+
+  public fbRedirect(): void {
+    void this.loginService.fbRedirect();
   }
 
   public submitForm(): void {
     if (this.form.invalid) {
       return;
     }
-    this.subscriptions.push(
-      this.loginService.login(this.form.value).subscribe(
-        data => {
-          if (data.isCorrect) {
-            this.errorMessage$.next('');
-            this.authService.storeToken(data);
-            this.router.navigateByUrl(PathUtils.concatPath(RoutingConfig.home));
-          } else {
-            this.errorMessage$.next(messages.invalidData);
-          }
+    this.loginService
+      .login(this.form.value)
+      .pipe(take(1))
+      .subscribe((data: TokensData) => {
+        if (data.isCorrect) {
+          this.errorMessage.set('');
+          this.authService.storeToken(data);
+          void this.router.navigateByUrl(PathUtils.concatPath(RoutingConfig.home));
+        } else {
+          this.errorMessage.set(messages.invalidData);
         }
-      )
-    );
-  }
-
-  public fbRedirect(): void {
-    this.loginService.fbRedirect();
-  }
-
-  public ngOnDestroy(): void {
-    this.subscriptions.forEach(subscription => subscription.unsubscribe());
+      });
   }
 }

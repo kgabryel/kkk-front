@@ -1,52 +1,62 @@
-<div class='preview pa-0'>
-  <div class='pa-1'>
-    <div class='d-flex align-center justify-content-between'>
-      <h2 class='mb-0 ma-1'>
-        Dodawanie
-      </h2>
-      <button [mat-dialog-close]='true' mat-icon-button type='button'>
-        <mat-icon>
-          close
-        </mat-icon>
+<div class="preview pa-0">
+  <div class="pa-1">
+    <div class="d-flex align-center justify-content-between">
+      <h2 class="mb-0 ma-1">Dodawanie</h2>
+      <button
+        [mat-dialog-close]="true"
+        mat-icon-button
+        type="button"
+      >
+        <mat-icon>close</mat-icon>
       </button>
     </div>
-    <mat-progress-bar *ngIf='uploading' mode='indeterminate'></mat-progress-bar>
-    <div class='two-columns-container mt-1'>
-      <div class='mb-1'>
-        <button [disabled]='uploading' class='glassmorphism-button upload-button w-100' mat-button type='button'>
-          <input (change)='fileChangeEvent($event)' accept='image/*' class='w-100' type='file' />
-          <mat-icon>
-            upload
-          </mat-icon>
+    @if (uploading) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+    <div class="two-columns-container mt-1">
+      <div class="mb-1">
+        <button
+          class="glassmorphism-button upload-button w-100"
+          [disabled]="uploading"
+          mat-button
+          type="button"
+        >
+          <input
+            class="w-100"
+            (change)="fileChangeEvent($event)"
+            accept="image/*"
+            type="file"
+          />
+          <mat-icon>upload</mat-icon>
           Wybierz zdjęcie
         </button>
       </div>
-      <div class='mb-1'>
+      <div class="mb-1">
         <button
-          (click)='upload()'
-          [disabled]='croppedImage === undefined || croppedImage === null || uploading'
-          class='glassmorphism-button w-100'
+          class="glassmorphism-button w-100"
+          [disabled]="croppedImage === undefined || croppedImage === null || uploading"
+          (click)="upload()"
           mat-button
-          type='button'>
-          <mat-icon>
-            save
-          </mat-icon>
+          type="button"
+        >
+          <mat-icon>save</mat-icon>
           Dodaj
         </button>
       </div>
     </div>
-    <div *ngIf='imageChangedEvent !== ""' class='cropper-container'>
-      <image-cropper
-        (imageCropped)='imageCropped($event)'
-        [aspectRatio]='4/3'
-        [cropperMinHeight]='600'
-        [cropperMinWidth]='800'
-        [disabled]='uploading'
-        [imageChangedEvent]='imageChangedEvent'
-        [maintainAspectRatio]='true'
-        format='png'>
-      </image-cropper>
-    </div>
+    @if (imageChangedEvent) {
+      <div class="cropper-container">
+        <image-cropper
+          [aspectRatio]="4 / 3"
+          [cropperMinHeight]="600"
+          [cropperMinWidth]="800"
+          [disabled]="uploading"
+          [imageChangedEvent]="imageChangedEvent"
+          [maintainAspectRatio]="true"
+          (imageCropped)="imageCropped($event)"
+          format="png"
+        ></image-cropper>
+      </div>
+    }
   </div>
 </div>
-

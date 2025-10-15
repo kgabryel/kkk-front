@@ -3,11 +3,11 @@
 }
 
 .available-icon {
-  color: rgba(52, 145, 56, .9);
+  color: rgb(52 145 56 / 90%);
 }
 
 .unavailable-icon {
-  color: rgba(255, 82, 82, .8);
+  color: rgb(255 82 82 / 80%);
 }
 
 a {
@@ -15,5 +15,5 @@ a {
 }
 
 .mat-icon-button:hover {
-  background-color: rgba(255, 255, 255, .3);
+  background-color: rgb(255 255 255 / 30%);
 }

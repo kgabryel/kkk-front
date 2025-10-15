@@ -1,57 +1,57 @@
-import {environment} from '../../environments/environment';
-import {PhotosConfig} from './photos.config';
+import { environment } from '../../environments/environment';
+import { PhotosConfig } from './photos.config';
 
 export const authRoutes = {
-  login: environment.baseUrl + 'login_check',
-  register: environment.baseUrl + 'register',
-  refreshToken: environment.baseUrl + 'refresh_token',
-  fbRedirect: environment.baseUrl + 'facebook/redirect',
+  changePassword: (token: string): string => environment.baseUrl + `change-password/${token}`,
+  checkToken: (token: string): string => environment.baseUrl + `check-token/${token}`,
   fbLogin: environment.baseUrl + 'facebook/login',
+  fbRedirect: environment.baseUrl + 'facebook/redirect',
+  login: environment.baseUrl + 'login_check',
+  refreshToken: environment.baseUrl + 'refresh_token',
+  register: environment.baseUrl + 'register',
   resetPassword: environment.baseUrl + 'reset-password',
-  checkToken: (token: string) => environment.baseUrl + `check-token/${token}`,
-  changePassword: (token: string) => environment.baseUrl + `change-password/${token}`
 };
 
 export const tagsRoutes = {
+  byId: (id: number): string => environment.baseUrl + `tags/${id}`,
   index: environment.baseUrl + 'tags',
-  byId: (id: number) => environment.baseUrl + `tags/${id}`
 };
 
 export const ingredientsRoutes = {
+  byId: (id: number): string => environment.baseUrl + `ingredients/${id}`,
   index: environment.baseUrl + 'ingredients',
   ozaSupplies: environment.baseUrl + 'ingredients/oza-supplies',
-  byId: (id: number) => environment.baseUrl + `ingredients/${id}`
 };
 
 export const seasonsRoutes = {
+  byId: (id: number): string => environment.baseUrl + `seasons/${id}`,
   index: environment.baseUrl + 'seasons',
-  byId: (id: number) => environment.baseUrl + `seasons/${id}`
 };
 
 export const recipesRoutes = {
+  byId: (id: number): string => environment.baseUrl + `recipes/${id}`,
+  byPublicId: (id: string): string => environment.baseUrl + `public/recipes/${id}`,
+  getPhoto: (recipeId: number, photoId: number, type: PhotosConfig): string =>
+    environment.baseUrl + `recipes/${recipeId}/photos/${photoId}/${type}`,
   index: environment.baseUrl + 'recipes',
-  byId: (id: number) => environment.baseUrl + `recipes/${id}`,
-  byPublicId: (id: string) => environment.baseUrl + `public/recipes/${id}`,
-  photos: (id: number) => environment.baseUrl + `recipes/${id}/photos`,
-  getPhoto: (recipeId: number,
-    photoId: number,
-    type: PhotosConfig) => environment.baseUrl + `recipes/${recipeId}/photos/${photoId}/${type}`,
-  photoById: (recipeId: number, photoId: number) => environment.baseUrl + `recipes/${recipeId}/photos/${photoId}`
+  photoById: (recipeId: number, photoId: number): string =>
+    environment.baseUrl + `recipes/${recipeId}/photos/${photoId}`,
+  photos: (id: number): string => environment.baseUrl + `recipes/${id}/photos`,
 };
 
 export const settingsRoutes = {
+  changeOzaKey: environment.baseUrl + 'settings/change-oza-key',
+  changePassword: environment.baseUrl + 'settings/change-password',
   index: environment.baseUrl + 'settings',
   switchAutocomplete: environment.baseUrl + 'settings/switch-autocomplete',
-  changeOzaKey: environment.baseUrl + 'settings/change-oza-key',
-  changePassword: environment.baseUrl + 'settings/change-password'
 };
 
 export const apiKeysRoutes = {
+  byId: (id: number): string => environment.baseUrl + `api-keys/${id}`,
   index: environment.baseUrl + 'api-keys',
-  byId: (id: number) => environment.baseUrl + `api-keys/${id}`
 };
 
 export const timersRoutes = {
+  byId: (id: number): string => environment.baseUrl + `timers/${id}`,
   index: environment.baseUrl + 'timers',
-  byId: (id: number) => environment.baseUrl + `timers/${id}`
 };

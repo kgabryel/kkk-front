@@ -1,46 +1,74 @@
-import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
-import {AuthService} from '../../../../core/services/auth/auth.service';
-import {ActivatedRoute, Router} from '@angular/router';
-import {filter, map, startWith} from 'rxjs/operators';
-import {PathUtils} from '../../../../core/utils/path.utils';
-import {RoutingConfig} from '../../../../config/routing.config';
-import {FormControl, FormGroup} from '@angular/forms';
-import {BehaviorSubject, Observable, Subscription} from 'rxjs';
-import {authErrors, AuthErrors} from '../../../../core/errors/auth.error';
-import {AuthFormFactory, AuthFormNames, formNames} from '../../../../core/factories/auth-form.factory';
-import {NotificationService} from '../../../../core/services/notification/notification.service';
-import {ChangePasswordRequest} from '../../../../core/requests/auth.request';
-import {Length} from '../../../../config/form.config';
-import {messages} from '../../../../core/messages/auth.messages';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  signal,
+  Signal,
+  WritableSignal,
+} from '@angular/core';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { EMPTY } from 'rxjs';
+import { filter, take } from 'rxjs/operators';
+
+import { Length } from '../../../../config/form.config';
+import { RoutingConfig } from '../../../../config/routing.config';
+import { authErrors, AuthErrors } from '../../../../core/errors/auth.error';
+import {
+  AuthFormFactory,
+  AuthFormNames,
+  formNames,
+} from '../../../../core/factories/auth-form.factory';
+import { messages } from '../../../../core/messages/auth.messages';
+import { ChangePasswordRequest } from '../../../../core/requests/auth.request';
+import { AuthService } from '../../../../core/services/auth.service';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { FormUtils } from '../../../../core/utils/form.utils';
+import { PathUtils } from '../../../../core/utils/path.utils';
+import { BaseComponent } from '../../../base.component';
+import { ErrorsContainerComponent } from '../../../shared/components/errors-container/errors-container.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatHint,
+    MatInput,
+    ErrorsContainerComponent,
+    RouterLink,
+    MatButton,
+  ],
   selector: 'auth-change-password-form',
-  templateUrl: './change-password-form.component.html',
+  standalone: true,
   styleUrls: ['./change-password-form.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './change-password-form.component.html',
 })
-export class ChangePasswordFormComponent implements OnInit, OnDestroy {
-  public form: FormGroup;
-  public errorMessage$: BehaviorSubject<string>;
+export class ChangePasswordFormComponent extends BaseComponent implements OnInit {
+  public errorMessage: WritableSignal<string> = signal<string>('');
   public errors: AuthErrors;
+  public form!: FormGroup;
   public formNames: AuthFormNames;
   public loginPath: string;
   public maxPasswordLength: number;
-  public passwordLength$: Observable<number>;
-  public repeatPasswordLength$: Observable<number>;
+  public passwordLength!: Signal<number>;
+  public repeatPasswordLength!: Signal<number>;
   private authService: AuthService;
+  private notificationService: NotificationService;
   private route: ActivatedRoute;
   private router: Router;
-  private token: string;
-  private notificationService: NotificationService;
-  private subscriptions: (Subscription | undefined)[];
-
+  private token!: string;
   public constructor(
     authService: AuthService,
     route: ActivatedRoute,
     router: Router,
-    notificationService: NotificationService
+    notificationService: NotificationService,
   ) {
+    super();
     this.authService = authService;
     this.route = route;
     this.router = router;
@@ -49,29 +77,30 @@ export class ChangePasswordFormComponent implements OnInit, OnDestroy {
     this.loginPath = PathUtils.concatPath(RoutingConfig.login);
     this.notificationService = notificationService;
     this.maxPasswordLength = Length.maxPasswordLength;
-    this.subscriptions = [];
   }
 
   public ngOnInit(): void {
-    this.errorMessage$ = new BehaviorSubject<string>('');
     this.token = this.route.snapshot.paramMap.get('token') ?? '';
-    this.subscriptions.push(
-      this.authService.checkToken(this.token).pipe(filter(isCorrect => !isCorrect))
-        .subscribe(() => this.router.navigateByUrl(PathUtils.concatPath(RoutingConfig.login)))
-    );
+    this.authService
+      .checkToken(this.token)
+      .pipe(
+        take(1),
+        filter((isCorrect: boolean) => !isCorrect),
+      )
+      .subscribe(() => this.router.navigateByUrl(PathUtils.concatPath(RoutingConfig.login)));
     this.form = AuthFormFactory.getChangePasswordForm();
-    this.subscriptions.push(
-      this.form.get(this.formNames.password)?.valueChanges
-        .subscribe(() => this.form.get(this.formNames.passwordRepeat)?.updateValueAndValidity())
+
+    this.onObservable(
+      () => this.form.get(this.formNames.passwordRepeat)?.updateValueAndValidity(),
+      this.form.get(this.formNames.password)?.valueChanges ?? EMPTY,
     );
-    this.errorMessage$.next('');
-    this.passwordLength$ = (this.form.get(this.formNames.password) as FormControl).valueChanges.pipe(
-      startWith(''),
-      map(value => value.length)
-    );
-    this.repeatPasswordLength$ = (this.form.get(this.formNames.passwordRepeat) as FormControl).valueChanges.pipe(
-      startWith(''),
-      map(value => value.length)
+
+    this.errorMessage.set('');
+    this.passwordLength = FormUtils.getLength(this.injector, this.form, this.formNames.password);
+    this.repeatPasswordLength = FormUtils.getLength(
+      this.injector,
+      this.form,
+      this.formNames.passwordRepeat,
     );
   }
 
@@ -82,28 +111,19 @@ export class ChangePasswordFormComponent implements OnInit, OnDestroy {
     const data: ChangePasswordRequest = {
       newPassword: {
         first: this.form.get(this.formNames.password)?.value,
-        second: this.form.get(this.formNames.passwordRepeat)?.value
-      }
+        second: this.form.get(this.formNames.passwordRepeat)?.value,
+      },
     };
-    this.subscriptions.push(
-      this.authService.changePassword(data, this.token).subscribe(
-        isCorrect => {
-          if (isCorrect) {
-            this.notificationService.showMessage(messages.passwordChanged);
-            this.router.navigateByUrl(PathUtils.concatPath(RoutingConfig.login));
-          } else {
-            this.errorMessage$.next(messages.invalidData);
-          }
+    this.authService
+      .changePassword(data, this.token)
+      .pipe(take(1))
+      .subscribe((isCorrect: boolean) => {
+        if (isCorrect) {
+          this.notificationService.showMessage(messages.passwordChanged);
+          void this.router.navigateByUrl(PathUtils.concatPath(RoutingConfig.login));
+        } else {
+          this.errorMessage.set(messages.invalidData);
         }
-      )
-    );
-  }
-
-  public ngOnDestroy(): void {
-    this.subscriptions.forEach(subscription => {
-      if (subscription !== undefined) {
-        subscription.unsubscribe();
-      }
-    });
+      });
   }
 }

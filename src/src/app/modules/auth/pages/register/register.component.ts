@@ -1,11 +1,14 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+
+import { FormContainerComponent } from '../../components/form-container/form-container.component';
+import { RegisterFormComponent } from '../../components/register-form/register-form.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [FormContainerComponent, RegisterFormComponent],
   selector: 'auth-pages-register',
-  templateUrl: './register.component.html',
+  standalone: true,
   styleUrls: [],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './register.component.html',
 })
-export class RegisterComponent {
-
-}
+export class RegisterComponent {}

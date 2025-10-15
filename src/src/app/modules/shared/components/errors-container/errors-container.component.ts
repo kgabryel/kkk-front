@@ -1,16 +1,17 @@
-import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {AbstractControl} from '@angular/forms';
+import { KeyValuePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular/core';
+import { AbstractControl } from '@angular/forms';
+import { MatHint } from '@angular/material/form-field';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatHint, KeyValuePipe],
   selector: 'shared-errors-container',
-  templateUrl: './errors-container.component.html',
+  standalone: true,
   styleUrls: [],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './errors-container.component.html',
 })
 export class ErrorsContainerComponent {
-
-  @Input() public input: AbstractControl | null;
-  @Input() public errors: Map<string, string>;
-  @Input() public prefix: string;
-  @Input() public part: string;
+  public input: InputSignal<AbstractControl | null> = input.required<AbstractControl | null>();
+  public errors: InputSignal<Map<string, string>> = input.required<Map<string, string>>();
 }

@@ -1,28 +1,32 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {Observable} from 'rxjs';
-import {Recipe} from '../../../../core/models/recipe';
-import {Store} from '@ngrx/store';
-import {State} from '../../../../core/store/recipes/reducers';
-import {selectById} from '../../../../core/store/recipes/selectors';
-import {tap} from 'rxjs/operators';
-import {PathUtils} from '../../../../core/utils/path.utils';
-import {RoutingConfig} from '../../../../config/routing.config';
+import { ChangeDetectionStrategy, Component, OnInit, Signal } from '@angular/core';
+import { MatTab, MatTabGroup } from '@angular/material/tabs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+
+import { Recipe } from '../../../../core/models/recipe';
+import { State } from '../../../../core/store/recipes/reducers';
+import { selectById } from '../../../../core/store/recipes/selectors';
+import { RouterUtils } from '../../../../core/utils/router.utils';
+import { BaseComponent } from '../../../base.component';
+import { DividerComponent } from '../../../layout/components/divider/divider.component';
+import { EditComponent as EditFormComponent } from '../../components/edit/edit.component';
+import { GalleryComponent } from '../../components/gallery/gallery.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatTabGroup, MatTab, EditFormComponent, GalleryComponent, DividerComponent],
   selector: 'recipes-pages-edit',
-  templateUrl: './edit.component.html',
+  standalone: true,
   styleUrls: ['./edit.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './edit.component.html',
 })
-export class EditComponent implements OnInit {
-
-  public recipe$: Observable<Recipe | undefined>;
+export class EditComponent extends BaseComponent implements OnInit {
+  public recipe!: Signal<Recipe | undefined>;
   private route: ActivatedRoute;
+  private readonly router: Router;
   private store: Store<State>;
-  private router: Router;
-
   public constructor(route: ActivatedRoute, recipesStore: Store<State>, router: Router) {
+    super();
     this.route = route;
     this.store = recipesStore;
     this.router = router;
@@ -30,12 +34,7 @@ export class EditComponent implements OnInit {
 
   public ngOnInit(): void {
     const recipeId = parseInt(this.route.snapshot.paramMap.get('id') ?? '') || 0;
-    this.recipe$ = this.store.select(selectById(recipeId)).pipe(
-      tap(recipe => {
-        if (recipe === undefined) {
-          this.router.navigateByUrl(PathUtils.concatPath(RoutingConfig.notFound), {skipLocationChange: true});
-        }
-      })
-    );
+    this.recipe = this.store.selectSignal(selectById(recipeId));
+    RouterUtils.redirectIfMissing<Recipe>(this.injector, this.recipe, this.router);
   }
 }

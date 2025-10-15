@@ -3,20 +3,24 @@ pipeline {
     stages {
         stage('install') {
             steps {
-                sh 'cd src && yarn install'
+                dir('src') {
+                    sh 'npm ci'
+                }
             }
         }
         stage('build'){
             steps {
-                sh 'cd src && ng build --prod'
+                dir('src') {
+                    sh 'npx ng build --configuration production'
+                }
             }
         }
         stage('deploy') {
             steps {
-                sh 'sudo rm -rf /var/www/html/kkk-front'
-                sh 'cp -r src/dist/KKK /var/www/html/kkk-front'
-                sh 'sudo chmod 755 -R /var/www/html/kkk-front'
-                sh 'sudo chown www-data -R /var/www/html/kkk-front'
+                sh 'sudo rsync -a --delete src/dist/KKK/browser/ /var/www/html/kkk-front/'
+                sh 'sudo chown -R www-data:www-data /var/www/html/kkk-front'
+                sh 'sudo find /var/www/html/kkk-front -type d -exec chmod 755 {} \\;'
+                sh 'sudo find /var/www/html/kkk-front -type f -exec chmod 644 {} \\;'
             }
         }
     }

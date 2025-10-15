@@ -3,9 +3,14 @@
 }
 
 .list-button:hover {
-  background-color: rgba(42, 212, 248, .3) !important;
+  background-color: rgb(42 212 248 / 30%) !important;
 }
 
 .flex-column {
   flex-direction: column;
+}
+
+.photos > div > img {
+  height: 150px;
+  width: 200px;
 }

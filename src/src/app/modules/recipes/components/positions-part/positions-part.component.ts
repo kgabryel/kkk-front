@@ -1,151 +1,242 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {AbstractControl, FormControl, FormGroup} from '@angular/forms';
-import {formNames, RecipesFormNames} from '../../../../core/factories/recipe.factory';
-import {Observable, Subscription} from 'rxjs';
-import {Ingredient} from '../../../../core/models/ingredient';
-import {Store} from '@ngrx/store';
-import {State as IngredientsState} from '../../../../core/store/ingredients/reducers';
-import {State as RecipesState} from '../../../../core/store/recipes/reducers';
-import {selectIngredients} from '../../../../core/store/ingredients/selectors';
-import {map, startWith, switchMap} from 'rxjs/operators';
-import {recipeErrors, RecipeErrors} from '../../../../core/errors/recipe.error';
-import {StringUtils} from '../../../../core/utils/string.utils';
-import {selectRecipes} from '../../../../core/store/recipes/selectors';
-import {Length} from '../../../../config/form.config';
-import {Recipe} from '../../../../core/models/recipe';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  InputSignal,
+  OnInit,
+  output,
+  signal,
+  Signal,
+  WritableSignal,
+} from '@angular/core';
+import { AbstractControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  MatAutocomplete,
+  MatAutocompleteTrigger,
+  MatOptgroup,
+  MatOption,
+} from '@angular/material/autocomplete';
+import { MatButton } from '@angular/material/button';
+import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { Store } from '@ngrx/store';
+import { take } from 'rxjs/operators';
+
+import { Length } from '../../../../config/form.config';
+import { recipeErrors, RecipeErrors } from '../../../../core/errors/recipe.error';
+import { formNames, RecipesFormNames } from '../../../../core/factories/recipe.factory';
+import { Ingredient } from '../../../../core/models/ingredient';
+import { Recipe, RecipePosition, RecipePositionsGroup } from '../../../../core/models/recipe';
+import { State as IngredientsState } from '../../../../core/store/ingredients/reducers';
+import { selectIngredients } from '../../../../core/store/ingredients/selectors';
+import { State as RecipesState } from '../../../../core/store/recipes/reducers';
+import { selectRecipes } from '../../../../core/store/recipes/selectors';
+import { FormUtils } from '../../../../core/utils/form.utils';
+import { StringUtils } from '../../../../core/utils/string.utils';
+import { BaseComponent } from '../../../base.component';
+import { ErrorsContainerComponent } from '../../../shared/components/errors-container/errors-container.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatHint,
+    ErrorsContainerComponent,
+    MatInput,
+    MatAutocompleteTrigger,
+    MatAutocomplete,
+    MatOption,
+    MatButton,
+    MatIcon,
+    MatSlideToggle,
+    MatOptgroup,
+  ],
   selector: 'recipes-positions-part',
-  templateUrl: './positions-part.component.html',
+  standalone: true,
   styleUrls: ['./positions-part.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './positions-part.component.html',
 })
-export class PositionsPartComponent implements OnInit, OnDestroy {
-
+export class PositionsPartComponent extends BaseComponent implements OnInit {
   private static measures: string[] = [];
-  @Input() public formPart: AbstractControl;
-  @Input() public usedIngredients: number[];
-  @Input() public usedRecipes: number[];
-  public formGroup: FormGroup;
-  public formNames: RecipesFormNames;
-  public ingredients$: Observable<Ingredient[]>;
-  public recipes$: Observable<Recipe[]>;
-  public filteredIngredients$: Observable<Ingredient[]>;
-  public filteredRecipes$: Observable<Recipe[]>;
-  public measureLength$: Observable<number>;
+  public formPart: InputSignal<AbstractControl> = input.required<AbstractControl>();
+  public usedIngredients: InputSignal<number[]> = input.required<number[]>();
+  public usedRecipes: InputSignal<number[]> = input.required<number[]>();
+  public delete = output<void>();
   public errors: RecipeErrors;
-  public filteredMeasures: string[];
-  public maxMeasureLength: number;
+  public filteredIngredients: WritableSignal<Ingredient[]> = signal<Ingredient[]>([]);
+  public filteredMeasures: WritableSignal<string[]> = signal<string[]>([]);
+  public filteredRecipes: WritableSignal<Recipe[]> = signal<Recipe[]>([]);
+  public formGroup!: FormGroup;
+  public formNames: RecipesFormNames;
+  public ingredients!: Signal<Ingredient[]>;
   public maxIngredientNameLength: number;
-  @Output() private delete: EventEmitter<void>;
+  public maxMeasureLength: number;
+  public measureLength!: Signal<number>;
+  public recipes!: Signal<Recipe[]>;
   private readonly ingredientsStore: Store<IngredientsState>;
   private readonly recipesStore: Store<RecipesState>;
-  private subscription: Subscription | undefined;
-
   public constructor(ingredientsStore: Store<IngredientsState>, recipesStore: Store<RecipesState>) {
+    super();
     this.formNames = formNames;
-    this.delete = new EventEmitter<void>();
     this.ingredientsStore = ingredientsStore;
     this.recipesStore = recipesStore;
     this.maxMeasureLength = Length.maxMeasureLength;
     this.maxIngredientNameLength = Length.maxIngredientNameLength;
     this.errors = recipeErrors;
     if (PositionsPartComponent.measures.length === 0) {
-      this.recipesStore.select(selectRecipes).subscribe(recipes =>
-        recipes.forEach(recipe => recipe.groups.forEach(group => group.positions.forEach(position => {
-          if (!PositionsPartComponent.measures.includes(position.measure)) {
-            PositionsPartComponent.measures.push(position.measure);
-          }
-        })))
-      ).unsubscribe();
+      this.recipesStore
+        .select(selectRecipes)
+        .pipe(take(1))
+        .subscribe((recipes: Recipe[]) => {
+          const measures = recipes
+            .flatMap((recipe: Recipe) => recipe.groups)
+            .flatMap((group: RecipePositionsGroup) => group.positions)
+            .map((position: RecipePosition) => position.measure)
+            .filter(
+              (measure: string, index: number, self: string[]) =>
+                !PositionsPartComponent.measures.includes(measure) &&
+                self.indexOf(measure) === index,
+            );
+
+          PositionsPartComponent.measures.push(...measures);
+        });
     }
   }
 
   public ngOnInit(): void {
-    this.formGroup = this.formPart as FormGroup;
-    this.ingredients$ = this.ingredientsStore.select(selectIngredients)
-      .pipe(map(ingredients => ingredients.sort(
-        (a, b) => StringUtils.compareString(a.name, b.name)
-      )));
-    this.recipes$ = this.recipesStore.select(selectRecipes)
-      .pipe(map(recipes => recipes.sort((a, b) => StringUtils.compareString(a.name, b.name))));
-    const search = this.formPart.get(this.formNames.ingredientSearch) as AbstractControl;
-    const search2 = this.formPart.get(this.formNames.measure) as AbstractControl;
-    search2.valueChanges.pipe(startWith('')).subscribe(value => {
-      this.filteredMeasures = PositionsPartComponent.measures.filter(
-        measure => StringUtils.clearPolishCharacters(measure.toLowerCase()).includes(StringUtils.clearPolishCharacters(value.toLowerCase()))
-      );
-      if (this.filteredMeasures.length === 0 && value.length > 0) {
-        this.filteredMeasures.push(`Dodać "${value}"?`);
-      }
-    });
-    this.measureLength$ = (this.formGroup.get(this.formNames.measure) as FormControl).valueChanges.pipe(
-      startWith(this.formGroup?.get(this.formNames.measure)?.value ?? ''),
-      map(value => value.length)
-    );
-    this.subscription = this.formGroup?.get(this.formNames.ingredientSearch)?.valueChanges
-      .subscribe(() => this.formGroup?.get(this.formNames.ingredient)?.setValue(null));
+    this.formGroup = this.formPart() as FormGroup;
+    this.ingredients = computed(() => {
+      const ingredients = this.ingredientsStore.selectSignal(selectIngredients);
 
-    this.filteredIngredients$ = search.valueChanges.pipe(
-      startWith(''),
-      switchMap((value: string) => this.ingredients$.pipe(
-        map(ingredients =>
-          ingredients.filter(ingredient => {
-              let used = this.usedIngredients;
-              let index = used.indexOf(this.formPart.get(this.formNames.ingredient)?.value);
-              if (index !== -1) {
-                used.splice(index, 1);
-              }
-              return StringUtils.clearPolishCharacters(StringUtils.clearPolishCharacters(ingredient.name.toLowerCase())).includes(StringUtils.clearPolishCharacters(value.toLowerCase()))
-                && !used.includes(ingredient.id);
+      return [...ingredients()].sort((a: Ingredient, b: Ingredient) =>
+        StringUtils.compareString(a.name, b.name),
+      );
+    });
+
+    this.recipes = computed(() => {
+      const recipes = this.recipesStore.selectSignal(selectRecipes);
+
+      return [...recipes()].sort((a: Recipe, b: Recipe) =>
+        StringUtils.compareString(a.name, b.name),
+      );
+    });
+    const search = this.formPart().get(this.formNames.ingredientSearch) as AbstractControl;
+    const search2 = this.formPart().get(this.formNames.measure) as AbstractControl;
+
+    this.onObservableValue(
+      (search: string) => {
+        const measures = PositionsPartComponent.measures.filter((measure: string) =>
+          StringUtils.clearPolishCharacters(measure.toLowerCase()).includes(
+            StringUtils.clearPolishCharacters(search.toLowerCase()),
+          ),
+        );
+
+        if (measures.length === 0 && search.length > 0) {
+          measures.push(`Dodać "${search}"?`);
+        }
+        this.filteredMeasures.set(measures);
+      },
+      search2.valueChanges,
+      '',
+    );
+
+    this.measureLength = FormUtils.getLength(
+      this.injector,
+      this.formGroup,
+      this.formNames.measure,
+      this.formGroup?.get(this.formNames.measure)?.value ?? '',
+    );
+
+    this.onObservableValue(
+      (search: string) =>
+        this.filteredIngredients.set(
+          this.ingredients().filter((ingredient: Ingredient) => {
+            const used = this.usedIngredients();
+            const index = used.indexOf(this.formPart().get(this.formNames.ingredient)?.value);
+
+            if (index !== -1) {
+              used.splice(index, 1);
             }
-          )
-        )
-      )));
-    this.filteredRecipes$ = search.valueChanges.pipe(
-      startWith(''),
-      switchMap((value: string) => this.recipes$.pipe(
-        map(recipes =>
-          recipes.filter(recipe => {
-              let used = this.usedRecipes;
-              let index = used.indexOf(this.formPart.get(this.formNames.ingredient)?.value);
-              if (index !== -1) {
-                used.splice(index, 1);
-              }
-              return StringUtils.clearPolishCharacters(StringUtils.clearPolishCharacters(recipe.name.toLowerCase())).includes(StringUtils.clearPolishCharacters(value.toLowerCase()))
-                && !used.includes(recipe.id);
+
+            return (
+              StringUtils.clearPolishCharacters(
+                StringUtils.clearPolishCharacters(ingredient.name.toLowerCase()),
+              ).includes(StringUtils.clearPolishCharacters(search.toLowerCase())) &&
+              !used.includes(ingredient.id)
+            );
+          }),
+        ),
+      search.valueChanges,
+      '',
+    );
+    this.onObservableValue(
+      (search: string) =>
+        this.filteredRecipes.set(
+          this.recipes().filter((recipe: Recipe) => {
+            const used = this.usedRecipes();
+            const index = used.indexOf(this.formPart().get(this.formNames.ingredient)?.value);
+
+            if (index !== -1) {
+              used.splice(index, 1);
             }
-          )
-        )
-      )));
+
+            return (
+              StringUtils.clearPolishCharacters(
+                StringUtils.clearPolishCharacters(recipe.name.toLowerCase()),
+              ).includes(StringUtils.clearPolishCharacters(search)) && !used.includes(recipe.id)
+            );
+          }),
+        ),
+      search.valueChanges,
+      '',
+    );
+  }
+
+  public decreaseAmount(): void {
+    const value = this.formPart().get(this.formNames.amount)?.value ?? 0;
+
+    if (value === 0) {
+      return;
+    }
+    this.formPart()
+      .get(this.formNames.amount)
+      ?.setValue(value - 1);
   }
 
   public deletePosition(): void {
     this.delete.emit();
   }
 
-  public selectIngredient(ingredient: number): void {
-    this.formPart.get(this.formNames.ingredient)?.setValue(ingredient);
-    this.formPart.get(this.formNames.type)?.setValue('ingredient');
+  public increaseAmount(): void {
+    const value = this.formPart().get(this.formNames.amount)?.value ?? 0;
+    this.formPart()
+      .get(this.formNames.amount)
+      ?.setValue(value + 1);
   }
 
-  public selectRecipe(recipe: number): void {
-    this.formPart.get(this.formNames.ingredient)?.setValue(recipe);
-    this.formPart.get(this.formNames.type)?.setValue('recipe');
+  public selectIngredient(ingredient: number): void {
+    this.formPart().get(this.formNames.ingredient)?.setValue(ingredient);
+    this.formPart().get(this.formNames.type)?.setValue('ingredient');
   }
 
   public selectMeasure(measure: string): void {
     if (measure.startsWith('Dodać "') && measure.endsWith('"?')) {
       measure = measure.slice(7, measure.length - 2);
       PositionsPartComponent.measures.push(measure);
-      PositionsPartComponent.measures.sort((a, b) => StringUtils.compareString(a, b));
+      PositionsPartComponent.measures.sort((a: string, b: string) =>
+        StringUtils.compareString(a, b),
+      );
     }
-    this.formPart.get(this.formNames.measure)?.setValue(measure);
+    this.formPart().get(this.formNames.measure)?.setValue(measure);
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription !== undefined) {
-      this.subscription.unsubscribe();
-    }
+  public selectRecipe(recipe: number): void {
+    this.formPart().get(this.formNames.ingredient)?.setValue(recipe);
+    this.formPart().get(this.formNames.type)?.setValue('recipe');
   }
 }

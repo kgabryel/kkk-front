@@ -1,43 +1,37 @@
-import {Injectable} from '@angular/core';
-import {Resolve} from '@angular/router';
-import {Store} from '@ngrx/store';
-import {combineLatest, Observable} from 'rxjs';
-import {filter, map, switchMap, take, tap} from 'rxjs/operators';
-import {State as SuppliesState} from '../store/oza-supplies/reducers';
-import {State as SettingsState} from '../store/settings/reducers';
-import {keyNotExists, suppliesLoad} from '../store/oza-supplies/actions';
-import {selectIsLoaded} from '../store/oza-supplies/selectors';
-import {selectIsLoaded as settingsLoaded, selectOzaKey} from '../store/settings/selectors';
+import { inject } from '@angular/core';
+import { ResolveFn } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { combineLatest } from 'rxjs';
+import { filter, map, switchMap, take, tap } from 'rxjs/operators';
 
-@Injectable()
-export class SuppliesResolver implements Resolve<boolean> {
+import { keyNotExists, suppliesLoad } from '../store/oza-supplies/actions';
+import { State as SuppliesState } from '../store/oza-supplies/reducers';
+import { selectIsLoaded } from '../store/oza-supplies/selectors';
+import { State as SettingsState } from '../store/settings/reducers';
+import { selectIsLoaded as settingsLoaded, selectOzaKey } from '../store/settings/selectors';
 
-  private readonly suppliesStore: Store<SuppliesState>;
-  private readonly settingsStore: Store<SettingsState>;
+export const suppliesResolver: ResolveFn<boolean> = () => {
+  const suppliesStore = inject<Store<SuppliesState>>(Store);
+  const settingsStore = inject<Store<SettingsState>>(Store);
 
-  constructor(suppliesStore: Store<SuppliesState>, settingsStore: Store<SettingsState>) {
-    this.suppliesStore = suppliesStore;
-    this.settingsStore = settingsStore;
-  }
+  const suppliesLoaded$ = suppliesStore.select(selectIsLoaded);
+  const settingsKey$ = settingsStore.select(settingsLoaded).pipe(
+    filter((loaded: boolean) => loaded),
+    switchMap(() => settingsStore.select(selectOzaKey)),
+  );
 
-  resolve(): Observable<boolean> {
-    const s1 = this.suppliesStore.select(selectIsLoaded);
-    const s2 = this.settingsStore.select(settingsLoaded).pipe(
-      filter(loaded => loaded),
-      switchMap(() => this.settingsStore.select(selectOzaKey)));
-    return combineLatest(s1, s2).pipe(
-      tap(values => {
-        if (!values[0]) {
-          if (values[1] === null || values[1] === '') {
-            this.suppliesStore.dispatch(keyNotExists());
-          } else {
-            this.suppliesStore.dispatch(suppliesLoad());
-          }
+  return combineLatest([suppliesLoaded$, settingsKey$]).pipe(
+    tap(([isLoaded, key]: [boolean, string | null]) => {
+      if (!isLoaded) {
+        if (!key) {
+          suppliesStore.dispatch(keyNotExists());
+        } else {
+          suppliesStore.dispatch(suppliesLoad());
         }
-      }),
-      filter(values => values[0]),
-      take(1),
-      map(values => values[0])
-    );
-  }
-}
+      }
+    }),
+    filter(([isLoaded]: [boolean, string | null]) => isLoaded),
+    take(1),
+    map(([isLoaded]: [boolean, string | null]) => isLoaded),
+  );
+};

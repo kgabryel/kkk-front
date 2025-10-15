@@ -1,36 +1,40 @@
 <mat-list-item>
-  <p class='w-100 mb-0'>
-    {{tag.name}}
+  <p class="w-100 mb-0 overflow-hidden">
+    {{ tag().name }}
   </p>
-  <button [matMenuTriggerFor]='menu' mat-icon-button type='button'>
-    <mat-icon>
-      menu
-    </mat-icon>
+  <button
+    [matMenuTriggerFor]="menu"
+    mat-icon-button
+    type="button"
+  >
+    <mat-icon>menu</mat-icon>
   </button>
-  <mat-menu #menu='matMenu'>
-    <button *ngIf='recipesCount > 0' [routerLink]='tag | tagRecipesHref' mat-menu-item type='button'>
-      <mat-icon>
-        menu_book
-      </mat-icon>
-      <span>
-        Przepisy ({{recipesCount}})
-      </span>
+  <mat-menu #menu="matMenu">
+    @if (recipesCount() > 0) {
+      <button
+        [routerLink]="tag() | tagRecipesHref"
+        mat-menu-item
+        type="button"
+      >
+        <mat-icon>menu_book</mat-icon>
+        <span>Przepisy ({{ recipesCount() }})</span>
+      </button>
+    }
+    <button
+      (click)="startEdit()"
+      mat-menu-item
+      type="button"
+    >
+      <mat-icon>edit</mat-icon>
+      <span>Edytuj</span>
     </button>
-    <button (click)='startEdit()' mat-menu-item type='button'>
-      <mat-icon>
-        edit
-      </mat-icon>
-      <span>
-        Edytuj
-      </span>
-    </button>
-    <button (click)='delete()' mat-menu-item type='button'>
-      <mat-icon>
-        delete
-      </mat-icon>
-      <span>
-        Usuń
-      </span>
+    <button
+      (click)="delete()"
+      mat-menu-item
+      type="button"
+    >
+      <mat-icon>delete</mat-icon>
+      <span>Usuń</span>
     </button>
   </mat-menu>
 </mat-list-item>

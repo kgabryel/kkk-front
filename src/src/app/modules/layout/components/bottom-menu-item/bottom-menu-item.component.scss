@@ -3,8 +3,8 @@
 }
 
 button {
-  box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2);
-  background-color: rgba(255, 255, 255, .3);
+  background-color: rgb(255 255 255 / 30%);
+  box-shadow: 0 0 1rem 0 rgb(0 0 0 / 20%);
   color: black;
 }
 
@@ -21,10 +21,11 @@ button {
   top: 10px;
 }
 
-@media screen and (max-width: 430px) {
+@media screen and (width <= 430px) {
   .big {
     display: none;
   }
+
   .small {
     display: inline-block;
   }

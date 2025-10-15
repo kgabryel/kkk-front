@@ -1,57 +1,87 @@
-import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
-import {SearchService} from '../../../../core/services/search/search.service';
-import {Observable, Subscription} from 'rxjs';
-import {Tag} from '../../../../core/models/tag';
-import {Ingredient} from '../../../../core/models/ingredient';
-import {State as IngredientsState} from '../../../../core/store/ingredients/reducers';
-import {State as TagsState} from '../../../../core/store/tags/reducers';
-import {Store} from '@ngrx/store';
-import {selectIngredients} from '../../../../core/store/ingredients/selectors';
-import {selectTags} from '../../../../core/store/tags/selectors';
-import {map} from 'rxjs/operators';
-import {RecipesSearchService} from '../../../../core/services/recipes-search/recipes-search.service';
-import {FormControl} from '@angular/forms';
-import {Length} from '../../../../config/form.config';
-import {StringUtils} from '../../../../core/utils/string.utils';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+  signal,
+  WritableSignal,
+} from '@angular/core';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatDialogClose } from '@angular/material/dialog';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatSelect, MatOption } from '@angular/material/select';
+import { Store } from '@ngrx/store';
+import { MatSelectSearchComponent } from 'ngx-mat-select-search';
+
+import { Length } from '../../../../config/form.config';
+import { Ingredient } from '../../../../core/models/ingredient';
+import { Tag } from '../../../../core/models/tag';
+import { RecipesSearchService } from '../../../../core/services/recipes-search.service';
+import { SearchService } from '../../../../core/services/search.service';
+import { State as IngredientsState } from '../../../../core/store/ingredients/reducers';
+import { selectIngredients } from '../../../../core/store/ingredients/selectors';
+import { State as TagsState } from '../../../../core/store/tags/reducers';
+import { selectTags } from '../../../../core/store/tags/selectors';
+import { SignalUtils } from '../../../../core/utils/signal.utils';
+import { StringUtils } from '../../../../core/utils/string.utils';
+import { BaseComponent } from '../../../base.component';
+import { AutocompletePipe } from '../../../shared/pipes/autocomplete.pipe';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatDialogClose,
+    MatButton,
+    MatIcon,
+    MatFormField,
+    MatLabel,
+    ReactiveFormsModule,
+    AutocompletePipe,
+    MatInput,
+    MatSelect,
+    MatOption,
+    FormsModule,
+    MatSelectSearchComponent,
+  ],
   selector: 'recipes-search',
+  standalone: true,
+  styleUrls: [],
   templateUrl: './search.component.html',
-  styleUrls: ['./search.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SearchComponent implements OnInit, OnDestroy {
-
-  private static searchName: string = '';
-  private static searchFavourite: boolean | null = null;
-  private static searchToDo: boolean | null = null;
-  private static searchHasLink: boolean | null = null;
-  private static searchTags: number[] = [];
-  private static searchIngredients: number[] = [];
+export class SearchComponent extends BaseComponent implements OnInit, OnDestroy {
   private static available: boolean | null = null;
-
-  public selectedName: FormControl;
-  public selectedFavourite: FormControl;
-  public selectedToDo: FormControl;
-  public selectedHasLink: FormControl;
-  public selectedTags: FormControl;
-  public selectedAvailable: FormControl;
-  public selectedIngredients: FormControl;
-  public tags$: Observable<Tag[]>;
-  public ingredients$: Observable<Ingredient[]>;
+  private static searchFavourite: boolean | null = null;
+  private static searchHasLink: boolean | null = null;
+  private static searchIngredients: number[] = [];
+  private static searchName: string = '';
+  private static searchTags: number[] = [];
+  private static searchToDo: boolean | null = null;
+  public filteredIngredients: WritableSignal<Ingredient[]> = signal<Ingredient[]>([]);
+  public filteredTags: WritableSignal<Tag[]> = signal<Tag[]>([]);
   public maxNameLength: number;
+  public selectedAvailable: FormControl;
+  public selectedFavourite: FormControl;
+  public selectedHasLink: FormControl;
+  public selectedIngredients: FormControl;
+  public selectedName: FormControl;
+  public selectedTags: FormControl;
+  public selectedToDo: FormControl;
+  private ingredientSearch: WritableSignal<string> = signal<string>('');
+  private tagSearch: WritableSignal<string> = signal<string>('');
+  private ingredientsState: Store<IngredientsState>;
   private recipesSearchService: RecipesSearchService;
   private searchService: SearchService;
-  private ingredientsState: Store<IngredientsState>;
   private tagsState: Store<TagsState>;
-  private subscriptions: Subscription[];
-
   public constructor(
     recipesSearchService: RecipesSearchService,
     searchService: SearchService,
     ingredientsState: Store<IngredientsState>,
-    tagsState: Store<TagsState>
+    tagsState: Store<TagsState>,
   ) {
+    super();
     this.selectedTags = new FormControl();
     this.selectedIngredients = new FormControl();
     this.selectedName = new FormControl();
@@ -74,26 +104,61 @@ export class SearchComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    this.ingredients$ = this.ingredientsState.select(selectIngredients)
-      .pipe(map(ingredients => ingredients.sort(
-        (a, b) => StringUtils.compareString(a.name, b.name)
-      )));
-    this.tags$ = this.tagsState.select(selectTags)
-      .pipe(map(tags => tags.sort(
-        (a, b) => StringUtils.compareString(a.name, b.name)
-      )));
-    this.subscriptions = [
-      this.selectedFavourite.valueChanges.subscribe(() => this.search()),
-      this.selectedToDo.valueChanges.subscribe(() => this.search()),
-      this.selectedHasLink.valueChanges.subscribe(() => this.search()),
-      this.selectedTags.valueChanges.subscribe(() => this.search()),
-      this.selectedIngredients.valueChanges.subscribe(() => this.search()),
-      this.selectedName.valueChanges.subscribe(() => this.search()),
-      this.selectedAvailable.valueChanges.subscribe(() => this.search())
-    ];
+    const ingredients = SignalUtils.map<Ingredient[], Ingredient[]>(
+      this.ingredientsState.selectSignal(selectIngredients),
+      (ingredients: Ingredient[]) =>
+        ingredients.sort((a: Ingredient, b: Ingredient) =>
+          StringUtils.compareString(a.name, b.name),
+        ),
+    );
+
+    const tags = SignalUtils.map<Tag[], Tag[]>(
+      this.tagsState.selectSignal(selectTags),
+      (tags: Tag[]) => tags.sort((a: Tag, b: Tag) => StringUtils.compareString(a.name, b.name)),
+    );
+
+    this.onSignalValue(
+      (search: string) =>
+        this.filteredIngredients.set(
+          ingredients().filter((ingredient: Ingredient) =>
+            StringUtils.stringIncludes(ingredient.name, search),
+          ),
+        ),
+      this.ingredientSearch,
+    );
+
+    this.onSignalValue(
+      (search: string) =>
+        this.filteredTags.set(
+          tags().filter((tag: Tag) => StringUtils.stringIncludes(tag.name, search)),
+        ),
+      this.tagSearch,
+    );
+
+    this.onObservable(
+      () => this.search(),
+      this.selectedFavourite.valueChanges,
+      this.selectedToDo.valueChanges,
+      this.selectedHasLink.valueChanges,
+      this.selectedTags.valueChanges,
+      this.selectedIngredients.valueChanges,
+      this.selectedName.valueChanges,
+      this.selectedAvailable.valueChanges,
+    );
+
     if (this.isUpdated()) {
       this.search();
     }
+  }
+
+  public ngOnDestroy(): void {
+    SearchComponent.searchName = this.selectedName.value;
+    SearchComponent.searchFavourite = this.selectedFavourite.value;
+    SearchComponent.searchToDo = this.selectedToDo.value;
+    SearchComponent.searchHasLink = this.selectedHasLink.value;
+    SearchComponent.searchTags = this.selectedTags.value;
+    SearchComponent.searchIngredients = this.selectedIngredients.value;
+    SearchComponent.available = this.selectedAvailable.value;
   }
 
   public clear(): void {
@@ -106,54 +171,40 @@ export class SearchComponent implements OnInit, OnDestroy {
     this.selectedAvailable.setValue(null);
     this.emitSearch();
   }
+  public filterIngredients(event: string): void {
+    this.ingredientSearch.set(event);
+  }
 
-  public ngOnDestroy(): void {
-    SearchComponent.searchName = this.selectedName.value;
-    SearchComponent.searchFavourite = this.selectedFavourite.value;
-    SearchComponent.searchToDo = this.selectedToDo.value;
-    SearchComponent.searchHasLink = this.selectedHasLink.value;
-    SearchComponent.searchTags = this.selectedTags.value;
-    SearchComponent.searchIngredients = this.selectedIngredients.value;
-    SearchComponent.available = this.selectedAvailable.value;
-    this.subscriptions.forEach(subscription => subscription.unsubscribe());
+  public filterTags(event: string): void {
+    this.tagSearch.set(event);
   }
 
   public search(): void {
     this.recipesSearchService.searchRecipe({
-      name: this.selectedName.value,
+      available: this.selectedAvailable.value,
       favourite: this.selectedFavourite.value,
-      toDo: this.selectedToDo.value,
       hasLink: this.selectedHasLink.value,
-      tags: this.selectedTags.value,
       ingredients: this.selectedIngredients.value,
-      available: this.selectedAvailable.value
+      name: this.selectedName.value,
+      tags: this.selectedTags.value,
+      toDo: this.selectedToDo.value,
     });
     this.emitSearch();
   }
 
-  public filterTags(event: string): void {
-    this.tags$ = this.tagsState.select(selectTags).pipe(
-      map(tags => tags.filter(tag => StringUtils.stringIncludes(tag.name, event)))
-    );
-  }
-
-  public filterIngredients(event: string): void {
-    this.ingredients$ = this.ingredientsState.select(selectIngredients).pipe(
-      map(ingredients => ingredients.filter(ingredient => StringUtils.stringIncludes(ingredient.name, event)))
-    );
-  }
-
-  private emitSearch(): void {
-    setTimeout(() => this.searchService.updateSearch(this.isUpdated()), 100);
-  }
-
   private isUpdated(): boolean {
-    return this.selectedName.value !== '' ||
+    return (
+      this.selectedName.value !== '' ||
       this.selectedFavourite.value !== null ||
       this.selectedToDo.value !== null ||
       this.selectedHasLink.value !== null ||
       this.selectedTags.value.length > 0 ||
       this.selectedIngredients.value.length > 0 ||
-      this.selectedAvailable.value !== null;
+      this.selectedAvailable.value !== null
+    );
+  }
+
+  private emitSearch(): void {
+    setTimeout(() => this.searchService.updateSearch(this.isUpdated()), 100);
   }
 }

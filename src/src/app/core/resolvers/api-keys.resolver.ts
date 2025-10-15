@@ -1,29 +1,21 @@
-import {Resolve} from '@angular/router';
-import {Observable} from 'rxjs';
-import {Store} from '@ngrx/store';
-import {Injectable} from '@angular/core';
-import {filter, take, tap} from 'rxjs/operators';
-import {keysLoad} from '../store/api-keys/actions';
-import {selectIsLoaded} from '../store/api-keys/selectors';
-import {State} from '../store/api-keys/reducers';
+import { inject } from '@angular/core';
+import { ResolveFn } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { filter, take, tap } from 'rxjs/operators';
 
-@Injectable()
-export class ApiKeysResolver implements Resolve<boolean> {
-  private readonly store: Store<State>;
+import { keysLoad } from '../store/api-keys/actions';
+import { selectIsLoaded } from '../store/api-keys/selectors';
 
-  constructor(store: Store<State>) {
-    this.store = store;
-  }
+export const apiKeysResolver: ResolveFn<boolean> = () => {
+  const store = inject(Store);
 
-  resolve(): Observable<boolean> {
-    return this.store.select(selectIsLoaded).pipe(
-      tap(loaded => {
-        if (!loaded) {
-          this.store.dispatch(keysLoad());
-        }
-      }),
-      filter(loaded => loaded),
-      take(1)
-    );
-  }
-}
+  return store.select(selectIsLoaded).pipe(
+    tap((loaded: boolean) => {
+      if (!loaded) {
+        store.dispatch(keysLoad());
+      }
+    }),
+    filter(Boolean),
+    take(1),
+  );
+};

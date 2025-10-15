@@ -1,5 +1,7 @@
-import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
-import {createReducer, on} from '@ngrx/store';
+import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
+import { createReducer, on } from '@ngrx/store';
+
+import { Recipe } from '../../models/recipe';
 import {
   photoAdd,
   photoAddError,
@@ -19,9 +21,8 @@ import {
   recipeToDoUpdate,
   recipeUpdate,
   recipeUpdateError,
-  recipeUpdateSuccess
+  recipeUpdateSuccess,
 } from './actions';
-import {Recipe} from '../../models/recipe';
 
 export interface State {
   recipes: EntityState<Recipe>;
@@ -33,45 +34,45 @@ export const RECIPES_KEY = 'recipes';
 export const adapter: EntityAdapter<Recipe> = createEntityAdapter<Recipe>();
 
 const initialState: State = {
+  loaded: false,
   recipes: adapter.getInitialState(),
-  loaded: false
 };
 
 export const recipesReducer = createReducer(
   initialState,
-  on(recipesLoad, state => state),
-  on(recipesLoadError, state => state),
-  on(recipesLoadSuccess, (state, action) => ({
+  on(recipesLoad, (state: State) => state),
+  on(recipesLoadError, (state: State) => state),
+  on(recipesLoadSuccess, (state: State, action: ReturnType<typeof recipesLoadSuccess>) => ({
     ...state,
     loaded: true,
-    recipes: adapter.addMany(action.recipes, state.recipes)
+    recipes: adapter.addMany(action.recipes, state.recipes),
   })),
-  on(recipeAdd, state => state),
-  on(recipeAddError, state => state),
-  on(recipeAddSuccess, (state, action) => ({
+  on(recipeAdd, (state: State) => state),
+  on(recipeAddError, (state: State) => state),
+  on(recipeAddSuccess, (state: State, action: ReturnType<typeof recipeAddSuccess>) => ({
     ...state,
-    recipes: adapter.addOne(action.recipe, state.recipes)
+    recipes: adapter.addOne(action.recipe, state.recipes),
   })),
-  on(recipeDelete, state => state),
-  on(recipeDeleteError, state => state),
-  on(recipeDeleteSuccess, (state, action) => ({
+  on(recipeDelete, (state: State) => state),
+  on(recipeDeleteError, (state: State) => state),
+  on(recipeDeleteSuccess, (state: State, action: ReturnType<typeof recipeDeleteSuccess>) => ({
     ...state,
-    recipes: adapter.removeOne(action.id, state.recipes)
+    recipes: adapter.removeOne(action.id, state.recipes),
   })),
-  on(recipeUpdate, state => state),
-  on(recipeFavouriteUpdate, state => state),
-  on(recipeToDoUpdate, state => state),
-  on(recipeUpdateError, state => state),
-  on(recipeUpdateSuccess, (state, action) => ({
+  on(recipeUpdate, (state: State) => state),
+  on(recipeFavouriteUpdate, (state: State) => state),
+  on(recipeToDoUpdate, (state: State) => state),
+  on(recipeUpdateError, (state: State) => state),
+  on(recipeUpdateSuccess, (state: State, action: ReturnType<typeof recipeUpdateSuccess>) => ({
     ...state,
-    recipes: adapter.updateOne(action.recipe, state.recipes)
+    recipes: adapter.updateOne(action.recipe, state.recipes),
   })),
   on(recipesReset, () => initialState),
-  on(photoAdd, state => state),
-  on(photoAddError, state => state),
-  on(photoAddSuccess, (state, action) => ({
+  on(photoAdd, (state: State) => state),
+  on(photoAddError, (state: State) => state),
+  on(photoAddSuccess, (state: State, action: ReturnType<typeof photoAddSuccess>) => ({
     ...state,
-    recipes: adapter.updateOne(action.recipe, state.recipes)
+    recipes: adapter.updateOne(action.recipe, state.recipes),
   })),
-  on(photosReorder, state => state)
+  on(photosReorder, (state: State) => state),
 );

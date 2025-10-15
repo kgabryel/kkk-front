@@ -1,25 +1,27 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import {Observable} from 'rxjs';
-import {ApiKey} from '../../../../core/models/api-key';
-import {Store} from '@ngrx/store';
-import {State} from '../../../../core/store/api-keys/reducers';
-import {selectKeys} from '../../../../core/store/api-keys/selectors';
+import { ChangeDetectionStrategy, Component, OnInit, Signal } from '@angular/core';
+import { Store } from '@ngrx/store';
+
+import { ApiKey } from '../../../../core/models/api-key';
+import { State } from '../../../../core/store/api-keys/reducers';
+import { selectKeys } from '../../../../core/store/api-keys/selectors';
+import { ApiKeyComponent } from '../api-key/api-key.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [ApiKeyComponent],
   selector: 'account-keys',
-  templateUrl: './keys.component.html',
+  standalone: true,
   styleUrls: ['./keys.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './keys.component.html',
 })
 export class KeysComponent implements OnInit {
-  public key$: Observable<ApiKey[]>;
+  public keys!: Signal<ApiKey[]>;
   private store: Store<State>;
-
   public constructor(store: Store<State>) {
     this.store = store;
   }
 
   public ngOnInit(): void {
-    this.key$ = this.store.select(selectKeys);
+    this.keys = this.store.selectSignal(selectKeys);
   }
 }

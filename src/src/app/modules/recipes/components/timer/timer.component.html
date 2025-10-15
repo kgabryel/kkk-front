@@ -1,20 +1,21 @@
-<div class='d-flex align-center'>
-  <div class='w-100'>
-    <p class='mb-0'>
-      {{timer.time | timerTime}}
+<div class="d-flex align-center mt-1 mb-1">
+  <div class="w-100">
+    <p class="mb-0">
+      {{ timer().time | timerTime }}
     </p>
-    <p *ngIf="timer.name !== null && timer.name !== ''" class='mb-0'>
-      {{timer.name}}
-    </p>
+    @if (timer().name !== null && timer().name !== '') {
+      <p class="mb-0">
+        {{ timer().name }}
+      </p>
+    }
   </div>
   <button
-    (click)='addTimer()'
-    [matTooltip]='tooltips.add'
-    class='glassmorphism-button add-btn'
+    class="glassmorphism-button add-btn"
+    [matTooltip]="tooltips.add"
+    (click)="addTimer()"
     mat-button
-    type='button'>
-    <mat-icon>
-      add
-    </mat-icon>
+    type="button"
+  >
+    <mat-icon>add</mat-icon>
   </button>
 </div>

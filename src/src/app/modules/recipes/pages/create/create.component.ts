@@ -1,12 +1,14 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { DividerComponent } from '../../../layout/components/divider/divider.component';
+import { CreateComponent as CreateFormComponent } from '../../components/create/create.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CreateFormComponent, DividerComponent],
   selector: 'recipes-pages-create',
-  templateUrl: './create.component.html',
+  standalone: true,
   styleUrls: [],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './create.component.html',
 })
-export class CreateComponent {
-
-}
+export class CreateComponent {}

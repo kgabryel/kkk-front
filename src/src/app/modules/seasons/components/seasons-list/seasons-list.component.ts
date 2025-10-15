@@ -1,33 +1,37 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import {Observable} from 'rxjs';
-import {Store} from '@ngrx/store';
-import {State} from '../../../../core/store/seasons/reducers';
-import {searchSeasons} from '../../../../core/store/seasons/selectors';
-import {Season} from '../../../../core/models/season';
-import {SeasonsSearchService} from '../../../../core/services/seasons-search/seasons-search.service';
-import {map, switchMap} from 'rxjs/operators';
+import { ChangeDetectionStrategy, Component, OnInit, Signal } from '@angular/core';
+import { MatList } from '@angular/material/list';
+import { Store } from '@ngrx/store';
+
+import { Season } from '../../../../core/models/season';
+import { Search, SeasonsSearchService } from '../../../../core/services/seasons-search.service';
+import { State } from '../../../../core/store/seasons/reducers';
+import { searchSeasons } from '../../../../core/store/seasons/selectors';
+import { SearchUtils } from '../../../../core/utils/search.utils';
+import { SeasonContainerComponent } from '../season-container/season-container.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatList, SeasonContainerComponent],
   selector: 'seasons-seasons-list',
-  templateUrl: './seasons-list.component.html',
+  standalone: true,
   styleUrls: ['./seasons-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './seasons-list.component.html',
 })
 export class SeasonsListComponent implements OnInit {
-
-  public seasons$: Observable<Season[]>;
-  private store: Store<State>;
-  private seasonsSearchService: SeasonsSearchService;
-
+  public seasons!: Signal<Season[]>;
+  private readonly seasonsSearchService: SeasonsSearchService;
+  private readonly store: Store<State>;
   public constructor(store: Store<State>, seasonsSearchService: SeasonsSearchService) {
     this.store = store;
     this.seasonsSearchService = seasonsSearchService;
   }
 
   public ngOnInit(): void {
-    this.seasons$ = this.seasonsSearchService.getState().pipe(
-      switchMap(search => this.store.select(searchSeasons(search))),
-      map(seasons => seasons.sort((a, b) => a.start - b.start))
+    this.seasons = SearchUtils.search<Search, Season, State>(
+      this.seasonsSearchService,
+      this.store,
+      (search: Search) => searchSeasons(search),
+      (seasons: Season[]) => [...seasons].sort((a: Season, b: Season) => a.start - b.start),
     );
   }
 }

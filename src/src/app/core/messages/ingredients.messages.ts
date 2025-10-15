@@ -6,6 +6,6 @@ export interface IngredientsMessages {
 
 export const messages: IngredientsMessages = {
   ingredientAdded: 'Składnik został dodany.',
-  ingredientUpdated: 'Składnik został zaktualizowny.',
-  ingredientDeleted: 'Składnik został usunięty.'
+  ingredientDeleted: 'Składnik został usunięty.',
+  ingredientUpdated: 'Składnik został zaktualizowany.',
 };

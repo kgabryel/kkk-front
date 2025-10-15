@@ -1,50 +1,74 @@
-<form (ngSubmit)='submit()' [autocomplete]='null | autocomplete' [formGroup]='form' class='glassmorphism-form'>
-  <div class='d-flex'>
-    <div class='input-container mr-2'>
-      <mat-form-field class='w-100'>
-        <mat-label>
-          Nazwa
-        </mat-label>
-        <input [formControlName]='formNames.name' [maxlength]='maxNameLength' matInput type='text' />
-        <mat-hint align='end'>
-          {{nameLength$ | async}} / {{maxNameLength}}
+<form
+  class="glassmorphism-form"
+  [autocomplete]="null | autocomplete"
+  [formGroup]="form"
+  (ngSubmit)="submit()"
+>
+  <div class="d-flex align-baseline">
+    <div class="input-container mr-2">
+      <mat-form-field class="w-100">
+        <mat-label>Nazwa</mat-label>
+        <input
+          [formControlName]="formNames.name"
+          [maxlength]="maxNameLength"
+          matInput
+          type="text"
+        />
+        <mat-hint align="start">
+          @if (form.get(formNames.name)?.invalid && form.get(formNames.name)?.touched) {
+            <shared-errors-container
+              [errors]="errors.name"
+              [input]="form.get(formNames.name)"
+            ></shared-errors-container>
+          }
         </mat-hint>
+        <mat-hint align="end">{{ nameLength() }} / {{ maxNameLength }}</mat-hint>
       </mat-form-field>
-      <span *ngIf='form.get(formNames.name)?.invalid && form.get(formNames.name)?.touched'>
-        <shared-errors-container [errors]='errors.name' [input]='form.get(formNames.name)'></shared-errors-container>
-      </span>
     </div>
     <mat-slide-toggle
-      [disabled]='form.get(formNames.supply)?.value !== null'
-      [formControlName]='formNames.available'
-      class='mt-3'
-      color='primary'>
+      class="mt-3"
+      [formControlName]="formNames.available"
+      color="primary"
+    >
       Dostępny
     </mat-slide-toggle>
   </div>
-  <ng-container *ngIf='(supplies$ | async) as supplies'>
-    <div *ngIf='supplies.length > 0 '>
-      <mat-form-field class='w-100'>
-        <mat-label>
-          Zapas OZA
-        </mat-label>
-        <input [formControlName]='formNames.supply' type='hidden' />
-        <input [formControlName]='formNames.supplySearch' [matAutocomplete]='auto' matInput type='text' />
-        <mat-autocomplete #auto='matAutocomplete'>
-          <mat-option
-            (click)='selectSupply(supply)'
-            *ngFor='let supply of filteredSupplies$ | async'
-            [value]='supply.name'>
-            {{supply.name}}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
-    </div>
-  </ng-container>
-  <button [disabled]='form.invalid' class='glassmorphism-button w-100 mt-1' mat-button type='submit'>
-    <mat-icon>
-      add_circle_outline
-    </mat-icon>
+  @if (supplies(); as supplies) {
+    @if (supplies.length > 0) {
+      <div>
+        <mat-form-field class="w-100">
+          <mat-label>Zapas OZA</mat-label>
+          <input
+            [formControlName]="formNames.supply"
+            type="hidden"
+          />
+          <input
+            [formControlName]="formNames.supplySearch"
+            [matAutocomplete]="auto"
+            matInput
+            type="text"
+          />
+          <mat-autocomplete #auto="matAutocomplete">
+            @for (supply of filteredSupplies(); track supply) {
+              <mat-option
+                [value]="supply.name"
+                (click)="selectSupply(supply)"
+              >
+                {{ supply.name }}
+              </mat-option>
+            }
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+    }
+  }
+  <button
+    class="glassmorphism-button w-100 mt-1"
+    [disabled]="form.invalid"
+    mat-button
+    type="submit"
+  >
+    <mat-icon>add_circle_outline</mat-icon>
     Utwórz
   </button>
 </form>

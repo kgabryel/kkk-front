@@ -1,30 +1,21 @@
-import {Injectable} from '@angular/core';
-import {Resolve} from '@angular/router';
-import {Store} from '@ngrx/store';
-import {State} from '../store/tags/reducers';
-import {Observable} from 'rxjs';
-import {tagsLoad} from '../store/tags/actions';
-import {selectIsLoaded} from '../store/tags/selectors';
-import {filter, take, tap} from 'rxjs/operators';
+import { inject } from '@angular/core';
+import { ResolveFn } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { filter, take, tap } from 'rxjs/operators';
 
-@Injectable()
-export class TagsResolver implements Resolve<boolean> {
+import { tagsLoad } from '../store/tags/actions';
+import { selectIsLoaded } from '../store/tags/selectors';
 
-  private readonly store: Store<State>;
+export const tagsResolver: ResolveFn<boolean> = () => {
+  const store = inject(Store);
 
-  constructor(store: Store<State>) {
-    this.store = store;
-  }
-
-  resolve(): Observable<boolean> {
-    return this.store.select(selectIsLoaded).pipe(
-      tap(loaded => {
-        if (!loaded) {
-          this.store.dispatch(tagsLoad());
-        }
-      }),
-      filter(loaded => loaded),
-      take(1)
-    );
-  }
-}
+  return store.select(selectIsLoaded).pipe(
+    tap((loaded: boolean) => {
+      if (!loaded) {
+        store.dispatch(tagsLoad());
+      }
+    }),
+    filter(Boolean),
+    take(1),
+  );
+};

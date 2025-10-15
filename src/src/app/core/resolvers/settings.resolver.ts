@@ -1,29 +1,21 @@
-import {Resolve} from '@angular/router';
-import {Observable} from 'rxjs';
-import {Store} from '@ngrx/store';
-import {Injectable} from '@angular/core';
-import {filter, take, tap} from 'rxjs/operators';
-import {settingsLoad} from '../store/settings/actions';
-import {selectIsLoaded} from '../store/settings/selectors';
-import {State} from '../store/settings/reducers';
+import { inject } from '@angular/core';
+import { ResolveFn } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { filter, take, tap } from 'rxjs/operators';
 
-@Injectable()
-export class SettingsResolver implements Resolve<boolean> {
-  private readonly store: Store<State>;
+import { settingsLoad } from '../store/settings/actions';
+import { selectIsLoaded } from '../store/settings/selectors';
 
-  constructor(store: Store<State>) {
-    this.store = store;
-  }
+export const settingsResolver: ResolveFn<boolean> = () => {
+  const store = inject(Store);
 
-  resolve(): Observable<boolean> {
-    return this.store.select(selectIsLoaded).pipe(
-      tap(loaded => {
-        if (!loaded) {
-          this.store.dispatch(settingsLoad());
-        }
-      }),
-      filter(loaded => loaded),
-      take(1)
-    );
-  }
-}
+  return store.select(selectIsLoaded).pipe(
+    tap((loaded: boolean) => {
+      if (!loaded) {
+        store.dispatch(settingsLoad());
+      }
+    }),
+    filter(Boolean),
+    take(1),
+  );
+};

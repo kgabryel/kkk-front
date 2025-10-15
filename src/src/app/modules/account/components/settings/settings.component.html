@@ -1,26 +1,35 @@
-<div class='glassmorphism-form'>
-  <h2 class='text-center'>
-    USTAWIENIA
-  </h2>
-  <div class='text-center'>
-    <mat-slide-toggle (change)='switchAutocomplete()' [checked]='autocomplete$ | async' color='primary'>
+<div class="glassmorphism-form">
+  <h2 class="text-center">USTAWIENIA</h2>
+  <div class="text-center">
+    <mat-slide-toggle
+      [checked]="autocomplete()"
+      (change)="switchAutocomplete()"
+      color="primary"
+    >
       Automatyczne uzupełniania włączone
     </mat-slide-toggle>
   </div>
-  <form (submit)='changeOzaKey($event)' [autocomplete]='null | autocomplete'>
-    <mat-form-field class='key-field d-inline-block'>
-      <mat-label>
-        Klucz OZA
-      </mat-label>
-      <input [formControl]='keyField' [maxLength]='maxKeyLength' matInput type='text' />
-      <mat-hint align='end'>
-        {{length$ | async}} / {{maxKeyLength}}
-      </mat-hint>
+  <form
+    class="d-flex align-center"
+    [autocomplete]="null | autocomplete"
+    (submit)="changeOzaKey($event)"
+  >
+    <mat-form-field class="key-field d-inline-block">
+      <mat-label>Klucz OZA</mat-label>
+      <input
+        [formControl]="keyField"
+        [maxLength]="maxKeyLength"
+        matInput
+        type="text"
+      />
+      <mat-hint align="end">{{ length() }} / {{ maxKeyLength }}</mat-hint>
     </mat-form-field>
-    <button class='glassmorphism-button ml-2' mat-button type='submit'>
-      <mat-icon>
-        save
-      </mat-icon>
+    <button
+      class="glassmorphism-button ml-2"
+      mat-button
+      type="submit"
+    >
+      <mat-icon>save</mat-icon>
     </button>
   </form>
 </div>

@@ -1,59 +1,60 @@
-<div class='d-flex align-center pa-1 pr-0'>
-  <p class='mb-0'>
-    {{leftTime | timerTime}}
+<div class="d-flex align-center pa-1 pr-0">
+  <p class="mb-0">
+    {{ leftTime() | timerTime }}
   </p>
-  <p class='w-100 pl-1 mb-0'>
-    {{timer.name}}
+  <p class="w-100 pl-1 mb-0">
+    {{ timer().name }}
   </p>
-  <div class='buttons'>
+  <div class="buttons">
     <button
-      (click)='emitSwitch()'
-      [disabled]='leftTime === 0'
-      [matTooltip]='timer.running ? tooltips.stop : tooltips.start'
-      [ngClass]="{'green-glass': !timer.running, 'red-glass': timer.running}"
-      class='glassmorphism-button'
+      class="glassmorphism-button"
+      [disabled]="leftTime() === 0"
+      [matTooltip]="timer().running ? tooltips.stop : tooltips.start"
+      [ngClass]="{ 'green-glass': !timer().running, 'red-glass': timer().running }"
+      (click)="emitSwitch()"
       mat-button
-      type='button'>
-      <mat-icon *ngIf='timer.running'>
-        pause_circle
-      </mat-icon>
-      <mat-icon *ngIf='!timer.running'>
-        play_circle
-      </mat-icon>
+      type="button"
+    >
+      @if (timer().running) {
+        <mat-icon>pause_circle</mat-icon>
+      }
+      @if (!timer().running) {
+        <mat-icon>play_circle</mat-icon>
+      }
     </button>
-    <button [matMenuTriggerFor]='menu' class='glassmorphism-button mt-1' mat-button type='button'>
-      <mat-icon>
-        menu
-      </mat-icon>
+    <button
+      class="glassmorphism-button mt-1"
+      [matMenuTriggerFor]="menu"
+      mat-button
+      type="button"
+    >
+      <mat-icon>menu</mat-icon>
     </button>
-    <mat-menu #menu='matMenu'>
+    <mat-menu #menu="matMenu">
       <button
-        (click)='emitRestart()'
-        [disabled]='!timer.running && timer.time === leftTime'
+        [disabled]="!timer().running && timer().time === leftTime()"
+        (click)="emitRestart()"
         mat-menu-item
-        type='button'>
-        <mat-icon>
-          restore
-        </mat-icon>
-        <span>
-          Restart
-        </span>
+        type="button"
+      >
+        <mat-icon>restore</mat-icon>
+        <span>Restart</span>
       </button>
-      <button (click)='openEditDialog()' mat-menu-item type='button'>
-        <mat-icon>
-          edit
-        </mat-icon>
-        <span>
-          Edytuj
-        </span>
+      <button
+        (click)="openEditDialog()"
+        mat-menu-item
+        type="button"
+      >
+        <mat-icon>edit</mat-icon>
+        <span>Edytuj</span>
       </button>
-      <button (click)='emitDelete()' mat-menu-item type='button'>
-        <mat-icon>
-          delete
-        </mat-icon>
-        <span>
-          Usuń
-        </span>
+      <button
+        (click)="emitDelete()"
+        mat-menu-item
+        type="button"
+      >
+        <mat-icon>delete</mat-icon>
+        <span>Usuń</span>
       </button>
     </mat-menu>
   </div>

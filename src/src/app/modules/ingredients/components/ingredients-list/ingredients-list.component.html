@@ -1,8 +1,12 @@
-<div *ngIf='(ingredients$ | async) as ingredients'>
-  <mat-list *ngIf='ingredients.length > 0' class='glassmorphism-list'>
-    <ingredients-ingredient-container
-      *ngFor='let ingredient of ingredients'
-      [ingredient]='ingredient' [ozaKey]='ozaKey$ | async'>
-    </ingredients-ingredient-container>
-  </mat-list>
+<div>
+  @if (ingredients().length > 0) {
+    <mat-list class="glassmorphism-list">
+      @for (ingredient of ingredients(); track ingredient) {
+        <ingredients-ingredient-container
+          [ingredient]="ingredient"
+          [ozaKey]="ozaKey()"
+        ></ingredients-ingredient-container>
+      }
+    </mat-list>
+  }
 </div>

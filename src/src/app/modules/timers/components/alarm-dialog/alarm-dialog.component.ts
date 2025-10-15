@@ -1,43 +1,59 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Inject} from '@angular/core';
-import {FullTimer} from '../../../../core/models/timer';
-import {MAT_DIALOG_DATA} from '@angular/material/dialog';
-import {ImagesConfig} from '../../../../config/images.config';
-import {interval} from 'rxjs';
+import { ChangeDetectionStrategy, Component, EventEmitter, Inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatButton } from '@angular/material/button';
+import { MAT_DIALOG_DATA, MatDialogClose, MatDialogTitle } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
+import { interval } from 'rxjs';
+
+import { ImagesConfig } from '../../../../config/images.config';
+import { FullTimer } from '../../../../core/models/timer';
+import { TimerTimePipe } from '../../../shared/pipes/timer-time.pipe';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Default,
+  imports: [MatIcon, MatDialogTitle, MatButton, TimerTimePipe, MatDialogClose],
   selector: 'timers-alarm-dialog',
-  templateUrl: './alarm-dialog.component.html',
+  standalone: true,
   styleUrls: ['./alarm-dialog.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Default
+  templateUrl: './alarm-dialog.component.html',
 })
 export class AlarmDialogComponent {
-  public readonly timer: FullTimer;
-  public paused: boolean;
   public alarm: string;
+  public paused: boolean;
   public time: number;
-  private readonly onPlay: EventEmitter<void>;
+  public readonly timer: FullTimer;
   private readonly onPause: EventEmitter<void>;
-
-  public constructor(@Inject(MAT_DIALOG_DATA) data: any) {
+  private readonly onPlay: EventEmitter<void>;
+  public constructor(@Inject(MAT_DIALOG_DATA) data: AlarmDialogInput) {
     this.timer = data.timer;
     this.paused = false;
     this.alarm = ImagesConfig.alarm;
     this.time = 0;
-    interval(1000).subscribe(() => this.time++);
+    interval(1000)
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.time++);
     this.onPlay = new EventEmitter();
     this.onPause = new EventEmitter();
   }
 
-  public switchAudio(): void {
-    this.paused = !this.paused;
-    this.paused ? this.onPause.emit() : this.onPlay.emit();
+  public getOnPauseEvent(): EventEmitter<void> {
+    return this.onPause;
   }
 
   public getOnPlayEvent(): EventEmitter<void> {
     return this.onPlay;
   }
 
-  public getOnPauseEvent(): EventEmitter<void> {
-    return this.onPause;
+  public switchAudio(): void {
+    this.paused = !this.paused;
+    if (this.paused) {
+      this.onPause.emit();
+    } else {
+      this.onPlay.emit();
+    }
   }
+}
+
+export interface AlarmDialogInput {
+  timer: FullTimer;
 }

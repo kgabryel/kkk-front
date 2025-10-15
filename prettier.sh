@@ -1,0 +1,1 @@
+docker exec -it angular sh -c 'npx prettier --write .'
