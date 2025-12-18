@@ -12,6 +12,7 @@ import { PathUtils } from '../../../../core/utils/path.utils';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [LoginService],
   selector: 'auth-pages-fb',
   standalone: true,
   styleUrls: [],
