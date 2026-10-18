@@ -25,7 +25,6 @@ import { State as IngredientsState } from '../../../../core/store/ingredients/re
 import { selectIngredients } from '../../../../core/store/ingredients/selectors';
 import { State as TagsState } from '../../../../core/store/tags/reducers';
 import { selectTags } from '../../../../core/store/tags/selectors';
-import { SignalUtils } from '../../../../core/utils/signal.utils';
 import { StringUtils } from '../../../../core/utils/string.utils';
 import { BaseComponent } from '../../../base.component';
 import { AutocompletePipe } from '../../../shared/pipes/autocomplete.pipe';
@@ -104,18 +103,8 @@ export class SearchComponent extends BaseComponent implements OnInit, OnDestroy 
   }
 
   public ngOnInit(): void {
-    const ingredients = SignalUtils.map<Ingredient[], Ingredient[]>(
-      this.ingredientsState.selectSignal(selectIngredients),
-      (ingredients: Ingredient[]) =>
-        ingredients.sort((a: Ingredient, b: Ingredient) =>
-          StringUtils.compareString(a.name, b.name),
-        ),
-    );
-
-    const tags = SignalUtils.map<Tag[], Tag[]>(
-      this.tagsState.selectSignal(selectTags),
-      (tags: Tag[]) => tags.sort((a: Tag, b: Tag) => StringUtils.compareString(a.name, b.name)),
-    );
+    const ingredients = this.ingredientsState.selectSignal(selectIngredients);
+    const tags = this.tagsState.selectSignal(selectTags);
 
     this.onSignalValue(
       (search: string) =>

@@ -16,7 +16,11 @@ const ingredientsState = createSelector(
 
 const { selectAll } = adapter.getSelectors(ingredientsState);
 
-export const selectIngredients = selectAll;
+export const selectIngredients = createSelector(selectAll, (ingredients: Ingredient[]) =>
+  [...ingredients].sort((a: Ingredient, b: Ingredient) =>
+    StringUtils.compareString(a.name, b.name),
+  ),
+);
 
 export const selectIsLoaded = createSelector(
   selectState,
@@ -66,10 +70,7 @@ export const selectIngredientsWithoutSeason = createSelector(
   selectSeasons,
   (ingredients: Ingredient[], seasons: Season[]) => {
     const usedIds = seasons.map((s: Season) => s.ingredientId);
-    const filtered = ingredients.filter((i: Ingredient) => !usedIds.includes(i.id));
 
-    return filtered.sort((a: Ingredient, b: Ingredient) =>
-      StringUtils.compareString(a.name, b.name),
-    );
+    return ingredients.filter((i: Ingredient) => !usedIds.includes(i.id));
   },
 );

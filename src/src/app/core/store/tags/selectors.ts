@@ -11,7 +11,9 @@ const tagsState = createSelector(selectState, (selectState: State) => selectStat
 
 const { selectAll } = adapter.getSelectors(tagsState);
 
-export const selectTags = selectAll;
+export const selectTags = createSelector(selectAll, (tags: Tag[]) =>
+  [...tags].sort((a: Tag, b: Tag) => StringUtils.compareString(a.name, b.name)),
+);
 
 export const selectIsLoaded = createSelector(
   selectState,

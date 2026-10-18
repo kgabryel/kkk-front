@@ -2,7 +2,6 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
   DestroyRef,
   ElementRef,
   input,
@@ -41,7 +40,6 @@ import { tagAddFromRecipe } from '../../../../core/store/tags/actions';
 import { State } from '../../../../core/store/tags/reducers';
 import { selectTags } from '../../../../core/store/tags/selectors';
 import { SignalUtils } from '../../../../core/utils/signal.utils';
-import { StringUtils } from '../../../../core/utils/string.utils';
 import { BaseComponent } from '../../../base.component';
 
 @Component({
@@ -88,11 +86,7 @@ export class TagsSelectComponent extends BaseComponent implements OnInit {
 
   public ngOnInit(): void {
     this.filteredTags = [];
-    this.tags = computed(() => {
-      const tags = this.store.selectSignal(selectTags);
-
-      return [...tags()].sort((a: Tag, b: Tag) => StringUtils.compareString(a.name, b.name));
-    });
+    this.tags = this.store.selectSignal(selectTags);
 
     this.tagsInput = this.formGroup().get(this.formNames.tags) as FormArray;
     runInInjectionContext(this.injector, () => {

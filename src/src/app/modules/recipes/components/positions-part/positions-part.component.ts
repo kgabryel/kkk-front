@@ -110,13 +110,7 @@ export class PositionsPartComponent extends BaseComponent implements OnInit {
 
   public ngOnInit(): void {
     this.formGroup = this.formPart() as FormGroup;
-    this.ingredients = computed(() => {
-      const ingredients = this.ingredientsStore.selectSignal(selectIngredients);
-
-      return [...ingredients()].sort((a: Ingredient, b: Ingredient) =>
-        StringUtils.compareString(a.name, b.name),
-      );
-    });
+    this.ingredients = this.ingredientsStore.selectSignal(selectIngredients);
 
     this.recipes = computed(() => {
       const recipes = this.recipesStore.selectSignal(selectRecipes);

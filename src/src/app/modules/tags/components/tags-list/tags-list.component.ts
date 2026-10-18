@@ -7,7 +7,6 @@ import { TagsSearchService } from '../../../../core/services/tags-search.service
 import { State } from '../../../../core/store/tags/reducers';
 import { searchTags } from '../../../../core/store/tags/selectors';
 import { SearchUtils } from '../../../../core/utils/search.utils';
-import { StringUtils } from '../../../../core/utils/string.utils';
 import { TagContainerComponent } from '../tag-container/tag-container.component';
 
 @Component({
@@ -32,8 +31,6 @@ export class TagsListComponent implements OnInit {
       this.tagsSearchService,
       this.store,
       (search: string) => searchTags(search),
-      (tags: Tag[]) =>
-        [...tags].sort((a: Tag, b: Tag) => StringUtils.compareString(a.name, b.name)),
     );
   }
 }

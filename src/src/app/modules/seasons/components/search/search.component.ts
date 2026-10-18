@@ -82,11 +82,8 @@ export class SearchComponent extends BaseComponent implements OnInit, OnDestroy 
     this.ingredients = computed(() => {
       const search = this.searchValue();
       const all = query();
-      const filtered = all.filter((i: Ingredient) => StringUtils.stringIncludes(i.name, search));
 
-      return [...filtered].sort((a: Ingredient, b: Ingredient) =>
-        StringUtils.compareString(a.name, b.name),
-      );
+      return all.filter((i: Ingredient) => StringUtils.stringIncludes(i.name, search));
     });
 
     this.onObservable(
