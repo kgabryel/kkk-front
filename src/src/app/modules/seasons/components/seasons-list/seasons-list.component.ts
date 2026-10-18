@@ -31,7 +31,8 @@ export class SeasonsListComponent implements OnInit {
       this.seasonsSearchService,
       this.store,
       (search: Search) => searchSeasons(search),
-      (seasons: Season[]) => [...seasons].sort((a: Season, b: Season) => a.start - b.start),
+      (seasons: Season[]) =>
+        [...seasons].sort((a: Season, b: Season) => a.start - b.start || a.stop - b.stop),
     );
   }
 }
