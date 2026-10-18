@@ -17,3 +17,9 @@ a {
 .mat-icon-button:hover {
   background-color: rgb(255 255 255 / 30%);
 }
+
+:host ::ng-deep .mat-mdc-list-item-unscoped-content {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
