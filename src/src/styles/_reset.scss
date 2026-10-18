@@ -28,7 +28,7 @@ input:-webkit-autofill:active {
 
 .mat-mdc-select-panel {
   backdrop-filter: blur(5px) !important;
-  background: rgb(255 255 255 / 60%) !important;
+  background: rgb(255 255 255 / 30%) !important;
   padding: 0 !important;
 }
 
@@ -55,7 +55,7 @@ input:-webkit-autofill:active {
 }
 
 .mat-mdc-menu-panel {
-  background: rgb(255 255 255 / 60%);
+  background: rgb(255 255 255 / 30%);
   border-radius: 5px;
   box-shadow: 0 0 1rem 0 rgb(0 0 0 / 20%);
   padding: 5px;
@@ -87,7 +87,7 @@ input:-webkit-autofill:active {
 }
 
 .mat-mdc-select-panel input[matInput] {
-  background: rgb(255 255 255 / 80%);
+  background: rgb(255 255 255 / 30%);
   border: 1px solid rgb(0 0 0 / 20%);
   border-radius: 4px;
   box-sizing: border-box;
