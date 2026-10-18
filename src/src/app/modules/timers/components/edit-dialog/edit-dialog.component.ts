@@ -1,38 +1,60 @@
-import {ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit} from '@angular/core';
-import {NotificationService} from '../../../../core/services/notification/notification.service';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {AddDialogComponent} from '../add-dialog/add-dialog.component';
-import {FullTimer} from '../../../../core/models/timer';
-import {FormControl, FormGroup} from '@angular/forms';
-import {formNames, TimerFactory, TimerFormNames} from '../../../../core/factories/timer.factory';
-import {Observable, Subscription} from 'rxjs';
-import {Length} from '../../../../config/form.config';
-import {map, startWith} from 'rxjs/operators';
+import { ChangeDetectionStrategy, Component, Inject, OnInit, Signal } from '@angular/core';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogClose,
+  MatDialogRef,
+  MatDialogTitle,
+} from '@angular/material/dialog';
+import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+
+import { Length } from '../../../../config/form.config';
+import { formNames, TimerFactory, TimerFormNames } from '../../../../core/factories/timer.factory';
+import { Time } from '../../../../core/models/time';
+import { FullTimer } from '../../../../core/models/timer';
+import { FormUtils } from '../../../../core/utils/form.utils';
+import { BaseComponent } from '../../../base.component';
+import { TimePickerComponent } from '../../../shared/components/time-picker/time-picker.component';
+import { AutocompletePipe } from '../../../shared/pipes/autocomplete.pipe';
+import { AddDialogComponent } from '../add-dialog/add-dialog.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatDialogTitle,
+    MatDialogClose,
+    MatButton,
+    ReactiveFormsModule,
+    AutocompletePipe,
+    MatIcon,
+    MatLabel,
+    MatFormField,
+    MatHint,
+    MatInput,
+    TimePickerComponent,
+  ],
   selector: 'timers-edit-dialog',
-  templateUrl: './edit-dialog.component.html',
+  standalone: true,
   styleUrls: [],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './edit-dialog.component.html',
 })
-export class EditDialogComponent implements OnInit, OnDestroy {
-  public nameForm: FormGroup;
-  public timeForm: FormGroup;
+export class EditDialogComponent extends BaseComponent implements OnInit {
   public formNames: TimerFormNames;
   public maxNameLength: number;
-  public nameLength$: Observable<number>;
-  private notificationService: NotificationService;
+  public nameForm!: FormGroup;
+  public nameLength!: Signal<number>;
+  public timeForm!: FormGroup;
   private dialogRef: MatDialogRef<AddDialogComponent>;
   private readonly leftTime: number;
   private readonly timer: FullTimer;
-  private subscription: Subscription | undefined;
-
   public constructor(
-    @Inject(MAT_DIALOG_DATA) data: any,
-    notificationService: NotificationService,
-    dialogRef: MatDialogRef<AddDialogComponent>
+    @Inject(MAT_DIALOG_DATA) data: EditDialogInput,
+    dialogRef: MatDialogRef<AddDialogComponent>,
   ) {
-    this.notificationService = notificationService;
+    super();
     this.dialogRef = dialogRef;
     this.formNames = formNames;
     this.timer = data.timer;
@@ -43,9 +65,11 @@ export class EditDialogComponent implements OnInit, OnDestroy {
   public ngOnInit(): void {
     this.nameForm = TimerFactory.getNameForm(this.timer);
     this.timeForm = TimerFactory.getTimeForm(this.leftTime);
-    this.nameLength$ = (this.nameForm.get(this.formNames.name) as FormControl).valueChanges.pipe(
-      startWith(this.timer.name ?? ''),
-      map(value => value.length)
+    this.nameLength = FormUtils.getLength(
+      this.injector,
+      this.nameForm,
+      this.formNames.name,
+      this.timer.name ?? '',
     );
   }
 
@@ -54,7 +78,7 @@ export class EditDialogComponent implements OnInit, OnDestroy {
       return;
     }
     this.dialogRef.close({
-      name: this.nameForm.get(this.formNames.name)?.value
+      name: this.nameForm.get(this.formNames.name)?.value,
     });
   }
 
@@ -63,13 +87,17 @@ export class EditDialogComponent implements OnInit, OnDestroy {
       return;
     }
     this.dialogRef.close({
-      time: this.timeForm.get(this.formNames.time)?.value
+      time: this.timeForm.get(this.formNames.time)?.value,
     });
   }
+}
 
-  public ngOnDestroy(): void {
-    if (this.subscription !== undefined) {
-      this.subscription.unsubscribe();
-    }
-  }
+export interface EditDialogResult {
+  name?: string;
+  time?: Time;
+}
+
+export interface EditDialogInput {
+  leftTime: number;
+  timer: FullTimer;
 }

@@ -1,25 +1,41 @@
 <p>
-  {{apiKey.key}}
+  {{ apiKey().key }}
 </p>
-<div class='d-flex justify-content-between align-center'>
-  <button (click)='copy()' class='glassmorphism-button logout-btn' mat-button type='button'>
-    <mat-icon>
-      content_copy
-    </mat-icon>
+<div class="d-flex justify-content-between align-center">
+  <button
+    class="glassmorphism-button logout-btn"
+    (click)="copy()"
+    mat-button
+    type="button"
+  >
+    <mat-icon>content_copy</mat-icon>
     Kopiuj
   </button>
-  <mat-slide-toggle (change)='switch()' [checked]='apiKey.active' class='big-switch' color='primary'>
+  <mat-slide-toggle
+    class="big-switch"
+    [checked]="apiKey().active"
+    (change)="switch()"
+    color="primary"
+  >
     Aktywny
   </mat-slide-toggle>
-  <button (click)='delete()' class='glassmorphism-button red-glass logout-btn' mat-button type='button'>
-    <mat-icon>
-      delete
-    </mat-icon>
+  <button
+    class="glassmorphism-button red-glass logout-btn"
+    (click)="delete()"
+    mat-button
+    type="button"
+  >
+    <mat-icon>delete</mat-icon>
     Usuń
   </button>
 </div>
-<div class='d-flex justify-center mt-1'>
-  <mat-slide-toggle (change)='switch()' [checked]='apiKey.active' class='small-switch' color='primary'>
+<div class="d-flex justify-center mt-1">
+  <mat-slide-toggle
+    class="small-switch"
+    [checked]="apiKey().active"
+    (change)="switch()"
+    color="primary"
+  >
     Aktywny
   </mat-slide-toggle>
 </div>

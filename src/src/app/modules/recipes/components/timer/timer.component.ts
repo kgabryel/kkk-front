@@ -1,21 +1,25 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
-import {Timer} from '../../../../core/models/timer';
-import {RecipesTooltips, tooltips} from '../../../../core/tooltips/recipes.tooltips';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
+
+import { Timer } from '../../../../core/models/timer';
+import { RecipesTooltips, tooltips } from '../../../../core/tooltips/recipes.tooltips';
+import { TimerTimePipe } from '../../../shared/pipes/timer-time.pipe';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [TimerTimePipe, MatTooltip, MatButton, MatIcon],
   selector: 'recipes-timer',
-  templateUrl: './timer.component.html',
+  standalone: true,
   styleUrls: ['./timer.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './timer.component.html',
 })
 export class TimerComponent {
-
-  @Input() public timer: Timer;
+  public timer = input.required<Timer>();
+  public add = output<void>();
   public tooltips: RecipesTooltips;
-  @Output() private add: EventEmitter<void>;
-
   public constructor() {
-    this.add = new EventEmitter<void>();
     this.tooltips = tooltips;
   }
 

@@ -1,58 +1,57 @@
-<div [formGroup]='formGroup' class='form-container'>
-  <div class='d-flex justify-center'>
-    <ngx-mat-timepicker
-      [formControlName]='formNames.time'
-      [showSeconds]='true'
-      [showSpinners]='true'
-      [stepHour]='1'
-      [stepMinute]='1'
-      [stepSecond]='1'>
-    </ngx-mat-timepicker>
+<div
+  class="form-container"
+  [formGroup]="formGroup"
+>
+  <div class="inputs">
+    <div class="d-flex justify-center">
+      <shared-time-picker [controlName]="formNames.time" />
+    </div>
+    <div class="w-100 pl-1 right-column">
+      <mat-form-field class="w-100">
+        <mat-label>Nazwa</mat-label>
+        <input
+          [formControlName]="formNames.name"
+          [maxlength]="maxNameLength"
+          matInput
+          type="text"
+        />
+        <mat-hint align="end">{{ nameLength() }} / {{ maxNameLength }}</mat-hint>
+      </mat-form-field>
+    </div>
   </div>
-  <div class='w-100 pl-1 right-column'>
-    <mat-form-field class='w-100'>
-      <mat-label>
-        Nazwa
-      </mat-label>
-      <input [formControlName]='formNames.name' [maxlength]='maxNameLength' matInput type='text' />
-      <mat-hint align='end'>
-        {{nameLength$ | async}} / {{maxNameLength}}
-      </mat-hint>
-    </mat-form-field>
-    <div class='d-flex buttons'>
+  <div class="d-flex buttons">
+    @if (remove()) {
       <button
-        (click)='emitDelete()'
-        *ngIf='remove'
-        class='glassmorphism-button red-glass w-100 mt-1 mb-1'
+        class="glassmorphism-button red-glass w-100 mt-1 mb-1"
+        (click)="emitDelete()"
         mat-button
-        type='button'>
-        <mat-icon>
-          delete
-        </mat-icon>
+        type="button"
+      >
+        <mat-icon>delete</mat-icon>
         Usuń
       </button>
+    }
+    @if (edit()) {
       <button
-        *ngIf='edit'
-        [disabled]='!formGroup.valid'
-        class='glassmorphism-button w-100 mt-1'
+        class="glassmorphism-button w-100 mt-1"
+        [disabled]="!formGroup.valid"
         mat-button
-        type='submit'>
-        <mat-icon>
-          edit
-        </mat-icon>
+        type="submit"
+      >
+        <mat-icon>edit</mat-icon>
         Aktualizuj
       </button>
+    }
+    @if (add()) {
       <button
-        *ngIf='add'
-        [disabled]='!formGroup.valid'
-        class='glassmorphism-button w-100 mt-1'
+        class="glassmorphism-button w-100 mt-1"
+        [disabled]="!formGroup.valid"
         mat-button
-        type='submit'>
-        <mat-icon>
-          add_circle_outline
-        </mat-icon>
-        {{addText}}
+        type="submit"
+      >
+        <mat-icon>add_circle_outline</mat-icon>
+        {{ addText() }}
       </button>
-    </div>
+    }
   </div>
 </div>

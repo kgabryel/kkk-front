@@ -1,0 +1,19 @@
+.toast .mdc-snackbar__surface {
+  backdrop-filter: blur(6px);
+  border-radius: 5px;
+  box-shadow: 0 0 1rem 0 rgb(0 0 0 / 20%);
+  color: black !important;
+  font-weight: 500;
+}
+
+.toast.success .mdc-snackbar__surface {
+  background-color: #51a351 !important;
+}
+
+.toast.error .mdc-snackbar__surface {
+  background-color: #bd362f;
+}
+
+.toast.warning .mdc-snackbar__surface {
+  background-color: #f89406;
+}

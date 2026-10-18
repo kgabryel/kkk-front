@@ -4,8 +4,8 @@
 }
 
 .save-button {
-  width: calc(50% - 5px);
   margin-right: 10px;
+  width: calc(50% - 5px);
 }
 
 .preview-button {
@@ -16,6 +16,7 @@ input,
 :host ::ng-deep .mat-slide-toggle-content,
 :host ::ng-deep .mat-icon,
 :host ::ng-deep input,
-:host ::ng-deep .ngx-mat-timepicker-spacer, :host ::ng-deep button {
+:host ::ng-deep .ngx-mat-timepicker-spacer,
+:host ::ng-deep button {
   color: black;
 }

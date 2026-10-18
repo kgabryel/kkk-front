@@ -1,8 +1,7 @@
-version: '3'
 services:
   angular:
     build: ./angular
-    container_name: angular
+    container_name: kkk_angular
     volumes:
       - ./../src/:/src
     ports:

@@ -2,13 +2,13 @@ recipes-recipe-preview {
   width: 450px;
 }
 
-@media screen and (max-width: 900px) {
+@media screen and (width <= 900px) {
   recipes-recipe-preview {
     width: calc(50vw - 10px);
   }
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (width <= 600px) {
   recipes-recipe-preview {
     width: calc(100vw - 10px);
   }
@@ -17,4 +17,36 @@ recipes-recipe-preview {
 .masonry-wrapper {
   display: flex;
   justify-content: space-around;
+}
+
+.masonry-grid {
+  column-gap: 10px;
+  column-width: 450px;
+  margin: 0 auto;
+}
+
+.masonry-item {
+  break-inside: avoid;
+  display: inline-block;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+@media screen and (width >= 1000px) {
+  .masonry-wrapper {
+    margin-left: 40px;
+    margin-right: 40px;
+  }
+}
+
+@media screen and (width <= 1000px) {
+  .masonry-wrapper {
+    margin-top: 45px;
+  }
+}
+
+@media screen and (width <= 948px) {
+  .masonry-wrapper {
+    margin-top: 55px;
+  }
 }

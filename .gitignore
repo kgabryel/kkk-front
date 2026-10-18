@@ -1,3 +1,5 @@
 /.idea
 /docker/logs
 /src/node_modules
+/src/.angular
+/src/dist

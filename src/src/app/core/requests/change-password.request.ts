@@ -1,3 +1,1 @@
-export interface ChangePasswordRequest {
-
-}
+export interface ChangePasswordRequest {}

@@ -1,34 +1,21 @@
-::ng-deep .mat-dialog-container {
-  padding: 0 !important;
-  background: unset !important;
-  backdrop-filter: none !important;
-  box-shadow: unset !important;
-  overflow: unset;
-}
-
-.preview {
-  box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2);
-  border-radius: 5px;
-  background-color: rgba(255, 255, 255, .3);
-}
-
 .rotate {
   animation-duration: 3s;
   animation-name: spin;
   font-size: 100px;
-  width: 100px;
   height: 100px;
+  width: 100px;
 }
 
 @keyframes spin {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
 }
 
 button:hover {
-  background-color: rgba(42, 212, 248, .3);
+  background-color: rgb(42 212 248 / 30%);
 }

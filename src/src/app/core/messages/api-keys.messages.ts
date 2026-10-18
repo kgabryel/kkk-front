@@ -7,5 +7,5 @@ export interface ApiKeysMessages {
 export const messages: ApiKeysMessages = {
   keyAdded: 'Klucz został dodany.',
   keyDeleted: 'Klucz został usunięty.',
-  keyUpdated: 'Klucz został zaktualizowny.'
+  keyUpdated: 'Klucz został zaktualizowany.',
 };

@@ -1,17 +1,21 @@
-import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {Ingredient} from '../../../../core/models/ingredient';
+import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular/core';
+import { MatLine } from '@angular/material/core';
+import { MatIcon } from '@angular/material/icon';
+import { MatListItem } from '@angular/material/list';
+
+import { Ingredient } from '../../../../core/models/ingredient';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatListItem, MatLine, MatIcon],
   selector: 'recipes-ingredient-position',
-  templateUrl: './ingredient-position.component.html',
+  standalone: true,
   styleUrls: ['./ingredient-position.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './ingredient-position.component.html',
 })
 export class IngredientPositionComponent {
-
-  @Input() public ingredient: Ingredient | null | undefined;
-  @Input() public measure: string;
-  @Input() public amount: string;
-  @Input() public additional: boolean;
-
+  public ingredient: InputSignal<Ingredient> = input.required<Ingredient>();
+  public measure: InputSignal<string> = input.required<string>();
+  public amount: InputSignal<string> = input.required<string>();
+  public additional: InputSignal<boolean> = input.required<boolean>();
 }

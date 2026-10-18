@@ -1,0 +1,48 @@
+.glassmorphism-form {
+  backdrop-filter: blur(6px);
+  background: rgb(255 255 255 / 30%);
+  border-radius: 5px;
+  box-shadow: 0 0 1rem 0 rgb(0 0 0 / 20%);
+  margin: 0 auto;
+  max-width: 800px;
+  padding: 5px;
+}
+
+.glassmorphism-button {
+  backdrop-filter: blur(6px);
+  background: rgb(255 255 255 / 30%) !important;
+  border-radius: 5px !important;
+  box-shadow: 0 0 1rem 0 rgb(0 0 0 / 20%);
+}
+
+.glassmorphism-red-button {
+  background: rgb(255 82 82 / 80%) !important;
+  border-radius: 5px;
+  box-shadow: 0 0 1rem 0 rgb(0 0 0 / 20%);
+  color: black;
+  margin-left: 5px;
+  min-width: 36px;
+  padding: 0;
+}
+
+.mdc-list.glassmorphism-list {
+  backdrop-filter: blur(6px);
+  background: rgb(255 255 255 / 30%);
+  border-radius: 5px;
+  box-shadow: 0 0 1rem 0 rgb(0 0 0 / 20%);
+  margin: 0 auto;
+  max-width: 800px;
+  padding: 5px;
+}
+
+.yellow-glass {
+  background: rgb(205 186 25 / 80%) !important;
+}
+
+.green-glass {
+  background: rgb(76 175 80 / 80%) !important;
+}
+
+.red-glass {
+  background: rgb(255 82 82 / 80%) !important;
+}

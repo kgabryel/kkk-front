@@ -1,14 +1,20 @@
 <mat-toolbar>
-  <recipes-navigation-item [menuItem]='menuItems.get(menuNames.all)' class='w-25'></recipes-navigation-item>
-  <recipes-navigation-item [menuItem]='menuItems.get(menuNames.create)' class='w-25'></recipes-navigation-item>
   <recipes-navigation-item
-    [disabled]='(favouritesDisabled$ | async) ?? false'
-    [menuItem]='menuItems.get(menuNames.favourite)'
-    class='w-25'>
-  </recipes-navigation-item>
+    class="w-25"
+    [menuItem]="menuItems.get(menuNames.all)!"
+  ></recipes-navigation-item>
   <recipes-navigation-item
-    [disabled]='(toDoDisabled$ | async) ?? false'
-    [menuItem]='menuItems.get(menuNames.toDo)'
-    class='w-25'>
-  </recipes-navigation-item>
+    class="w-25"
+    [menuItem]="menuItems.get(menuNames.create)!"
+  ></recipes-navigation-item>
+  <recipes-navigation-item
+    class="w-25"
+    [disabled]="favouritesDisabled()"
+    [menuItem]="menuItems.get(menuNames.favourite)!"
+  ></recipes-navigation-item>
+  <recipes-navigation-item
+    class="w-25"
+    [disabled]="toDoDisabled()"
+    [menuItem]="menuItems.get(menuNames.toDo)!"
+  ></recipes-navigation-item>
 </mat-toolbar>

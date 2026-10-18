@@ -6,6 +6,6 @@ export interface SeasonsMessages {
 
 export const messages: SeasonsMessages = {
   seasonAdded: 'Sezon został dodany.',
-  seasonUpdated: 'Sezon został zaktualizowny.',
-  seasonDeleted: 'Sezon został usunięty.'
+  seasonDeleted: 'Sezon został usunięty.',
+  seasonUpdated: 'Sezon został zaktualizowany.',
 };

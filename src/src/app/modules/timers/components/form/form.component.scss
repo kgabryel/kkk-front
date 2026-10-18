@@ -1,4 +1,4 @@
-@media screen and (min-width: 451px) {
+@media screen and (width >= 451px) {
   .buttons > *:not(:only-child):first-child {
     margin-right: 5px;
   }
@@ -8,20 +8,20 @@
   }
 }
 
-@media screen and (max-width: 450px) {
+@media screen and (width <= 450px) {
   .buttons {
     display: block !important;
   }
 }
 
-@media screen and (min-width: 410px) {
-  .form-container {
-    display: flex;
+@media screen and (width >= 410px) {
+  .form-container > .inputs {
     align-items: center;
+    display: flex;
   }
 }
 
-@media screen and (max-width: 409px) {
+@media screen and (width <= 409px) {
   .right-column {
     padding: 0 !important;
   }

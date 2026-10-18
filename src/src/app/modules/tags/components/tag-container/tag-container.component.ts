@@ -1,17 +1,20 @@
-import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
-import {Tag} from '../../../../core/models/tag';
+import { ChangeDetectionStrategy, Component, input, OnInit } from '@angular/core';
+
+import { Tag } from '../../../../core/models/tag';
+import { TagEditComponent } from '../tag-edit/tag-edit.component';
+import { TagPreviewComponent } from '../tag-preview/tag-preview.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [TagEditComponent, TagPreviewComponent],
   selector: 'tags-tag-container',
-  templateUrl: './tag-container.component.html',
+  standalone: true,
   styleUrls: [],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './tag-container.component.html',
 })
 export class TagContainerComponent implements OnInit {
-
-  @Input() public tag: Tag;
-  public edit: boolean;
-
+  public tag = input.required<Tag>();
+  public edit!: boolean;
   public ngOnInit(): void {
     this.edit = false;
   }

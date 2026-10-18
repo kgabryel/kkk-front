@@ -1,21 +1,22 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {Observable} from 'rxjs';
-import {Recipe} from '../../../../core/models/recipe';
-import {Store} from '@ngrx/store';
-import {State} from '../../../../core/store/recipes/reducers';
-import {selectFavouriteRecipes} from '../../../../core/store/recipes/selectors';
+import { ChangeDetectionStrategy, Component, Signal } from '@angular/core';
+import { Store } from '@ngrx/store';
+
+import { Recipe } from '../../../../core/models/recipe';
+import { State } from '../../../../core/store/recipes/reducers';
+import { selectFavouriteRecipes } from '../../../../core/store/recipes/selectors';
+import { RecipesListComponent } from '../../components/recipes-list/recipes-list.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RecipesListComponent],
   selector: 'recipes-pages-favourites',
-  templateUrl: './favourites.component.html',
+  standalone: true,
   styleUrls: [],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './favourites.component.html',
 })
 export class FavouritesComponent {
-
-  public recipes$: Observable<Recipe[]>;
-
+  public recipes: Signal<Recipe[]>;
   public constructor(store: Store<State>) {
-    this.recipes$ = store.select(selectFavouriteRecipes);
+    this.recipes = store.selectSignal(selectFavouriteRecipes);
   }
 }

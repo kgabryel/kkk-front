@@ -1,26 +1,29 @@
 <mat-toolbar>
-  <img [src]='logoPath' alt='logo' />
-  <div class='part'>
-    <layout-upper-menu-item [menuItem]='menuItems.get(menuNames.recipes)'></layout-upper-menu-item>
-    <layout-upper-menu-item [menuItem]='menuItems.get(menuNames.seasons)'></layout-upper-menu-item>
+  <img
+    [src]="logoPath"
+    alt="logo"
+  />
+  <div class="part">
+    <layout-upper-menu-item [menuItem]="menuItems.get(menuNames.recipes)!"></layout-upper-menu-item>
+    <layout-upper-menu-item [menuItem]="menuItems.get(menuNames.seasons)!"></layout-upper-menu-item>
   </div>
-  <button
-    (click)='openModal()'
-    *ngIf='searchAvailable'
-    [ngClass]="{'filtered': filtered | async}"
-    class='glassmorphism-button search-btn'
-    mat-button
-    type='button'>
-    <mat-icon>
-      search
-    </mat-icon>
-  </button>
-  <div class='part'>
-    <layout-upper-menu-item [menuItem]='menuItems.get(menuNames.ingredients)'></layout-upper-menu-item>
-    <layout-upper-menu-item [menuItem]='menuItems.get(menuNames.tags)'></layout-upper-menu-item>
+  @if (searchAvailable) {
+    <button
+      class="glassmorphism-button search-btn"
+      [ngClass]="{ filtered: filtered() }"
+      (click)="openModal()"
+      mat-button
+      type="button"
+    >
+      <mat-icon>search</mat-icon>
+    </button>
+  }
+  <div class="part">
+    <layout-upper-menu-item [menuItem]="menuItems.get(menuNames.ingredients)!"></layout-upper-menu-item>
+    <layout-upper-menu-item [menuItem]="menuItems.get(menuNames.tags)!"></layout-upper-menu-item>
     <layout-upper-menu-item
-      [menuItem]='menuItems.get(menuNames.account)'
-      class='to-right mt-0'>
-    </layout-upper-menu-item>
+      class="to-right mt-0"
+      [menuItem]="menuItems.get(menuNames.account)!"
+    ></layout-upper-menu-item>
   </div>
 </mat-toolbar>

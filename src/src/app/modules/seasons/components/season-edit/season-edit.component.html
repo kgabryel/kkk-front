@@ -1,48 +1,66 @@
-<form (ngSubmit)='submit()' [autocomplete]='null | autocomplete' [formGroup]='form'>
+<form
+  [autocomplete]="null | autocomplete"
+  [formGroup]="form"
+  (ngSubmit)="submit()"
+>
   <mat-list-item>
-    <button (click)='stopEdit()' mat-icon-button type='button'>
-      <mat-icon>
-        clear
-      </mat-icon>
+    <button
+      (click)="stopEdit()"
+      mat-icon-button
+      type="button"
+    >
+      <mat-icon>clear</mat-icon>
     </button>
-    <div class='w-100'>
-      <mat-form-field class='mr-1'>
-        <mat-label>
-          Start sezonu
-        </mat-label>
-        <mat-select [formControlName]='formNames.startMonth'>
-          <mat-option *ngFor='let month of startMonths' [disabled]='month.disabled' [value]='month.value'>
-            {{month.key}}
-          </mat-option>
+    <div class="w-100">
+      <mat-form-field class="mr-1">
+        <mat-label>Start sezonu</mat-label>
+        <mat-select [formControlName]="formNames.startMonth">
+          @for (month of startMonths; track month) {
+            <mat-option
+              [disabled]="month.disabled"
+              [value]="month.value"
+            >
+              {{ month.key }}
+            </mat-option>
+          }
         </mat-select>
-        <mat-hint align='start'>
-          <span *ngIf='form.get(formNames.startMonth)?.invalid && form.get(formNames.startMonth)?.touched'>
-            <shared-errors-container [errors]='errors.startMonth' [input]='form.get(formNames.startMonth)'>
-            </shared-errors-container>
-          </span>
+        <mat-hint align="start">
+          @if (form.get(formNames.startMonth)?.invalid && form.get(formNames.startMonth)?.touched) {
+            <shared-errors-container
+              [errors]="errors.startMonth"
+              [input]="form.get(formNames.startMonth)"
+            ></shared-errors-container>
+          }
         </mat-hint>
       </mat-form-field>
-      <mat-form-field class='ml-1'>
-        <mat-label>
-          Koniec sezonu
-        </mat-label>
-        <mat-select [formControlName]='formNames.endMonth'>
-          <mat-option *ngFor='let month of endMonths' [disabled]='month.disabled' [value]='month.value'>
-            {{month.key}}
-          </mat-option>
+      <mat-form-field class="ml-1">
+        <mat-label>Koniec sezonu</mat-label>
+        <mat-select [formControlName]="formNames.endMonth">
+          @for (month of endMonths; track month) {
+            <mat-option
+              [disabled]="month.disabled"
+              [value]="month.value"
+            >
+              {{ month.key }}
+            </mat-option>
+          }
         </mat-select>
-        <mat-hint align='start'>
-          <span *ngIf='form.get(formNames.endMonth)?.invalid && form.get(formNames.endMonth)?.touched'>
-          <shared-errors-container [errors]='errors.endMonth' [input]='form.get(formNames.endMonth)'>
-          </shared-errors-container>
-          </span>
+        <mat-hint align="start">
+          @if (form.get(formNames.endMonth)?.invalid && form.get(formNames.endMonth)?.touched) {
+            <shared-errors-container
+              [errors]="errors.endMonth"
+              [input]="form.get(formNames.endMonth)"
+            ></shared-errors-container>
+          }
         </mat-hint>
       </mat-form-field>
     </div>
-    <button [disabled]='form.invalid' mat-icon-button type='submit'>
-      <mat-icon>
-        save
-      </mat-icon>
+    <button
+      [disabled]="form.invalid"
+      mat-icon-button
+      type="submit"
+    >
+      <mat-icon>save</mat-icon>
     </button>
   </mat-list-item>
 </form>

@@ -1,34 +1,36 @@
-<mat-list-item role='listitem'>
-  <button (click)='openDialog()' [matTooltip]='tooltips.preview' mat-icon-button type='button'>
-    <mat-icon>
-      visibility
-    </mat-icon>
+<mat-list-item role="listitem">
+  <button
+    [matTooltip]="tooltips.preview"
+    (click)="openDialog()"
+    mat-icon-button
+    type="button"
+  >
+    <mat-icon>visibility</mat-icon>
   </button>
-  <div class='w-100 pl-1'>
+  <div class="w-100 pl-1">
     <div mat-line>
-      <ng-container *ngIf='(recipe$ | async) as recipe'>
-        <a [routerLink]='recipe | recipePreviewHref' class='text-decoration-none'>
-          {{recipe.name}}
-        </a>
-      </ng-container>
-      <span *ngIf='additional' class='additional'>
-      (opcjonalne)
-  </span>
+      <a
+        class="text-decoration-none"
+        [routerLink]="recipe() | recipePreviewHref"
+      >
+        {{ recipe().name }}
+      </a>
+
+      @if (additional()) {
+        <span class="additional">(opcjonalne)</span>
+      }
     </div>
     <div mat-line>
-      ({{measure}}
-      <ng-container *ngIf="amount !== ''"> - </ng-container>
-      {{amount}})
+      ({{ measure() }}
+      @if (amount() !== '') {
+        -
+      }
+      {{ amount() }})
     </div>
   </div>
-  <mat-icon
-    *ngIf='available$ | async; else unavailable'
-    class='available-icon'>
-    check_circle
-  </mat-icon>
-  <ng-template #unavailable>
-    <mat-icon class='unavailable-icon'>
-      cancel
-    </mat-icon>
-  </ng-template>
+  @if (available()) {
+    <mat-icon class="available-icon">check_circle</mat-icon>
+  } @else {
+    <mat-icon class="unavailable-icon">cancel</mat-icon>
+  }
 </mat-list-item>

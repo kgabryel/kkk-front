@@ -1,34 +1,55 @@
-<form (ngSubmit)='submit()' *ngIf='form !== undefined' [autocomplete]='null | autocomplete' [formGroup]='form'>
+<form
+  [autocomplete]="null | autocomplete"
+  [formGroup]="form"
+  (ngSubmit)="submit()"
+>
   <mat-list-item>
-    <button (click)='stopEdit()' mat-icon-button type='button'>
-      <mat-icon>
-        clear
-      </mat-icon>
+    <button
+      (click)="stopEdit()"
+      mat-icon-button
+      type="button"
+    >
+      <mat-icon>clear</mat-icon>
     </button>
-    <button (click)='remove()' [disabled]='ingredient.ozaId === null' mat-icon-button type='button'>
-      <mat-icon>
-        delete
-      </mat-icon>
+    <button
+      [disabled]="ingredient().ozaId === null"
+      (click)="remove()"
+      mat-icon-button
+      type="button"
+      class="mr-1"
+    >
+      <mat-icon>delete</mat-icon>
     </button>
-    <mat-form-field class='w-100'>
-      <mat-label>
-        Zapas
-      </mat-label>
-      <input [formControlName]='formNames.supply' type='hidden' />
-      <input [formControlName]='formNames.supplySearch' [matAutocomplete]='auto' matInput type='text' />
-      <mat-autocomplete #auto='matAutocomplete'>
-        <mat-option
-          (click)='selectSupply(supply.id)'
-          *ngFor='let supply of filteredSupplies$ | async'
-          [value]='supply.name'>
-          {{supply.name}}
-        </mat-option>
+    <mat-form-field class="w-100">
+      <mat-label>Zapas</mat-label>
+      <input
+        [formControlName]="formNames.supply"
+        type="hidden"
+      />
+      <input
+        [formControlName]="formNames.supplySearch"
+        [matAutocomplete]="auto"
+        matInput
+        type="text"
+      />
+      <mat-autocomplete #auto="matAutocomplete">
+        @for (supply of filteredSupplies(); track supply) {
+          <mat-option
+            [value]="supply.name"
+            (click)="selectSupply(supply.id)"
+          >
+            {{ supply.name }}
+          </mat-option>
+        }
       </mat-autocomplete>
     </mat-form-field>
-    <button [disabled]='form.invalid' mat-icon-button type='submit'>
-      <mat-icon>
-        save
-      </mat-icon>
+    <button
+      [disabled]="form.invalid"
+      mat-icon-button
+      type="submit"
+      class="ml-1"
+    >
+      <mat-icon>save</mat-icon>
     </button>
   </mat-list-item>
 </form>

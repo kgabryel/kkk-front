@@ -1,11 +1,13 @@
-<div *ngIf='(key$ | async) as keys'>
-  <div *ngIf='keys.length > 0' class='glassmorphism-form'>
-    <h2 class='text-center'>
-      KLUCZE API
-    </h2>
-    <ng-container *ngFor='let key of keys; let last = last'>
-      <account-api-key [apiKey]='key'></account-api-key>
-      <hr *ngIf='!last' />
-    </ng-container>
-  </div>
+<div>
+  @if (keys().length > 0) {
+    <div class="glassmorphism-form">
+      <h2 class="text-center">KLUCZE API</h2>
+      @for (key of keys(); track key; let last = $last) {
+        <account-api-key [apiKey]="key"></account-api-key>
+        @if (!last) {
+          <hr />
+        }
+      }
+    </div>
+  }
 </div>

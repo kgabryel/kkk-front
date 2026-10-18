@@ -1,23 +1,24 @@
-<mat-list-item role='listitem'>
-  <div mat-line>
-    <ng-container>
-      {{ingredient?.name}}
-    </ng-container>
-    <span *ngIf='additional' class='additional'>
-      (opcjonalne)
-  </span>
+<mat-list-item role="listitem">
+  <div>
+    <div mat-line>
+      <ng-container>
+        {{ ingredient().name }}
+      </ng-container>
+      @if (additional()) {
+        <span class="additional">(opcjonalne)</span>
+      }
+    </div>
+    <div mat-line>
+      ({{ measure() }}
+      @if (amount() !== '') {
+        -
+      }
+      {{ amount() }})
+    </div>
   </div>
-  <div mat-line>
-    ({{measure}}<ng-container *ngIf="amount !== ''"> - </ng-container>{{amount}})
-  </div>
-  <mat-icon
-    *ngIf='(ingredient?.available); else unavailable'
-    class='available-icon'>
-    check_circle
-  </mat-icon>
-  <ng-template #unavailable>
-    <mat-icon class='unavailable-icon'>
-      cancel
-    </mat-icon>
-  </ng-template>
+  @if (ingredient().available) {
+    <mat-icon class="available-icon">check_circle</mat-icon>
+  } @else {
+    <mat-icon class="unavailable-icon">cancel</mat-icon>
+  }
 </mat-list-item>

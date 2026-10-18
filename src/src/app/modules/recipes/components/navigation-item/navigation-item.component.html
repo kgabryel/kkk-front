@@ -1,18 +1,25 @@
 <button
-  [disabled]='disabled'
-  [routerLink]='menuItem?.href'
-  class='glassmorphism-button big pl-4 pr-4'
+  class="glassmorphism-button big pl-4 pr-4"
+  [disabled]="disabled()"
+  [routerLink]="menuItem().href"
   mat-button
-  type='button'>
+  type="button"
+>
   <mat-icon>
-    {{menuItem?.icon}}
+    {{ menuItem().icon }}
   </mat-icon>
   <span>
-    {{menuItem?.name}}
+    {{ menuItem().name }}
   </span>
 </button>
-<button [matTooltip]="menuItem?.name ?? ''" [routerLink]='menuItem?.href' class='small' mat-icon-button type='button'>
+<button
+  class="small"
+  [matTooltip]="menuItem().name"
+  [routerLink]="menuItem().href"
+  mat-icon-button
+  type="button"
+>
   <mat-icon>
-    {{menuItem?.icon}}
+    {{ menuItem().icon }}
   </mat-icon>
 </button>

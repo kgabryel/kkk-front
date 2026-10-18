@@ -1,7 +1,7 @@
-::ng-deep .mat-dialog-container {
-  padding: 0 !important;
-  background: unset !important;
+:host ::ng-deep .mat-mdc-dialog-container {
   backdrop-filter: none !important;
+  background: unset !important;
   box-shadow: unset !important;
   overflow: unset;
+  padding: 0 !important;
 }

@@ -1,11 +1,14 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+
+import { ChangePasswordFormComponent } from '../../components/change-password-form/change-password-form.component';
+import { FormContainerComponent } from '../../components/form-container/form-container.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [FormContainerComponent, ChangePasswordFormComponent],
   selector: 'auth-pages-change-password',
-  templateUrl: './change-password.component.html',
+  standalone: true,
   styleUrls: [],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './change-password.component.html',
 })
-export class ChangePasswordComponent {
-
-}
+export class ChangePasswordComponent {}

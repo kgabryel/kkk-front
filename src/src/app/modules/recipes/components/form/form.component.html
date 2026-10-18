@@ -1,122 +1,205 @@
-<form (ngSubmit)='submit()' [autocomplete]='null | autocomplete' [formGroup]='form'>
-  <mat-vertical-stepper [linear]='true'>
+<form
+  [autocomplete]="null | autocomplete"
+  [formGroup]="formService.form"
+  (ngSubmit)="submit()"
+>
+  <mat-vertical-stepper [linear]="true">
     <mat-step
-      (interacted)='markDescriptionsAsTouched()'
-      [formGroup]='descriptionGroup'
-      [stepControl]='descriptionGroup'>
-      <ng-template matStepLabel>
-        Opis
-      </ng-template>
-      <mat-form-field class='d-block w-100 pt-2'>
-        <mat-label>
-          Nazwa
-        </mat-label>
-        <input [formControlName]='formNames.name' [maxlength]='maxRecipeNameLength' matInput type='text' />
-        <mat-hint align='end'>
-          {{nameLength$ | async}} / {{maxRecipeNameLength}}
+      [formGroup]="formService.descriptionGroup"
+      [stepControl]="formService.descriptionGroup"
+      (interacted)="formService.markDescriptionsAsTouched()"
+    >
+      <ng-template matStepLabel>Opis</ng-template>
+      <mat-form-field class="d-block w-100 pt-2">
+        <mat-label>Nazwa</mat-label>
+        <input
+          [formControlName]="formNames.name"
+          [maxlength]="formService.maxRecipeNameLength"
+          matInput
+          type="text"
+        />
+        <mat-hint align="start">
+          @if (
+            formService.descriptionGroup.get(formNames.name)?.invalid &&
+            formService.descriptionGroup.get(formNames.name)?.touched
+          ) {
+            <shared-errors-container
+              [errors]="formService.errors.name"
+              [input]="formService.descriptionGroup.get(formNames.name)"
+            ></shared-errors-container>
+          }
         </mat-hint>
+        <mat-hint align="end">{{ formService.nameLength() }} / {{ formService.maxRecipeNameLength }}</mat-hint>
       </mat-form-field>
-      <span *ngIf='descriptionGroup.get(formNames.name)?.invalid && descriptionGroup.get(formNames.name)?.touched'>
-        <shared-errors-container [errors]='errors.name' [input]='descriptionGroup.get(formNames.name)'>
-        </shared-errors-container>
-      </span>
-      <div class='mt-1'>
-        <angular-editor [config]='editorConfig' [formControlName]='formNames.description'></angular-editor>
+      <div class="mt-1">
+        <shared-text-editor [controlName]="formNames.description" />
       </div>
     </mat-step>
-    <mat-step (interacted)='markDetailsAsTouched()' [formGroup]='detailsGroup' [stepControl]='detailsGroup'>
-      <ng-template matStepLabel>
-        Szczegóły
-      </ng-template>
-      <div class='text-center'>
-        <mat-slide-toggle [formControlName]='formNames.favourite' class='mr-1' color='primary'>
-          Ulubione
-        </mat-slide-toggle>
-        <mat-slide-toggle [formControlName]='formNames.toDo' class='mr-1' color='primary'>
-          Do zrobienia
-        </mat-slide-toggle>
-        <mat-slide-toggle [formControlName]='formNames.public' class='mr-1' color='primary'>
-          Publiczny
-        </mat-slide-toggle>
-        <mat-form-field class='portions-input pt-2'>
-          <mat-label>
-            Ilość porcji
-          </mat-label>
-          <input [formControlName]='formNames.portions' matInput min='1' step='any' type='number' />
-        </mat-form-field>
-        <span *ngIf='detailsGroup.get(formNames.portions)?.invalid && detailsGroup.get(formNames.portions)?.touched'>
-          <shared-errors-container [errors]='errors.portions' [input]='detailsGroup.get(formNames.portions)'>
-          </shared-errors-container>
-        </span>
+
+    <mat-step
+      [formGroup]="formService.detailsGroup"
+      [stepControl]="formService.detailsGroup"
+      (interacted)="formService.markDetailsAsTouched()"
+    >
+      <ng-template matStepLabel>Szczegóły</ng-template>
+      <div class="d-flex align-baseline justify-flex-evenly details pt-1">
+        <div>
+          <mat-slide-toggle
+            class="mr-2"
+            [formControlName]="formNames.favourite"
+            color="primary"
+          >
+            Ulubione
+          </mat-slide-toggle>
+          <mat-slide-toggle
+            class="mr-2 ml-1"
+            [formControlName]="formNames.toDo"
+            color="primary"
+          >
+            Do zrobienia
+          </mat-slide-toggle>
+          <mat-slide-toggle
+            class="ml-1"
+            [formControlName]="formNames.public"
+            color="primary"
+          >
+            Publiczny
+          </mat-slide-toggle>
+        </div>
+        <div class="d-flex align-center">
+          <mat-form-field class="portions-input pt-2">
+            <mat-label>Ilość porcji</mat-label>
+
+            <input
+              [formControlName]="formNames.portions"
+              matInput
+              min="1"
+              step="any"
+              type="number"
+            />
+            <mat-hint align="start">
+              @if (
+                formService.detailsGroup.get(formNames.portions)?.invalid &&
+                formService.detailsGroup.get(formNames.portions)?.touched
+              ) {
+                <shared-errors-container
+                  [errors]="formService.errors.portions"
+                  [input]="formService.detailsGroup.get(formNames.portions)"
+                ></shared-errors-container>
+              }
+            </mat-hint>
+          </mat-form-field>
+          <div class="portions-button">
+            <button
+              type="button"
+              class="plus"
+              (click)="formService.increasePortion()"
+            >
+              <mat-icon>keyboard_arrow_up</mat-icon>
+            </button>
+            <button
+              type="button"
+              class="minus"
+              (click)="formService.decreasePortion()"
+            >
+              <mat-icon>keyboard_arrow_down</mat-icon>
+            </button>
+          </div>
+        </div>
       </div>
-      <mat-form-field class='d-block w-100'>
-        <mat-label>
-          Link
-        </mat-label>
-        <input [formControlName]='formNames.url' matInput type='url' />
+      <mat-form-field class="d-block w-100">
+        <mat-label>Link</mat-label>
+        <input
+          [formControlName]="formNames.url"
+          matInput
+          type="url"
+        />
+        <mat-hint align="start">
+          @if (
+            formService.detailsGroup.get(formNames.url)?.invalid && formService.detailsGroup.get(formNames.url)?.touched
+          ) {
+            <shared-errors-container
+              [errors]="formService.errors.url"
+              [input]="formService.detailsGroup.get(formNames.url)"
+            ></shared-errors-container>
+          }
+        </mat-hint>
       </mat-form-field>
-      <span *ngIf='detailsGroup.get(formNames.url)?.invalid && detailsGroup.get(formNames.url)?.touched'>
-        <shared-errors-container [errors]='errors.url' [input]='detailsGroup.get(formNames.url)'>
-        </shared-errors-container>
-      </span>
-      <recipes-tags-select [formGroup]='tagsGroup'></recipes-tags-select>
-      <div [formArrayName]='formNames.timersGroup'>
-        <timers-form
-          (delete)='removeTimer(i)'
-          *ngFor='let e of timers.controls; let i = index;'
-          [formPart]='e'
-          [remove]='true'>
-        </timers-form>
+      <recipes-tags-select [formGroup]="formService.tagsGroup"></recipes-tags-select>
+      <div [formArrayName]="formNames.timersGroup">
+        @for (e of formService.timers.controls; track e; let i = $index) {
+          <timers-form
+            [formPart]="e"
+            [remove]="true"
+            (delete)="formService.removeTimer(i)"
+          ></timers-form>
+        }
       </div>
-      <button (click)='addTimer()' class='glassmorphism-button w-100' mat-button type='button'>
-        <mat-icon>
-          add_circle_outline
-        </mat-icon>
+      <button
+        class="glassmorphism-button w-100"
+        (click)="formService.addTimer()"
+        mat-button
+        type="button"
+      >
+        <mat-icon>add_circle_outline</mat-icon>
         Dodaj minutnik
       </button>
     </mat-step>
-    <mat-step [stepControl]='positionsGroup'>
-      <ng-template matStepLabel>
-        Składniki
-      </ng-template>
-      <div [formArrayName]='formNames.positionsGroup'>
-        <recipes-group-positions-part
-          (delete)='removeGroup(i)'
-          *ngFor='let e of positions.controls; let i = index;' [formPart]='e'>
-        </recipes-group-positions-part>
+
+    <mat-step [stepControl]="formService.positionsGroup">
+      <ng-template matStepLabel>Składniki</ng-template>
+      <div [formArrayName]="formNames.positionsGroup">
+        @for (e of formService.positions.controls; track e; let i = $index) {
+          <recipes-group-positions-part
+            [formPart]="e"
+            (delete)="formService.removeGroup(i)"
+          ></recipes-group-positions-part>
+        }
       </div>
-      <button (click)='addPositionsGroup()' class='glassmorphism-button w-100 mt-1' mat-button type='button'>
-        <mat-icon>
-          add_circle_outline
-        </mat-icon>
+      <button
+        class="glassmorphism-button w-100 mt-1"
+        (click)="formService.addPositionsGroup()"
+        mat-button
+        type="button"
+      >
+        <mat-icon>add_circle_outline</mat-icon>
         Dodaj kolejną grupę
       </button>
     </mat-step>
   </mat-vertical-stepper>
-  <div *ngIf='recipeModel !== null'>
-    <button [disabled]='form.invalid' class='glassmorphism-button save-button' mat-button type='submit'>
-      <mat-icon>
-        edit
-      </mat-icon>
-      Aktualizuj
-    </button>
-    <button
-      [routerLink]='recipeModel | recipePreviewHref'
-      class='glassmorphism-button preview-button'
-      mat-button
-      type='button'>
-      <mat-icon>
-        visibility
-      </mat-icon>
-      Podgląd
-    </button>
-  </div>
-  <div *ngIf='recipeModel === null'>
-    <button [disabled]='form.invalid' class='glassmorphism-button w-100' mat-button type='submit'>
-      <mat-icon>
-        add_circle_outline
-      </mat-icon>
-      Utwórz
-    </button>
-  </div>
+  @if (formService.recipeModel !== null) {
+    <div>
+      <button
+        class="glassmorphism-button save-button"
+        [disabled]="formService.form.invalid"
+        mat-button
+        type="submit"
+      >
+        <mat-icon>edit</mat-icon>
+        Aktualizuj
+      </button>
+      <button
+        class="glassmorphism-button preview-button"
+        [routerLink]="formService.recipeModel | recipePreviewHref"
+        mat-button
+        type="button"
+      >
+        <mat-icon>visibility</mat-icon>
+        Podgląd
+      </button>
+    </div>
+  }
+  @if (formService.recipeModel === null) {
+    <div>
+      <button
+        [disabled]="formService.form.invalid"
+        class="glassmorphism-button w-100"
+        mat-button
+        type="submit"
+      >
+        <mat-icon>add_circle_outline</mat-icon>
+        Utwórz
+      </button>
+    </div>
+  }
 </form>

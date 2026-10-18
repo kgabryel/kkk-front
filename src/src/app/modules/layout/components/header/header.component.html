@@ -1,5 +1,11 @@
 <mat-toolbar>
-  <img [src]='logoPath' alt='logo' />
-  <span class='spacer'></span>
-  <layout-upper-menu-item [menuItem]='menuItems.get(menuNames.account)' class='mt-0'></layout-upper-menu-item>
+  <img
+    [src]="logoPath"
+    alt="logo"
+  />
+  <span class="spacer"></span>
+  <layout-upper-menu-item
+    class="mt-0"
+    [menuItem]="menuItems.get(menuNames.account)!"
+  ></layout-upper-menu-item>
 </mat-toolbar>

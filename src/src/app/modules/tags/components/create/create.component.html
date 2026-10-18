@@ -1,25 +1,35 @@
-<form (ngSubmit)='submit()' [autocomplete]='null | autocomplete' [formGroup]='form' class='glassmorphism-form'>
-  <mat-form-field class='w-100'>
-    <mat-label>
-      Nazwa
-    </mat-label>
+<form
+  class="glassmorphism-form"
+  [autocomplete]="null | autocomplete"
+  [formGroup]="form"
+  (ngSubmit)="submit()"
+>
+  <mat-form-field class="w-100">
+    <mat-label>Nazwa</mat-label>
     <input
-      (ngModelChange)='name = $event.toUpperCase()'
-      [formControlName]='formNames.name'
-      [maxlength]='maxNameLength'
+      [formControlName]="formNames.name"
+      [maxlength]="maxNameLength"
+      (input)="toUppercase($event)"
       matInput
-      type='text' />
-    <mat-hint align='end'>
-      {{nameLength$ | async}} / {{maxNameLength}}
+      type="text"
+    />
+    <mat-hint align="start">
+      @if (form.get(formNames.name)?.invalid && form.get(formNames.name)?.touched) {
+        <shared-errors-container
+          [errors]="errors.name"
+          [input]="form.get(formNames.name)"
+        ></shared-errors-container>
+      }
     </mat-hint>
+    <mat-hint align="end">{{ nameLength() }} / {{ maxNameLength }}</mat-hint>
   </mat-form-field>
-  <span *ngIf='form.get(formNames.name)?.invalid && form.get(formNames.name)?.touched'>
-    <shared-errors-container [errors]='errors.name' [input]='form.get(formNames.name)'></shared-errors-container>
-  </span>
-  <button [disabled]='form.invalid' class='glassmorphism-button w-100 mt-1' mat-button type='submit'>
-    <mat-icon>
-      add_circle_outline
-    </mat-icon>
+  <button
+    class="glassmorphism-button w-100 mt-1"
+    [disabled]="form.invalid"
+    mat-button
+    type="submit"
+  >
+    <mat-icon>add</mat-icon>
     Utwórz
   </button>
 </form>

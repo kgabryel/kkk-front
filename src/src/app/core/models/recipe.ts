@@ -1,5 +1,5 @@
-import {Timer} from './timer';
-import {Photo} from './photo';
+import { Photo } from './photo';
+import { Timer } from './timer';
 
 export interface Recipe {
   id: number;

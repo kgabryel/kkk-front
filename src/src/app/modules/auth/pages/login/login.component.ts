@@ -1,11 +1,14 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+
+import { FormContainerComponent } from '../../components/form-container/form-container.component';
+import { LoginFormComponent } from '../../components/login-form/login-form.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [FormContainerComponent, LoginFormComponent],
   selector: 'auth-pages-login',
-  templateUrl: './login.component.html',
+  standalone: true,
   styleUrls: [],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './login.component.html',
 })
-export class LoginComponent {
-
-}
+export class LoginComponent {}

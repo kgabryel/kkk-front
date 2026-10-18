@@ -1,171 +1,236 @@
-<div class='container d-inline-block pa-1'>
-  <div [ngClass]="{'in-masonry': previewAvailable}" class='preview pa-1'>
+<div class="container d-inline-block pa-1">
+  <div
+    class="preview pa-1"
+    [ngClass]="{ 'in-masonry': previewAvailable }"
+  >
     <div>
-      <h3 class='mb-0 ma-1 text-uppercase'>
-        {{recipe.name}}
+      <h3 class="mb-0 ma-1 text-uppercase">
+        {{ recipe().name }}
       </h3>
-      <div class='mb-1 d-flex'>
-        <a *ngIf='!(recipe.url | emptyString)' [href]='recipe.url' target='_blank'>
-          <button class='glassmorphism-button' mat-raised-button type='button'>
-            Link
-          </button>
-        </a>
-        <div *ngIf='buttons' class='w-100 text-right'>
+      <div class="mb-1 d-flex">
+        @if (!(recipe().url | emptyString)) {
+          <a
+            [href]="recipe().url"
+            target="_blank"
+          >
+            <button
+              class="glassmorphism-button"
+              mat-raised-button
+              type="button"
+            >
+              Link
+            </button>
+          </a>
+        }
+        @if (buttons()) {
+          <div class="w-100 text-right">
+            <button
+              [disabled]="!recipe().public"
+              [matTooltip]="tooltips.share"
+              (click)="share()"
+              mat-icon-button
+              type="button"
+            >
+              <mat-icon>share</mat-icon>
+            </button>
+            <button
+              [matTooltip]="tooltips.favourite"
+              (click)="updateFavourite()"
+              mat-icon-button
+              type="button"
+            >
+              @if (!recipe().favourite) {
+                <mat-icon>star_outline</mat-icon>
+              }
+              @if (recipe().favourite) {
+                <mat-icon>star</mat-icon>
+              }
+            </button>
+            <button
+              [matTooltip]="tooltips.toDo"
+              (click)="updateToDo()"
+              mat-icon-button
+              type="button"
+            >
+              @if (!recipe().toDo) {
+                <mat-icon>turned_in_not</mat-icon>
+              }
+              @if (recipe().toDo) {
+                <mat-icon>turned_in</mat-icon>
+              }
+            </button>
+            @if (previewAvailable()) {
+              <button
+                [matTooltip]="tooltips.preview"
+                [routerLink]="recipe() | recipePreviewHref"
+                mat-icon-button
+                type="button"
+              >
+                <mat-icon>visibility</mat-icon>
+              </button>
+            }
+            <button
+              [matTooltip]="tooltips.delete"
+              (click)="delete()"
+              mat-icon-button
+              type="button"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+            <button
+              [matTooltip]="tooltips.edit"
+              [routerLink]="recipe() | recipeEditHref"
+              mat-icon-button
+              type="button"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+          </div>
+        }
+      </div>
+      @if (buttons() && recipe().timers.length > 0) {
+        <div class="w-100">
+          @for (timer of recipe().timers; track timer) {
+            <recipes-timer
+              [timer]="timer"
+              (add)="addTimer(timer)"
+            ></recipes-timer>
+          }
           <button
-            (click)='share()'
-            [disabled]='!recipe.public'
-            [matTooltip]='tooltips.share'
-            mat-icon-button
-            type='button'>
-            <mat-icon>
-              share
-            </mat-icon>
-          </button>
-          <button (click)='updateFavourite()' [matTooltip]='tooltips.favourite' mat-icon-button type='button'>
-            <mat-icon *ngIf='!recipe.favourite'>
-              star_outline
-            </mat-icon>
-            <mat-icon *ngIf='recipe.favourite'>
-              star
-            </mat-icon>
-          </button>
-          <button (click)='updateToDo()' [matTooltip]='tooltips.toDo' mat-icon-button type='button'>
-            <mat-icon *ngIf='!recipe.toDo'>
-              turned_in_not
-            </mat-icon>
-            <mat-icon *ngIf='recipe.toDo'>
-              turned_in
-            </mat-icon>
-          </button>
-          <button
-            *ngIf='previewAvailable'
-            [matTooltip]='tooltips.preview'
-            [routerLink]='recipe | recipePreviewHref'
-            mat-icon-button
-            type='button'>
-            <mat-icon>
-              visibility
-            </mat-icon>
-          </button>
-          <button (click)='delete()' [matTooltip]='tooltips.delete' mat-icon-button type='button'>
-            <mat-icon>
-              delete
-            </mat-icon>
-          </button>
-          <button [matTooltip]='tooltips.edit' [routerLink]='recipe | recipeEditHref' mat-icon-button type='button'>
-            <mat-icon>
-              edit
-            </mat-icon>
+            class="glassmorphism-button w-100 add-timers-btn mt-1"
+            (click)="addAllTimers()"
+            mat-button
+            type="button"
+          >
+            <mat-icon>alarm</mat-icon>
+            Dodaj wszystkie minutniki
           </button>
         </div>
-      </div>
-      <div *ngIf='buttons && recipe.timers.length > 0' class='w-100'>
-        <recipes-timer (add)='addTimer(timer)' *ngFor='let timer of recipe.timers' [timer]='timer'></recipes-timer>
-        <button
-          (click)='addAllTimers()'
-          class='glassmorphism-button w-100 add-timers-btn mt-1'
-          mat-button
-          type='button'>
-          <mat-icon>
-            alarm
-          </mat-icon>
-          Dodaj wszystkie minutniki
-        </button>
-      </div>
+      }
     </div>
-    <div class='mt-1 mb-1'>
-      <mat-carousel
-        (change)='changedPhoto($event)'
-        (click)='showPhoto($event)'
-        *ngIf='recipe.photos.length > 0'
-        [autoplay]='false'
-        [hideArrows]='recipe.photos.length === 1'
-        [hideIndicators]='recipe.photos.length === 1'
-        [proportion]='75'
-        [useKeyboard]='true'
-        color='primary'>
-        <ng-container *ngFor='let photo of recipe.photos'>
-          <mat-carousel-slide
-            *ngIf='(getPhoto(photo)) | async as image; else unloaded'
-            [image]='image'>
-          </mat-carousel-slide>
-          <ng-template #unloaded>
-            <mat-carousel-slide [image]='loadingGif'></mat-carousel-slide>
-          </ng-template>
-        </ng-container>
-      </mat-carousel>
+    <div class="mt-1 mb-1">
+      @if (recipe().photos.length > 0) {
+        <swiper-container
+          slides-per-view="1"
+          navigation="true"
+          pagination="true"
+          centered-slides="true"
+          zoom="true"
+        >
+          @for (photo of recipe().photos; track photo) {
+            <swiper-slide>
+              @if (getPhoto(photo)(); as image) {
+                <div class="swiper-zoom-container">
+                  <img
+                    [src]="image"
+                    (click)="showPhoto(photo)"
+                    alt="photo"
+                  />
+                </div>
+              } @else {
+                <div class="swiper-zoom-container">
+                  <img
+                    [src]="loadingGif"
+                    height="150"
+                    width="200"
+                    alt="loading"
+                  />
+                </div>
+              }
+            </swiper-slide>
+          }
+        </swiper-container>
+      }
     </div>
-    <ng-container *ngIf='(tags$ | async) as tags'>
-      <div *ngIf='tags.length > 0' class='pb-1 ml--1'>
-        <button
-          *ngFor='let tag of tags'
-          [routerLink]='tag | tagRecipesHref'
-          class='glassmorphism-button ma-1'
-          mat-button
-          type='button'>
-          {{tag.name}}
-        </button>
+    @if (tags().length > 0) {
+      <div class="pb-1 ml--1">
+        @for (tag of tags(); track tag) {
+          <button
+            class="glassmorphism-button ma-1"
+            [routerLink]="tag | tagRecipesHref"
+            mat-button
+            type="button"
+          >
+            {{ tag.name }}
+          </button>
+        }
       </div>
-    </ng-container>
+    }
     <mat-accordion multi>
-      <mat-expansion-panel *ngIf='!(recipe.description | emptyString)' expanded hideToggle>
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            Przepis
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-        <p [innerHTML]='recipe.description'></p>
-      </mat-expansion-panel>
-      <mat-expansion-panel *ngIf='recipe.groups.length > 0' expanded hideToggle>
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            Składniki
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-        <div class='w-100 text-center'>
-          <button (click)='decrementPortion()' [disabled]='portions < 2' mat-icon-button type='button'>
-            <mat-icon>
-              remove
-            </mat-icon>
-          </button>
-          <span>
-            ilość porcji: {{portions}}
-          </span>
-          <button (click)='incrementPortion()' mat-icon-button type='button'>
-            <mat-icon>
-              add
-            </mat-icon>
-          </button>
-        </div>
-        <div *ngFor='let group of recipe.groups; first as isFirst;'>
-          <br *ngIf='!isFirst' />
-          <h2 class='mb-0'>
-            {{group.name}}
-          </h2>
-          <mat-list class='pt-0' role='list'>
-            <ng-container *ngFor='let position of group.positions'>
-              <ng-container *ngIf='position.ingredient !== null'>
-                <recipes-ingredient-position
-                  [additional]='position.additional'
-                  [amount]='position.amount | calculateAmount: portions / recipe.portions'
-                  [ingredient]='position.ingredient | findIngredient | async'
-                  [measure]='position.measure'
-                  class='w-100'>
-                </recipes-ingredient-position>
-              </ng-container>
-              <ng-container *ngIf='position.recipe !== null'>
-                <recipes-recipe-position
-                  [additional]='position.additional'
-                  [amount]='position.amount | calculateAmount: portions / recipe.portions'
-                  [measure]='position.measure'
-                  [recipe$]='position.recipe | findRecipe'
-                  class='w-100'>
-                </recipes-recipe-position>
-              </ng-container>
-            </ng-container>
-          </mat-list>
-        </div>
-      </mat-expansion-panel>
+      @if (!(recipe().description | emptyString)) {
+        <mat-expansion-panel
+          expanded
+          hideToggle
+        >
+          <mat-expansion-panel-header>
+            <mat-panel-title>Przepis</mat-panel-title>
+          </mat-expansion-panel-header>
+          <p [innerHTML]="recipe().description"></p>
+        </mat-expansion-panel>
+      }
+      @if (recipe().groups.length > 0) {
+        <mat-expansion-panel
+          expanded
+          hideToggle
+        >
+          <mat-expansion-panel-header>
+            <mat-panel-title>Składniki</mat-panel-title>
+          </mat-expansion-panel-header>
+          <div class="w-100 d-flex align-center justify-center">
+            <button
+              [disabled]="portions < 2"
+              (click)="decrementPortion()"
+              mat-icon-button
+              type="button"
+            >
+              <mat-icon>remove</mat-icon>
+            </button>
+            <span>ilość porcji: {{ portions }}</span>
+            <button
+              (click)="incrementPortion()"
+              mat-icon-button
+              type="button"
+            >
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+          @for (group of recipe().groups; track group; let isFirst = $first) {
+            <div>
+              @if (!isFirst) {
+                <br />
+              }
+              <h2 class="mb-0">
+                {{ group.name }}
+              </h2>
+              <mat-list
+                class="pt-0"
+                role="list"
+              >
+                @for (position of group.positions; track position) {
+                  @if (position.ingredient !== null) {
+                    <recipes-ingredient-position
+                      class="w-100 ma-1"
+                      [additional]="position.additional"
+                      [amount]="position.amount | calculateAmount: portions / recipe().portions"
+                      [ingredient]="(position.ingredient | findIngredient)()!"
+                      [measure]="position.measure"
+                    ></recipes-ingredient-position>
+                  }
+                  @if (position.recipe !== null) {
+                    <recipes-recipe-position
+                      class="w-100"
+                      [additional]="position.additional"
+                      [amount]="position.amount | calculateAmount: portions / recipe().portions"
+                      [measure]="position.measure"
+                      [recipe]="(position.recipe | findRecipe)()!"
+                    ></recipes-recipe-position>
+                  }
+                }
+              </mat-list>
+            </div>
+          }
+        </mat-expansion-panel>
+      }
     </mat-accordion>
   </div>
 </div>

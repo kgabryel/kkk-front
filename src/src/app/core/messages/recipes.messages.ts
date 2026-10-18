@@ -13,13 +13,13 @@ export interface RecipesMessages {
 
 export const messages: RecipesMessages = {
   copied: 'Skopiowano',
-  timerAdded: 'Minutnik został dodany.',
-  timersAdded: 'Wszystki minutniki zostały dodane.',
-  recipeAdded: 'Przepis został dodany.',
-  recipeUpdated: 'Przepis został zaktualizowny.',
-  recipeDeleted: 'Przepis został usunięty.',
-  invalidPhotoDimensions: 'Zdjęcie ma błędne wymiary.',
+  invalidPhotoDimensions: 'Zdjęcie ma błędne wymiary',
   photoAdded: 'Zdjęcie zostało dodane.',
+  photoDeleted: 'Zdjęcie zostało usunięte.',
   photosReordered: 'Kolejność zdjęć została zmodyfikowana',
-  photoDeleted: 'Zdjęcie zostało usunięte.'
+  recipeAdded: 'Przepis został dodany.',
+  recipeDeleted: 'Przepis został usunięty.',
+  recipeUpdated: 'Przepis został zaktualizowany.',
+  timerAdded: 'Minutnik został dodany.',
+  timersAdded: 'Wszystkie minutniki zostały dodane.',
 };

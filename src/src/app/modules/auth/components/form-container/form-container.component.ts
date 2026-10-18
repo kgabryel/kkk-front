@@ -1,16 +1,17 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {ImagesConfig} from '../../../../config/images.config';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+
+import { ImagesConfig } from '../../../../config/images.config';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'auth-form-container',
-  templateUrl: './form-container.component.html',
+  standalone: true,
   styleUrls: ['./form-container.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './form-container.component.html',
 })
 export class FormContainerComponent {
-  public authVertical: string;
   public authHorizontal: string;
-
+  public authVertical: string;
   public constructor() {
     this.authVertical = ImagesConfig.authVertical;
     this.authHorizontal = ImagesConfig.authHorizontal;

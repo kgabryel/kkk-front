@@ -10,10 +10,10 @@ export interface RecipesTooltips {
 
 export const tooltips: RecipesTooltips = {
   add: 'Dodaj',
+  delete: 'Usuń',
+  edit: 'Edytuj',
+  favourite: 'Ulubione',
   preview: 'Podgląd',
   share: 'Udostępnij',
-  favourite: 'Ulubione',
   toDo: 'Do zrobienia',
-  delete: 'Usuń',
-  edit: 'Edytuj'
 };

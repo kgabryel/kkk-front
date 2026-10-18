@@ -1,19 +1,19 @@
 .main-container {
+  align-content: center;
+  background-color: rgb(255 255 255 / 30%);
+  border-radius: 5px;
+  box-shadow: 0 0 1rem 0 rgb(0 0 0 / 20%);
   display: grid;
   justify-items: center;
-  align-content: center;
-  box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2);
-  border-radius: 5px;
-  background-color: rgba(255, 255, 255, .3);
   margin: 0 auto;
 }
 
 :host {
+  align-content: center;
   display: grid;
-  width: 100%;
   height: 100%;
   justify-items: center;
-  align-content: center;
+  width: 100%;
 }
 
 img {
@@ -21,46 +21,49 @@ img {
 }
 
 .vertical {
-  width: 250px;
-  height: auto;
-  border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
+  border-top-left-radius: 5px;
+  height: auto;
+  width: 250px;
 }
 
 .horizontal {
-  height: auto;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
+  height: auto;
 }
 
 .form-container {
   display: inline-block;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (width <= 600px) {
   .vertical {
     display: none;
-
   }
+
   .main-container {
     margin: 10px;
   }
+
   .form-container {
     display: block;
-    width: calc(100% - 20px);
     padding: 10px;
+    width: calc(100% - 20px);
   }
 }
 
-@media screen and (min-width: 601px) {
+@media screen and (width >= 601px) {
   .horizontal {
     display: none;
   }
+
   .form-container {
+    align-items: center;
     display: flex;
     min-width: 600px;
-    align-items: center;
   }
+
   :host ::ng-deep form {
     padding-left: 5px;
     padding-right: 5px;

@@ -1,4 +1,3 @@
-FROM node:16
+FROM node:26
 RUN npm install -g @angular/cli
 WORKDIR /src
-#CMD ng serve --host 0.0.0.0

@@ -4,17 +4,17 @@
 }
 
 .ingredient-input {
-  width: calc(100% - 370px);
+  width: calc(100% - 434px);
 }
 
 .month-input:nth-child(2) {
   margin-right: 5px;
 }
 
-@media screen and (max-width: 700px) {
+@media screen and (width <= 700px) {
   .ingredient-input {
-    width: 100%;
     margin-right: 0;
+    width: 100%;
   }
 
   .month-input {
@@ -26,14 +26,14 @@
   }
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (width <= 400px) {
   .ingredient-input {
-    width: 100%;
     margin-right: 0;
+    width: 100%;
   }
 
   .month-input {
-    width: 100%;
     margin-right: 0;
+    width: 100%;
   }
 }

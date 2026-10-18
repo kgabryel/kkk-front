@@ -1,36 +1,50 @@
-<div [formGroup]='formGroup'>
-  <div>
-    <mat-form-field class='name-input d-inline-block'>
-      <mat-label>
-        Nazwa
-      </mat-label>
-      <input [formControlName]='formNames.name' [maxlength]='maxNameLength' matInput />
-      <mat-hint align='end'>
-        {{nameLength$ | async}} / {{maxNameLength}}
+<div [formGroup]="formGroup">
+  <div class="d-flex align-baseline">
+    <mat-form-field class="name-input d-inline-block">
+      <mat-label>Nazwa</mat-label>
+      <input
+        [formControlName]="formNames.name"
+        [maxlength]="maxNameLength"
+        matInput
+      />
+      <mat-hint align="start">
+        @if (formGroup.get(formNames.name)?.invalid && formGroup.get(formNames.name)?.touched) {
+          <shared-errors-container
+            [errors]="errors.groupName"
+            [input]="formGroup.get(formNames.name)"
+          ></shared-errors-container>
+        }
       </mat-hint>
+      <mat-hint align="end">{{ nameLength() }} / {{ maxNameLength }}</mat-hint>
     </mat-form-field>
-    <button (click)='deleteGroup()' class='glassmorphism-red-button delete-button pa-0 ml-1' mat-button type='button'>
-      <mat-icon>
-        delete
-      </mat-icon>
+    <button
+      class="glassmorphism-red-button delete-button pa-0 ml-1"
+      (click)="deleteGroup()"
+      mat-button
+      type="button"
+    >
+      <mat-icon>delete</mat-icon>
     </button>
   </div>
-  <span *ngIf='formGroup.get(formNames.name)?.invalid && formGroup.get(formNames.name)?.touched'>
-    <shared-errors-container [errors]='errors.groupName' [input]='formGroup.get(formNames.name)'>
-    </shared-errors-container>
-  </span>
-  <div [formArrayName]='formNames.positions'>
-    <recipes-positions-part
-      (delete)='removePosition(i)'
-      *ngFor='let e of positions.controls; let i = index;'
-      [formPart]='e'
-      [usedIngredients]='usedIngredients'
-      [usedRecipes]='usedRecipes'>
-    </recipes-positions-part>
-    <button (click)='addPosition()' class='glassmorphism-button w-100' mat-button type='button'>
-      <mat-icon>
-        add_circle_outline
-      </mat-icon>
+  <div [formArrayName]="formNames.positions">
+    @for (e of positions.controls; track e; let i = $index; let last = $last) {
+      <recipes-positions-part
+        [formPart]="e"
+        [usedIngredients]="usedIngredients()"
+        [usedRecipes]="usedRecipes"
+        (delete)="removePosition(i)"
+      ></recipes-positions-part>
+      @if (!last) {
+        <hr />
+      }
+    }
+    <button
+      class="glassmorphism-button w-100 mt-1"
+      (click)="addPosition()"
+      mat-button
+      type="button"
+    >
+      <mat-icon>add_circle_outline</mat-icon>
       Dodaj kolejną pozycję
     </button>
   </div>

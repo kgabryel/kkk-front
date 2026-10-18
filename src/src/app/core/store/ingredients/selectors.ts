@@ -1,49 +1,75 @@
-import {createFeatureSelector, createSelector} from '@ngrx/store';
-import {adapter, INGREDIENTS_KEY, State} from './reducers';
-import {Search} from '../../services/ingredients-search/ingredients-search.service';
-import {StringUtils} from '../../utils/string.utils';
+import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
+
+import { Ingredient } from '../../models/ingredient';
+import { Season } from '../../models/season';
+import { Search } from '../../services/ingredients-search.service';
+import { StringUtils } from '../../utils/string.utils';
+import { selectSeasons } from '../seasons/selectors';
+import { adapter, INGREDIENTS_KEY, State } from './reducers';
 
 const selectState = createFeatureSelector<State>(INGREDIENTS_KEY);
 
-const ingredientsState = createSelector(selectState, (selectState: State) => selectState.ingredients);
+const ingredientsState = createSelector(
+  selectState,
+  (selectState: State) => selectState.ingredients,
+);
 
-const {selectAll} = adapter.getSelectors(ingredientsState);
+const { selectAll } = adapter.getSelectors(ingredientsState);
 
 export const selectIngredients = selectAll;
 
-export const selectIsLoaded = createSelector(selectState, selectState => selectState.loaded);
-
-export const selectByName = (name: string) => createSelector(
-  selectIngredients,
-  ingredients => ingredients.find(ingredient => ingredient.name.toLowerCase() === name.toLowerCase())
+export const selectIsLoaded = createSelector(
+  selectState,
+  (selectState: State) => selectState.loaded,
 );
 
-export const selectById = (id: number) => createSelector(
-  selectIngredients,
-  ingredients => ingredients.find(ingredient => ingredient.id === id)
-);
+export const selectByName = (name: string): MemoizedSelector<object, Ingredient | undefined> =>
+  createSelector(selectIngredients, (ingredients: Ingredient[]) =>
+    ingredients.find(
+      (ingredient: Ingredient) => ingredient.name.toLowerCase() === name.toLowerCase(),
+    ),
+  );
 
-export const searchIngredients = (search: Search) => createSelector(
-  selectIngredients,
-  ingredients => ingredients.filter(ingredient => {
-    if (!StringUtils.stringIncludes(ingredient.name, search.name)) {
-      return false;
-    }
-    if (search.available !== null) {
-      if (search.available) {
-        return ingredient.available;
+export const selectById = (id: number): MemoizedSelector<object, Ingredient | undefined> =>
+  createSelector(selectIngredients, (ingredients: Ingredient[]) =>
+    ingredients.find((ingredient: Ingredient) => ingredient.id === id),
+  );
+
+export const searchIngredients = (search: Search): MemoizedSelector<object, Ingredient[]> =>
+  createSelector(selectIngredients, (ingredients: Ingredient[]) =>
+    ingredients.filter((ingredient: Ingredient) => {
+      if (!StringUtils.stringIncludes(ingredient.name, search.name)) {
+        return false;
       }
-    }
-    return true;
-  })
+      if (search.available !== null) {
+        if (search.available) {
+          return ingredient.available;
+        }
+      }
+
+      return true;
+    }),
+  );
+
+export const selectIngredientsWithSeason = createSelector(
+  selectIngredients,
+  selectSeasons,
+  (ingredients: Ingredient[], seasons: Season[]) => {
+    const usedIds = seasons.map((s: Season) => s.ingredientId);
+
+    return ingredients.filter((i: Ingredient) => usedIds.includes(i.id));
+  },
 );
 
-export const selectIngredientsWithoutAssignedSeason = (usedIngredients: number[]) => createSelector(
+export const selectIngredientsWithoutSeason = createSelector(
   selectIngredients,
-  ingredients => ingredients.filter(ingredient => !usedIngredients.includes(ingredient.id))
-);
+  selectSeasons,
+  (ingredients: Ingredient[], seasons: Season[]) => {
+    const usedIds = seasons.map((s: Season) => s.ingredientId);
+    const filtered = ingredients.filter((i: Ingredient) => !usedIds.includes(i.id));
 
-export const selectIngredientsWithAssignedSeason = (usedIngredients: number[]) => createSelector(
-  selectIngredients,
-  ingredients => ingredients.filter(ingredient => usedIngredients.includes(ingredient.id))
+    return filtered.sort((a: Ingredient, b: Ingredient) =>
+      StringUtils.compareString(a.name, b.name),
+    );
+  },
 );

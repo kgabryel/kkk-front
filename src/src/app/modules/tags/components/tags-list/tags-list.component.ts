@@ -1,34 +1,39 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import {Observable} from 'rxjs';
-import {Tag} from '../../../../core/models/tag';
-import {Store} from '@ngrx/store';
-import {State} from '../../../../core/store/tags/reducers';
-import {searchTags} from '../../../../core/store/tags/selectors';
-import {TagsSearchService} from '../../../../core/services/tags-search/tags-search.service';
-import {map, switchMap} from 'rxjs/operators';
-import {StringUtils} from '../../../../core/utils/string.utils';
+import { ChangeDetectionStrategy, Component, OnInit, Signal } from '@angular/core';
+import { MatList } from '@angular/material/list';
+import { Store } from '@ngrx/store';
+
+import { Tag } from '../../../../core/models/tag';
+import { TagsSearchService } from '../../../../core/services/tags-search.service';
+import { State } from '../../../../core/store/tags/reducers';
+import { searchTags } from '../../../../core/store/tags/selectors';
+import { SearchUtils } from '../../../../core/utils/search.utils';
+import { StringUtils } from '../../../../core/utils/string.utils';
+import { TagContainerComponent } from '../tag-container/tag-container.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [TagContainerComponent, MatList],
   selector: 'tags-tags-list',
-  templateUrl: './tags-list.component.html',
+  standalone: true,
   styleUrls: ['./tags-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './tags-list.component.html',
 })
 export class TagsListComponent implements OnInit {
-
-  public tags$: Observable<Tag[]>;
-  private store: Store<State>;
-  private tagsSearchService: TagsSearchService;
-
+  public tags!: Signal<Tag[]>;
+  private readonly store: Store<State>;
+  private readonly tagsSearchService: TagsSearchService;
   public constructor(store: Store<State>, tagsSearchService: TagsSearchService) {
     this.store = store;
     this.tagsSearchService = tagsSearchService;
   }
 
   public ngOnInit(): void {
-    this.tags$ = this.tagsSearchService.getState().pipe(
-      switchMap(name => this.store.select(searchTags(name))),
-      map(tags => tags.sort((a, b) => StringUtils.compareString(a.name, b.name)))
+    this.tags = SearchUtils.search<string, Tag, State>(
+      this.tagsSearchService,
+      this.store,
+      (search: string) => searchTags(search),
+      (tags: Tag[]) =>
+        [...tags].sort((a: Tag, b: Tag) => StringUtils.compareString(a.name, b.name)),
     );
   }
 }

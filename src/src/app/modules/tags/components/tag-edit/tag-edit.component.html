@@ -1,37 +1,45 @@
-<form (ngSubmit)='submit()' [autocomplete]='null | autocomplete' [formGroup]='form'>
+<form
+  [autocomplete]="null | autocomplete"
+  [formGroup]="form"
+  (ngSubmit)="submit()"
+>
   <mat-list-item>
-    <button (click)='stopEdit()' mat-icon-button type='button'>
-      <mat-icon>
-        clear
-      </mat-icon>
+    <button
+      (click)="stopEdit()"
+      mat-icon-button
+      type="button"
+      class="mr-1"
+    >
+      <mat-icon>clear</mat-icon>
     </button>
-    <div class='w-100'>
-      <mat-form-field class='w-100'>
-        <mat-label>
-          Nazwa
-        </mat-label>
+    <div class="w-100">
+      <mat-form-field class="w-100">
+        <mat-label>Nazwa</mat-label>
         <input
-          (ngModelChange)='name = $event.toUpperCase()'
-          [(ngModel)]='name'
-          [formControlName]='formNames.name'
+          [formControlName]="formNames.name"
+          (input)="toUppercase($event)"
           matInput
-          maxlength='50'
-          type='text' />
-        <mat-hint align='start'>
-          <span *ngIf='form.get(formNames.name)?.invalid && form.get(formNames.name)?.touched'>
-            <shared-errors-container [errors]='errors.name' [input]='form.get(formNames.name)'>
-            </shared-errors-container>
-          </span>
+          maxlength="50"
+          type="text"
+        />
+        <mat-hint align="start">
+          @if (form.get(formNames.name)?.invalid && form.get(formNames.name)?.touched) {
+            <shared-errors-container
+              [errors]="errors.name"
+              [input]="form.get(formNames.name)"
+            ></shared-errors-container>
+          }
         </mat-hint>
-        <mat-hint align='end'>
-          {{nameLength$ | async}} / {{maxNameLength}}
-        </mat-hint>
+        <mat-hint align="end">{{ nameLength() }} / {{ maxNameLength }}</mat-hint>
       </mat-form-field>
     </div>
-    <button [disabled]='form.invalid' mat-icon-button type='submit'>
-      <mat-icon>
-        save
-      </mat-icon>
+    <button
+      [disabled]="form.invalid"
+      mat-icon-button
+      type="submit"
+      class="ml-1"
+    >
+      <mat-icon>save</mat-icon>
     </button>
   </mat-list-item>
 </form>

@@ -3,5 +3,5 @@ export interface OzaMessages {
 }
 
 export const messages: OzaMessages = {
-  downloadError: 'Nie udało się pobrać zapasów OZA.'
+  downloadError: 'Nie udało się pobrać zapasów OZA.',
 };

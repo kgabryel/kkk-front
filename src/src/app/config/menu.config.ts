@@ -1,5 +1,5 @@
-import {PathUtils} from '../core/utils/path.utils';
-import {RoutingConfig} from './routing.config';
+import { PathUtils } from '../core/utils/path.utils';
+import { RoutingConfig } from './routing.config';
 
 export interface MenuConfig {
   icon: string;
@@ -16,17 +16,32 @@ export interface Names {
 }
 
 export const ItemNames: Names = {
+  account: 'account',
+  ingredients: 'ingredients',
   recipes: 'recipes',
   seasons: 'seasons',
-  ingredients: 'ingredients',
   tags: 'tags',
-  account: 'account'
 };
 
-export const MenuItems: Map<string, MenuConfig> = new Map([
-  [ItemNames.recipes, {icon: 'menu_book', name: 'Przepisy', href: PathUtils.concatPath(RoutingConfig.recipes)}],
-  [ItemNames.seasons, {icon: 'calendar_today', name: 'Sezony', href: PathUtils.concatPath(RoutingConfig.seasons)}],
-  [ItemNames.ingredients, {icon: 'kitchen', name: 'Składniki', href: PathUtils.concatPath(RoutingConfig.ingredients)}],
-  [ItemNames.tags, {icon: 'local_offer', name: 'Tagi', href: PathUtils.concatPath(RoutingConfig.tags)}],
-  [ItemNames.account, {icon: 'account_circle', name: 'Konto', href: PathUtils.concatPath(RoutingConfig.account)}]
+export const MenuItems = new Map<string, MenuConfig>([
+  [
+    ItemNames.recipes,
+    { href: PathUtils.concatPath(RoutingConfig.recipes), icon: 'menu_book', name: 'Przepisy' },
+  ],
+  [
+    ItemNames.seasons,
+    { href: PathUtils.concatPath(RoutingConfig.seasons), icon: 'calendar_today', name: 'Sezony' },
+  ],
+  [
+    ItemNames.ingredients,
+    { href: PathUtils.concatPath(RoutingConfig.ingredients), icon: 'kitchen', name: 'Składniki' },
+  ],
+  [
+    ItemNames.tags,
+    { href: PathUtils.concatPath(RoutingConfig.tags), icon: 'local_offer', name: 'Tagi' },
+  ],
+  [
+    ItemNames.account,
+    { href: PathUtils.concatPath(RoutingConfig.account), icon: 'account_circle', name: 'Konto' },
+  ],
 ]);

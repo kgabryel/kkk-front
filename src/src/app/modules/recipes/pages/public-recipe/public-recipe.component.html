@@ -1,4 +1,6 @@
-<div *ngIf='(recipe$ | async) as recipe'>
-  <recipes-full-recipe [recipe]='recipe'></recipes-full-recipe>
-  <recipes-full-photo></recipes-full-photo>
-</div>
+@if (recipe(); as recipe) {
+  <div>
+    <recipes-full-recipe [recipe]="recipe"></recipes-full-recipe>
+    <recipes-full-photo></recipes-full-photo>
+  </div>
+}

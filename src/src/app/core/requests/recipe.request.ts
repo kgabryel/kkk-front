@@ -1,4 +1,4 @@
-import {TimerRequest} from './timer.request';
+import { TimerRequest } from './timer.request';
 
 export interface RecipeRequest {
   name: string;
@@ -9,8 +9,8 @@ export interface RecipeRequest {
   toDo: boolean;
   portions: number;
   tags: string[];
-  groups: PositionsGroup[],
-  timers: TimerRequest[]
+  groups: PositionsGroup[];
+  timers: TimerRequest[];
 }
 
 export interface PositionsGroup {

@@ -3,9 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false,
   baseUrl: 'https://localhost.kkk/api/',
-  frontUrl: 'https://localhost:4200/'
+  frontUrl: 'https://localhost:4200/',
+  production: false,
 };
 
 /*

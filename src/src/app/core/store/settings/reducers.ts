@@ -1,5 +1,15 @@
-import {createReducer, on} from '@ngrx/store';
-import * as actions from './actions';
+import { createReducer, on } from '@ngrx/store';
+
+import {
+  changeOzaKey,
+  settingsLoad,
+  settingsLoadError,
+  settingsLoadSuccess,
+  settingsReset,
+  switchAutocomplete,
+  updateError,
+  updateSuccess,
+} from './actions';
 
 export interface State {
   autocomplete: boolean;
@@ -14,31 +24,31 @@ const initialState: State = {
   autocomplete: false,
   loaded: false,
   ozaKey: null,
-  userType: ''
+  userType: '',
 };
 
 export const settingsReducer = createReducer(
   initialState,
-  on(actions.settingsLoad, state => state),
-  on(actions.settingsLoadError, state => state),
-  on(actions.settingsLoadSuccess, (state, action) => {
+  on(settingsLoad, (state: State) => state),
+  on(settingsLoadError, (state: State) => state),
+  on(settingsLoadSuccess, (state: State, action: ReturnType<typeof settingsLoadSuccess>) => {
     return {
-      loaded: true,
       autocomplete: action.settings.autocomplete,
+      loaded: true,
       ozaKey: action.settings.ozaKey,
-      userType: action.settings.userType
+      userType: action.settings.userType,
     };
   }),
-  on(actions.switchAutocomplete, state => state),
-  on(actions.changeOzaKey, state => state),
-  on(actions.updateError, state => state),
-  on(actions.updateSuccess, (state, action) => {
+  on(switchAutocomplete, (state: State) => state),
+  on(changeOzaKey, (state: State) => state),
+  on(updateError, (state: State) => state),
+  on(updateSuccess, (state: State, action: ReturnType<typeof updateSuccess>) => {
     return {
-      loaded: true,
       autocomplete: action.settings.autocomplete,
+      loaded: true,
       ozaKey: action.settings.ozaKey,
-      userType: action.settings.userType
+      userType: action.settings.userType,
     };
   }),
-  on(actions.settingsReset, () => initialState)
+  on(settingsReset, () => initialState),
 );

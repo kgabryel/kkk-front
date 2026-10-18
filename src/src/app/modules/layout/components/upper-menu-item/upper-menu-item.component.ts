@@ -1,13 +1,18 @@
-import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {MenuConfig} from '../../../../config/menu.config';
+import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { RouterLink } from '@angular/router';
+
+import { MenuConfig } from '../../../../config/menu.config';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RouterLink, MatIcon, MatButton],
   selector: 'layout-upper-menu-item',
-  templateUrl: './upper-menu-item.component.html',
+  standalone: true,
   styleUrls: ['./upper-menu-item.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './upper-menu-item.component.html',
 })
 export class UpperMenuItemComponent {
-
-  @Input() public menuItem: MenuConfig | undefined;
+  public menuItem: InputSignal<MenuConfig> = input.required<MenuConfig>();
 }

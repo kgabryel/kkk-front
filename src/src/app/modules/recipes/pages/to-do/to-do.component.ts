@@ -1,21 +1,22 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {Observable} from 'rxjs';
-import {Recipe} from '../../../../core/models/recipe';
-import {Store} from '@ngrx/store';
-import {State} from '../../../../core/store/recipes/reducers';
-import {selectToDoRecipes} from '../../../../core/store/recipes/selectors';
+import { ChangeDetectionStrategy, Component, Signal } from '@angular/core';
+import { Store } from '@ngrx/store';
+
+import { Recipe } from '../../../../core/models/recipe';
+import { State } from '../../../../core/store/recipes/reducers';
+import { selectToDoRecipes } from '../../../../core/store/recipes/selectors';
+import { RecipesListComponent } from '../../components/recipes-list/recipes-list.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RecipesListComponent],
   selector: 'recipes-pages-to-do',
-  templateUrl: './to-do.component.html',
+  standalone: true,
   styleUrls: [],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './to-do.component.html',
 })
 export class ToDoComponent {
-
-  public recipes$: Observable<Recipe[]>;
-
+  public recipes: Signal<Recipe[]>;
   public constructor(store: Store<State>) {
-    this.recipes$ = store.select(selectToDoRecipes);
+    this.recipes = store.selectSignal(selectToDoRecipes);
   }
 }

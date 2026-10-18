@@ -1,6 +1,11 @@
-<button [routerLink]='menuItem?.href' class='glassmorphism-button mt-0 ml-4 mr-4' mat-button type='button'>
+<button
+  class="glassmorphism-button mt-0 ml-4 mr-4"
+  [routerLink]="menuItem().href"
+  mat-button
+  type="button"
+>
   <mat-icon>
-    {{menuItem?.icon}}
+    {{ menuItem().icon }}
   </mat-icon>
-  {{menuItem?.name}}
+  {{ menuItem().name }}
 </button>

@@ -1,16 +1,16 @@
-import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {Observable} from 'rxjs';
-import {Recipe} from '../../../../core/models/recipe';
-import {masonryConfig} from '../../../../config/masonry.config';
+import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular/core';
+
+import { Recipe } from '../../../../core/models/recipe';
+import { RecipePreviewComponent } from '../recipe-preview/recipe-preview.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RecipePreviewComponent],
   selector: 'recipes-recipes-list',
-  templateUrl: './recipes-list.component.html',
+  standalone: true,
   styleUrls: ['./recipes-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './recipes-list.component.html',
 })
 export class RecipesListComponent {
-
-  @Input() public recipes: Observable<Recipe[]>;
-  public options = masonryConfig;
+  public recipes: InputSignal<Recipe[]> = input.required<Recipe[]>();
 }

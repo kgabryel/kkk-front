@@ -1,6 +1,6 @@
-import {PathUtils} from '../core/utils/path.utils';
-import {RoutingConfig} from './routing.config';
-import {MenuConfig} from './menu.config';
+import { PathUtils } from '../core/utils/path.utils';
+import { MenuConfig } from './menu.config';
+import { RoutingConfig } from './routing.config';
 
 export interface Names {
   all: string;
@@ -13,32 +13,40 @@ export const ItemNames: Names = {
   all: 'recipes',
   create: 'seasons',
   favourite: 'ingredients',
-  toDo: 'tags'
+  toDo: 'tags',
 };
 
-export const MenuItems: Map<string, MenuConfig> = new Map([
+export const MenuItems = new Map<string, MenuConfig>([
   [
-    ItemNames.all, {
-    icon: 'menu_book',
-    name: 'Wszystkie',
-    href: PathUtils.concatPath(RoutingConfig.recipes, RoutingConfig.home)
-  }],
+    ItemNames.all,
+    {
+      href: PathUtils.concatPath(RoutingConfig.recipes, RoutingConfig.home),
+      icon: 'menu_book',
+      name: 'Wszystkie',
+    },
+  ],
   [
-    ItemNames.create, {
-    icon: 'add_circle_outline',
-    name: 'Utwórz',
-    href: PathUtils.concatPath(RoutingConfig.recipes, RoutingConfig.create)
-  }],
+    ItemNames.create,
+    {
+      href: PathUtils.concatPath(RoutingConfig.recipes, RoutingConfig.create),
+      icon: 'add_circle_outline',
+      name: 'Utwórz',
+    },
+  ],
   [
-    ItemNames.favourite, {
-    icon: 'star',
-    name: 'Ulubione',
-    href: PathUtils.concatPath(RoutingConfig.recipes, RoutingConfig.favourite)
-  }],
+    ItemNames.favourite,
+    {
+      href: PathUtils.concatPath(RoutingConfig.recipes, RoutingConfig.favourite),
+      icon: 'star',
+      name: 'Ulubione',
+    },
+  ],
   [
-    ItemNames.toDo, {
-    icon: 'turned_in',
-    name: 'Do zrobienia',
-    href: PathUtils.concatPath(RoutingConfig.recipes, RoutingConfig.toDo)
-  }]
+    ItemNames.toDo,
+    {
+      href: PathUtils.concatPath(RoutingConfig.recipes, RoutingConfig.toDo),
+      icon: 'turned_in',
+      name: 'Do zrobienia',
+    },
+  ],
 ]);

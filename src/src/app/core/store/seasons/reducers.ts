@@ -1,6 +1,7 @@
-import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
-import {createReducer, on} from '@ngrx/store';
-import {Season} from '../../models/season';
+import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
+import { createReducer, on } from '@ngrx/store';
+
+import { Season } from '../../models/season';
 import {
   seasonAdd,
   seasonAddError,
@@ -14,7 +15,7 @@ import {
   seasonsReset,
   seasonUpdate,
   seasonUpdateError,
-  seasonUpdateSuccess
+  seasonUpdateSuccess,
 } from './actions';
 
 export interface State {
@@ -27,36 +28,36 @@ export const SEASONS_KEY = 'seasons';
 export const adapter: EntityAdapter<Season> = createEntityAdapter<Season>();
 
 const initialState: State = {
+  loaded: false,
   seasons: adapter.getInitialState(),
-  loaded: false
 };
 
 export const seasonsReducer = createReducer(
   initialState,
-  on(seasonsLoad, state => state),
-  on(seasonsLoadError, state => state),
-  on(seasonsLoadSuccess, (state, action) => ({
+  on(seasonsLoad, (state: State) => state),
+  on(seasonsLoadError, (state: State) => state),
+  on(seasonsLoadSuccess, (state: State, action: ReturnType<typeof seasonsLoadSuccess>) => ({
     ...state,
     loaded: true,
-    seasons: adapter.addMany(action.seasons, state.seasons)
+    seasons: adapter.addMany(action.seasons, state.seasons),
   })),
-  on(seasonAdd, state => state),
-  on(seasonAddError, state => state),
-  on(seasonAddSuccess, (state, action) => ({
+  on(seasonAdd, (state: State) => state),
+  on(seasonAddError, (state: State) => state),
+  on(seasonAddSuccess, (state: State, action: ReturnType<typeof seasonAddSuccess>) => ({
     ...state,
-    seasons: adapter.addOne(action.season, state.seasons)
+    seasons: adapter.addOne(action.season, state.seasons),
   })),
-  on(seasonDelete, state => state),
-  on(seasonDeleteError, state => state),
-  on(seasonDeleteSuccess, (state, action) => ({
+  on(seasonDelete, (state: State) => state),
+  on(seasonDeleteError, (state: State) => state),
+  on(seasonDeleteSuccess, (state: State, action: ReturnType<typeof seasonDeleteSuccess>) => ({
     ...state,
-    seasons: adapter.removeOne(action.id, state.seasons)
+    seasons: adapter.removeOne(action.id, state.seasons),
   })),
-  on(seasonUpdate, state => state),
-  on(seasonUpdateError, state => state),
-  on(seasonUpdateSuccess, (state, action) => ({
+  on(seasonUpdate, (state: State) => state),
+  on(seasonUpdateError, (state: State) => state),
+  on(seasonUpdateSuccess, (state: State, action: ReturnType<typeof seasonUpdateSuccess>) => ({
     ...state,
-    seasons: adapter.updateOne(action.season, state.seasons)
+    seasons: adapter.updateOne(action.season, state.seasons),
   })),
-  on(seasonsReset, () => initialState)
+  on(seasonsReset, () => initialState),
 );

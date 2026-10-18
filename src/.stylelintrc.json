@@ -1,0 +1,18 @@
+{
+  "extends": ["stylelint-config-standard-scss"],
+  "plugins": ["stylelint-order"],
+  "rules": {
+    "color-hex-length": "short",
+    "scss/load-no-partial-leading-underscore": true,
+    "scss/at-mixin-pattern": "^[a-z0-9\\-]+$",
+    "scss/dollar-variable-pattern": "^[a-z0-9\\-]+$",
+    "scss/percent-placeholder-pattern": "^[a-z0-9\\-]+$",
+    "max-nesting-depth": 3,
+    "order/properties-alphabetical-order": true,
+    "block-no-empty": true,
+    "declaration-block-no-duplicate-properties": true,
+    "selector-pseudo-class-no-unknown": [true, { "ignorePseudoClasses": ["ng-deep"] }],
+    "selector-pseudo-element-no-unknown": [true, { "ignorePseudoElements": ["ng-deep"] }],
+    "selector-class-pattern": null
+  }
+}

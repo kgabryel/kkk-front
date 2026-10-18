@@ -3,16 +3,17 @@ button {
 }
 
 button:hover {
-  background-color: rgba(42, 212, 248, .3);
+  background-color: rgb(42 212 248 / 30%);
 }
 
-@media screen and (max-width: 1247px) {
+@media screen and (width <= 1247px) {
   button mat-icon {
     display: none;
   }
+
   button {
-    width: 100px;
     margin-left: 10px;
     margin-right: 10px;
+    width: 100px;
   }
 }

@@ -1,17 +1,20 @@
-import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
-import {Season} from '../../../../core/models/season';
+import { ChangeDetectionStrategy, Component, input, InputSignal, OnInit } from '@angular/core';
+
+import { Season } from '../../../../core/models/season';
+import { SeasonEditComponent } from '../season-edit/season-edit.component';
+import { SeasonPreviewComponent } from '../season-preview/season-preview.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [SeasonEditComponent, SeasonPreviewComponent],
   selector: 'seasons-season-container',
-  templateUrl: './season-container.component.html',
+  standalone: true,
   styleUrls: [],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './season-container.component.html',
 })
 export class SeasonContainerComponent implements OnInit {
-
-  @Input() public season: Season;
-  public edit: boolean;
-
+  public season: InputSignal<Season> = input.required<Season>();
+  public edit!: boolean;
   public ngOnInit(): void {
     this.edit = false;
   }

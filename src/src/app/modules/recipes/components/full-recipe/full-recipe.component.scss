@@ -1,7 +1,7 @@
 .preview {
-  box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2);
+  background-color: rgb(255 255 255 / 30%);
   border-radius: 5px;
-  background-color: rgba(255, 255, 255, .3);
+  box-shadow: 0 0 1rem 0 rgb(0 0 0 / 20%);
 }
 
 .container {
@@ -9,22 +9,22 @@
 }
 
 mat-expansion-panel {
+  background-color: rgb(255 255 255 / 30%);
+  box-shadow: 0 0 1rem 0 rgb(0 0 0 / 20%);
   margin: 0;
-  box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2);
-  background-color: rgba(255, 255, 255, .3);
-}
-
-mat-expansion-panel + .mat-expanded {
-  margin-top: 2px;
-  border-top-right-radius: 0;
-  border-top-left-radius: 0;
 }
 
 .mat-expanded {
-  margin-top: 0;
-  margin-bottom: 0;
-  border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+mat-expansion-panel + .mat-expanded {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  margin-top: 2px;
 }
 
 .additional {
@@ -32,17 +32,17 @@ mat-expansion-panel + .mat-expanded {
 }
 
 .available-icon {
-  color: rgba(76, 175, 80, .8);
+  color: rgb(76 175 80 / 80%);
 }
 
 .unavailable-icon {
-  color: rgba(255, 82, 82, .8);
+  color: rgb(255 82 82 / 80%);
 }
 
 .preview.in-masonry:hover {
-  background-color: rgba(0, 208, 255, .2);
+  background-color: rgb(0 208 255 / 20%);
 }
 
 .mat-icon-button:not([disabled]):hover {
-  background-color: rgba(255, 255, 255, .3);
+  background-color: rgb(255 255 255 / 30%);
 }

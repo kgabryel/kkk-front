@@ -1,11 +1,10 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'shared-loader',
-  templateUrl: './loader.component.html',
+  standalone: true,
   styleUrls: ['./loader.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './loader.component.html',
 })
-export class LoaderComponent {
-
-}
+export class LoaderComponent {}

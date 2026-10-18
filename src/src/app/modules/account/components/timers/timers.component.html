@@ -1,12 +1,12 @@
-<div class='glassmorphism-form'>
-  <h2 class='text-center'>
-    MINUTNIKI
-  </h2>
-  <div *ngIf='(timers$ | async) as timers'>
-    <ng-container *ngFor='let timer of timers'>
-      <account-timer-edit [timer]='timer'></account-timer-edit>
-      <hr />
-    </ng-container>
-  </div>
+<div class="glassmorphism-form">
+  <h2 class="text-center">MINUTNIKI</h2>
+  @if (timers(); as timers) {
+    <div>
+      @for (timer of timers; track timer) {
+        <account-timer-edit [timer]="timer"></account-timer-edit>
+        <hr />
+      }
+    </div>
+  }
   <account-timer-add></account-timer-add>
 </div>

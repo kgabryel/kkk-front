@@ -1,6 +1,7 @@
-import {createAction, props} from '@ngrx/store';
-import {Actions, Prefixes} from '../actions.config';
-import {Settings} from '../../models/settings';
+import { createAction, props } from '@ngrx/store';
+
+import { Settings } from '../../models/settings';
+import { Actions, Prefixes } from '../actions.config';
 
 export const settingsLoad = createAction(`${Prefixes.settings} ${Actions.load}`);
 
@@ -8,19 +9,21 @@ export const settingsLoadError = createAction(`${Prefixes.settings} ${Actions.lo
 
 export const settingsLoadSuccess = createAction(
   `${Prefixes.settings} ${Actions.loadSuccess}`,
-  props<{ settings: Settings }>()
+  props<{ settings: Settings }>(),
 );
 
-export const switchAutocomplete = createAction(`${Prefixes.settings} ${Actions.switchAutocomplete}`);
+export const switchAutocomplete = createAction(
+  `${Prefixes.settings} ${Actions.switchAutocomplete}`,
+);
 
 export const changeOzaKey = createAction(
   `${Prefixes.settings} ${Actions.changeOzaKey}`,
-  props<{ key: string | null }>()
+  props<{ key: string | null }>(),
 );
 
 export const updateSuccess = createAction(
   `${Prefixes.settings} ${Actions.updateSuccess}`,
-  props<{ settings: Settings }>()
+  props<{ settings: Settings }>(),
 );
 
 export const updateError = createAction(`${Prefixes.settings} ${Actions.updateError}`);

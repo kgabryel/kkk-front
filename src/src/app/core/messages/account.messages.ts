@@ -6,8 +6,8 @@ export interface AccountMessages {
 }
 
 export const messages: AccountMessages = {
+  invalidData: 'Przesłano błędne dane.',
   keyCopied: 'Skopiowano klucz',
   passwordChanged: 'Hasło zostało zmienione.',
   settingsUpdated: 'Ustawienia zostały zaktualizowane.',
-  invalidData: 'Przesłano błędne dane.'
 };

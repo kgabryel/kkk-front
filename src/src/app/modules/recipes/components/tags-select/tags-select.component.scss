@@ -1,0 +1,16 @@
+:host ::ng-deep .mat-mdc-standard-chip {
+  cursor: pointer !important;
+}
+
+:host ::ng-deep .mdc-evolution-chip__action--presentational {
+  cursor: unset;
+}
+
+:host ::ng-deep .mat-mdc-chip-action-label {
+  align-items: center;
+  display: flex;
+}
+
+:host ::ng-deep .mat-mdc-chip-action-label > mat-icon {
+  margin-left: 5px;
+}

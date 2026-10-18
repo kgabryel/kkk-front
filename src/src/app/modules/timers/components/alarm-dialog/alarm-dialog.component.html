@@ -1,24 +1,36 @@
-<h2 class='d-flex justify-content-between header' mat-dialog-title>
-  <button (click)='switchAudio()' class='glassmorphism-button close-btn' mat-button type='button'>
-    <mat-icon *ngIf='paused'>
-      volume_off
-    </mat-icon>
-    <mat-icon *ngIf='!paused'>
-      volume_up
-    </mat-icon>
+<h2
+  class="d-flex justify-content-between header"
+  mat-dialog-title
+>
+  <button
+    class="glassmorphism-button close-btn"
+    (click)="switchAudio()"
+    mat-button
+    type="button"
+  >
+    @if (paused) {
+      <mat-icon>volume_off</mat-icon>
+    }
+    @if (!paused) {
+      <mat-icon>volume_up</mat-icon>
+    }
   </button>
-  <p class='mb-0 ml-2 mr-2'>
-    {{timer.name}} [{{timer.time | timerTime}}]
-  </p>
-  <button [mat-dialog-close]='true' class='glassmorphism-button close-btn' mat-button type='button'>
-    <mat-icon>
-      close
-    </mat-icon>
+  <p class="mb-0 ml-2 mr-2">{{ timer.name }} [{{ timer.time | timerTime }}]</p>
+  <button
+    class="glassmorphism-button close-btn"
+    [mat-dialog-close]="true"
+    mat-button
+    type="button"
+  >
+    <mat-icon>close</mat-icon>
   </button>
 </h2>
-<div class='d-flex justify-center'>
-  <img [src]='alarm' alt='alarm' />
+<div class="d-flex justify-center">
+  <img
+    [src]="alarm"
+    alt="alarm"
+  />
 </div>
-<p *ngIf='time > 0' class='mb-0 text-center mt-1'>
-  - {{time | timerTime}}
-</p>
+@if (time > 0) {
+  <p class="mb-0 text-center mt-1">- {{ time | timerTime }}</p>
+}

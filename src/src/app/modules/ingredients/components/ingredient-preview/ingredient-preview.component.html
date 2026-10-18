@@ -1,62 +1,74 @@
 <mat-list-item>
-  <mat-checkbox
-    (change)='updateAvailable()'
-    *ngIf='ingredient.ozaId === null || (null | ozaSuccess | async) === false'
-    [checked]='ingredient.available'
-    color='primary'>
-  </mat-checkbox>
-  <mat-checkbox
-    (change)='updateAvailable()'
-    *ngIf='ingredient.ozaId !== null && (null | ozaSuccess | async)'
-    [checked]='ingredient.available'
-    color='primary'
-    onclick='return false;'>
-  </mat-checkbox>
-  <div class='w-100 mb-0 ml-2'>
-    <p class='mb-0'>
-      {{ingredient.name}}
+  @if (ingredient().ozaId === null || !(null | ozaSuccess)()) {
+    <mat-checkbox
+      [checked]="ingredient().available"
+      (change)="updateAvailable()"
+      color="primary"
+    ></mat-checkbox>
+  }
+  @if (ingredient().ozaId !== null && (null | ozaSuccess)()) {
+    <mat-checkbox
+      [checked]="ingredient().available"
+      color="primary"
+      onclick="return false;"
+    ></mat-checkbox>
+  }
+  <div class="w-100 mb-0 ml-2 overflow-hidden">
+    <p class="mb-0">
+      {{ ingredient().name }}
     </p>
-    <small *ngIf='ingredient.ozaId !== null && (null | ozaSuccess | async)'>Dostępność zarządzana przez OZA
-      <ng-container *ngIf='ingredient.available'>({{(ingredient.ozaId | ozaSupply | async)?.amount}})</ng-container>
-    </small>
+    @if (ingredient().ozaId !== null && (null | ozaSuccess)()) {
+      <small>
+        Dostępność zarządzana przez OZA
+        @if (ingredient().available) {
+          ({{ (ingredient().ozaId ?? 0 | ozaSupply)()?.amount }})
+        }
+      </small>
+    }
   </div>
-  <button [matMenuTriggerFor]='menu' mat-icon-button type='button'>
-    <mat-icon>
-      menu
-    </mat-icon>
+  <button
+    [matMenuTriggerFor]="menu"
+    mat-icon-button
+    type="button"
+  >
+    <mat-icon>menu</mat-icon>
   </button>
-  <mat-menu #menu='matMenu'>
-    <button *ngIf='recipesCount > 0' [routerLink]='ingredient | ingredientRecipesHref' mat-menu-item type='button'>
-      <mat-icon>
-        menu_book
-      </mat-icon>
-      <span>
-        Przepisy ({{recipesCount}})
-      </span>
+  <mat-menu #menu="matMenu">
+    @if (recipesCount() > 0) {
+      <button
+        [routerLink]="ingredient() | ingredientRecipesHref"
+        mat-menu-item
+        type="button"
+      >
+        <mat-icon>menu_book</mat-icon>
+        <span>Przepisy ({{ recipesCount() }})</span>
+      </button>
+    }
+    <button
+      (click)="startEdit()"
+      mat-menu-item
+      type="button"
+    >
+      <mat-icon>edit</mat-icon>
+      <span>Edytuj</span>
     </button>
-    <button (click)='startEdit()' mat-menu-item type='button'>
-      <mat-icon>
-        edit
-      </mat-icon>
-      <span>
-        Edytuj
-      </span>
-    </button>
-    <button (click)='startOzaEdit()' *ngIf='ozaKey !== null' mat-menu-item type='button'>
-      <mat-icon>
-        edit
-      </mat-icon>
-      <span>
-        Zapas OZA
-      </span>
-    </button>
-    <button (click)='delete()' mat-menu-item type='button'>
-      <mat-icon>
-        delete
-      </mat-icon>
-      <span>
-        Usuń
-      </span>
+    @if (ozaKey() !== null) {
+      <button
+        (click)="startOzaEdit()"
+        mat-menu-item
+        type="button"
+      >
+        <mat-icon>edit</mat-icon>
+        <span>Zapas OZA</span>
+      </button>
+    }
+    <button
+      (click)="delete()"
+      mat-menu-item
+      type="button"
+    >
+      <mat-icon>delete</mat-icon>
+      <span>Usuń</span>
     </button>
   </mat-menu>
 </mat-list-item>

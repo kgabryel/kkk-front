@@ -1,30 +1,21 @@
-import {Injectable} from '@angular/core';
-import {Resolve} from '@angular/router';
-import {Store} from '@ngrx/store';
-import {Observable} from 'rxjs';
-import {filter, take, tap} from 'rxjs/operators';
-import {State} from '../store/seasons/reducers';
-import {seasonsLoad} from '../store/seasons/actions';
-import {selectIsLoaded} from '../store/seasons/selectors';
+import { inject } from '@angular/core';
+import { ResolveFn } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { filter, take, tap } from 'rxjs/operators';
 
-@Injectable()
-export class SeasonsResolver implements Resolve<boolean> {
+import { seasonsLoad } from '../store/seasons/actions';
+import { selectIsLoaded } from '../store/seasons/selectors';
 
-  private readonly store: Store<State>;
+export const seasonsResolver: ResolveFn<boolean> = () => {
+  const store = inject(Store);
 
-  constructor(store: Store<State>) {
-    this.store = store;
-  }
-
-  resolve(): Observable<boolean> {
-    return this.store.select(selectIsLoaded).pipe(
-      tap(loaded => {
-        if (!loaded) {
-          this.store.dispatch(seasonsLoad());
-        }
-      }),
-      filter(loaded => loaded),
-      take(1)
-    );
-  }
-}
+  return store.select(selectIsLoaded).pipe(
+    tap((loaded: boolean) => {
+      if (!loaded) {
+        store.dispatch(seasonsLoad());
+      }
+    }),
+    filter(Boolean),
+    take(1),
+  );
+};

@@ -1,40 +1,57 @@
-<button (click)='openDialog()' class='glassmorphism-button mt-1 mr-1 ml-1' mat-button type='button'>
-  <mat-icon>
-    upload
-  </mat-icon>
+<button
+  class="glassmorphism-button mt-1 mr-1 ml-1"
+  (click)="openDialog()"
+  mat-button
+  type="button"
+>
+  <mat-icon>upload</mat-icon>
   Dodaj zdjęcie
 </button>
-<div class='mt-1'>
-  <div (cdkDropListDropped)='drop($event)' cdkDropList>
-    <div *ngFor='let photo of photos' cdkDrag class='d-flex align-center justify-content-between'>
-      <div cdkDragHandle class='c-move'>
-        <img *ngIf='(getPhoto(photo.value)) | async as image; else unloaded' [src]='image' />
-        <ng-template #unloaded>
-          <img [src]='loadingGif' height='150' width='200' />
-        </ng-template>
+<div class="mt-1">
+  <div
+    (cdkDropListDropped)="drop($event)"
+    cdkDropList
+  >
+    @for (photo of photos; track photo) {
+      <div
+        class="d-flex align-center justify-content-between photos"
+        cdkDrag
+      >
+        <div cdkDragHandle>
+          @if (getPhoto(photo.value)(); as image) {
+            <img
+              [src]="image"
+              alt="photo"
+            />
+          } @else {
+            <img
+              class="photo-loading"
+              [src]="loadingGif"
+              alt="loading"
+            />
+          }
+        </div>
+        <div class="d-flex flex-column justify-center">
+          <button
+            class="list-button"
+            [matTooltip]="tooltips.preview"
+            (click)="show(photo.value)"
+            mat-icon-button
+            type="button"
+          >
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button
+            class="list-button"
+            [matTooltip]="tooltips.delete"
+            (click)="deletePhoto(photo.value.id)"
+            mat-icon-button
+            type="button"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
       </div>
-      <div class='d-flex flex-column justify-center'>
-        <button
-          (click)='show(photo.value)'
-          [matTooltip]='tooltips.preview'
-          class='list-button'
-          mat-icon-button
-          type='button'>
-          <mat-icon>
-            visibility
-          </mat-icon>
-        </button>
-        <button
-          (click)='deletePhoto(photo.value.id)'
-          [matTooltip]='tooltips.delete'
-          class='list-button'
-          mat-icon-button
-          type='button'>
-          <mat-icon>
-            delete
-          </mat-icon>
-        </button>
-      </div>
-    </div>
+    }
   </div>
 </div>

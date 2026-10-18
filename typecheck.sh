@@ -1,0 +1,1 @@
+docker exec -it kkk_angular sh -c 'npx tsc --noEmit'

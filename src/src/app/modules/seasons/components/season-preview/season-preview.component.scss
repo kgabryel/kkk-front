@@ -1,10 +1,13 @@
-p > span {
-  font-weight: 500;
+p {
+  flex-direction: column;
+}
+
+p > span:first-child {
   color: #303f9f;
+  font-weight: 500;
 }
 
 .season-btn {
-  box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2);
   border-radius: 5px;
   color: black;
   min-width: 36px;
@@ -13,4 +16,12 @@ p > span {
 
 .alert-container {
   min-width: 36px;
+}
+
+:host ::ng-deep .mat-mdc-list-item-unscoped-content {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 5px;
+  margin-top: 5px;
 }

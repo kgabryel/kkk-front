@@ -1,0 +1,99 @@
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: url("/assets/background.jpg") no-repeat fixed center;
+  background-size: cover;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  margin: 0;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  transition: background-color 5000s;
+}
+
+.mat-mdc-text-field-wrapper {
+  --mdc-filled-text-field-container-color: transparent;
+  --mdc-filled-text-field-hover-state-layer-color: transparent;
+  --mdc-filled-text-field-focus-active-indicator-color: transparent;
+
+  background: transparent !important;
+  transition: none !important;
+}
+
+.mat-mdc-select-panel {
+  backdrop-filter: blur(5px) !important;
+  background: rgb(255 255 255 / 60%) !important;
+  padding: 0 !important;
+}
+
+.mat-mdc-toolbar.mat-primary {
+  background: rgb(42 212 248 / 80%);
+  color: black;
+}
+
+.mat-mdc-toolbar.mat-primary .mat-mdc-button-base,
+.mat-mdc-toolbar.mat-warn .mat-mdc-button-base {
+  color: black;
+}
+
+.mat-mdc-toolbar.mat-warn {
+  background: rgb(255 82 82 / 60%);
+  color: black;
+}
+
+.mat-select-search-inner,
+.mat-select-search-inner-row,
+.mat-select-search-input {
+  backdrop-filter: none !important;
+  background: transparent !important;
+}
+
+.mat-mdc-menu-panel {
+  background: rgb(255 255 255 / 60%);
+  border-radius: 5px;
+  box-shadow: 0 0 1rem 0 rgb(0 0 0 / 20%);
+  padding: 5px;
+}
+
+.mat-mdc-option[aria-disabled="true"].contains-mat-select-search {
+  height: 45px;
+  margin-top: 0 !important;
+}
+
+.mat-mdc-button .mat-icon {
+  margin: 0 !important;
+}
+
+.mat-mdc-dialog-container {
+  backdrop-filter: none !important;
+  background: unset !important;
+  box-shadow: unset !important;
+  overflow: unset !important;
+  padding: 0 !important;
+}
+
+.mdc-dialog__surface {
+  backdrop-filter: blur(6px);
+  background: rgb(255 255 255 / 30%) !important;
+  border-radius: 5px;
+  box-shadow: 0 0 1rem 0 rgb(0 0 0 / 20%);
+  padding: 24px;
+}
+
+.mat-mdc-select-panel input[matInput] {
+  background: rgb(255 255 255 / 80%);
+  border: 1px solid rgb(0 0 0 / 20%);
+  border-radius: 4px;
+  box-sizing: border-box;
+  color: black;
+  display: block;
+  margin: 8px;
+  padding: 4px 8px;
+  width: calc(100% - 16px);
+}

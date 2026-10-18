@@ -1,5 +1,9 @@
-<span *ngFor='let error of errors | keyvalue'>
-  <mat-hint *ngIf='input?.hasError(error.key)' class='d-block pb-1'>
-    {{error.value}}
-  </mat-hint>
-</span>
+@for (error of errors() | keyvalue; track error) {
+  <span>
+    @if (input()?.hasError(error.key)) {
+      <mat-hint class="pb-1">
+        {{ error.value }}
+      </mat-hint>
+    }
+  </span>
+}

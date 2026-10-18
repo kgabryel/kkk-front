@@ -1,19 +1,22 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {ModalService} from '../../../../core/services/modal/modal.service';
-import {Observable} from 'rxjs';
-import {SearchService} from '../../../../core/services/search/search.service';
+import { NgClass } from '@angular/common';
+import { ChangeDetectionStrategy, Component, Signal } from '@angular/core';
+import { MatFabButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+
+import { ModalService } from '../../../../core/services/modal.service';
+import { SearchService } from '../../../../core/services/search.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatIcon, NgClass, MatFabButton],
   selector: 'layout-search-button',
-  templateUrl: './search-button.component.html',
+  standalone: true,
   styleUrls: ['./search-button.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './search-button.component.html',
 })
 export class SearchButtonComponent {
-
-  public filtered: Observable<boolean>;
+  public filtered: Signal<boolean>;
   private modalService: ModalService;
-
   public constructor(modalService: ModalService, searchService: SearchService) {
     this.modalService = modalService;
     this.filtered = searchService.getState();
