@@ -1,1 +1,0 @@
-docker exec -it kkk_angular sh -c 'npx stylelint "src/**/*.scss"'

@@ -1,1 +1,0 @@
-docker exec -it kkk_angular sh -c 'npx eslint src --ext .ts,.html --fix'

@@ -6,7 +6,7 @@
 - `src/` – kod źródłowy aplikacji
 - `docker/` – środowisko dockerowe
 - `Jenkinsfile` – CI/CD pipeline
-- `*.sh` – skrypty pomocnicze (lint, prettier, stylelint, typecheck, uruchamianie)
+- `helpers/` – skrypty pomocnicze
 
 ## Uruchamianie (Docker)
 ```
@@ -16,12 +16,12 @@ docker-compose up -d
 
 ## Wejście do kontenera Angulara:
 ```
-docker exec -it angular bash
+docker exec -it kkk_angular bash
 ```
 
 ## Instalacja
 ```
-docker exec -it angular bash
+docker exec -it kkk_angular bash
 npm ci
 ```
 

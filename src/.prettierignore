@@ -1,5 +1,4 @@
 node_modules
-.angular
 dist
 package-lock.json
-.prettierrc
+.angular
