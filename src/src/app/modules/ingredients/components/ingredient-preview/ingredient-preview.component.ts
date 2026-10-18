@@ -8,11 +8,11 @@ import {
   Signal,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
-import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatListItem } from '@angular/material/list';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 
@@ -35,7 +35,6 @@ import { OzaSupplyPipe } from '../../../shared/pipes/oza-supply.pipe';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatListItem,
-    MatCheckbox,
     OzaSuccessPipe,
     MatMenuTrigger,
     OzaSupplyPipe,
@@ -45,6 +44,7 @@ import { OzaSupplyPipe } from '../../../shared/pipes/oza-supply.pipe';
     RouterLink,
     IngredientRecipesHrefPipe,
     MatMenuItem,
+    MatSlideToggle,
   ],
   selector: 'ingredients-ingredient-preview',
   standalone: true,

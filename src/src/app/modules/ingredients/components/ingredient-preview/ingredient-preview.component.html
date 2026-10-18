@@ -1,17 +1,19 @@
 <mat-list-item>
   @if (ingredient().ozaId === null || !(null | ozaSuccess)()) {
-    <mat-checkbox
+    <mat-slide-toggle
       [checked]="ingredient().available"
       (change)="updateAvailable()"
       color="primary"
-    ></mat-checkbox>
+      class="mr-1 ml-2"
+    ></mat-slide-toggle>
   }
   @if (ingredient().ozaId !== null && (null | ozaSuccess)()) {
-    <mat-checkbox
+    <mat-slide-toggle
       [checked]="ingredient().available"
       color="primary"
       onclick="return false;"
-    ></mat-checkbox>
+      class="mr-1 ml-2"
+    ></mat-slide-toggle>
   }
   <div class="w-100 mb-0 ml-2 overflow-hidden">
     <p class="mb-0">
