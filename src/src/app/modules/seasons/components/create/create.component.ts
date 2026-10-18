@@ -131,13 +131,11 @@ export class CreateComponent extends BaseComponent implements OnInit {
   }
 
   public clearForm(): void {
-    FormUtils.clearInputs(
-      this.form,
-      '',
-      this.formNames.ingredient,
-      this.formNames.startMonth,
-      this.formNames.endMonth,
-    );
+    FormUtils.clearInputs(this.form, '', this.formNames.ingredient);
+
+    FormUtils.clearInputs(this.form, 0, this.formNames.startMonth);
+
+    FormUtils.clearInputs(this.form, 13, this.formNames.endMonth);
 
     this.startMonths.forEach((month: Month) => (month.disabled = false));
     this.endMonths.forEach((month: Month) => (month.disabled = false));
