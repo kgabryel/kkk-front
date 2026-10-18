@@ -1,5 +1,6 @@
-import { environment } from '../../environments/environment';
-import { PhotosConfig } from './photos.config';
+import type { PhotosConfig } from '@/app/config/photos.config';
+
+import { environment } from '@/environments/environment';
 
 export const authRoutes = {
   changePassword: (token: string): string => environment.baseUrl + `change-password/${token}`,

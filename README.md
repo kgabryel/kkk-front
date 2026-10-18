@@ -1,7 +1,3 @@
-## Wymagania
-- Docker
-- Docker Compose (v1.27+ lub v2)
-
 ## Struktura repo
 - `src/` – kod źródłowy aplikacji
 - `docker/` – środowisko dockerowe

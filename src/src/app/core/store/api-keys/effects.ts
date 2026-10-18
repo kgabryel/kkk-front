@@ -1,17 +1,18 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { Update } from '@ngrx/entity';
-import { Action } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import type { HttpErrorResponse } from '@angular/common/http';
+import type { Update } from '@ngrx/entity';
+import type { Action } from '@ngrx/store';
+import type { Observable } from 'rxjs';
+
+import { Injectable, inject } from '@angular/core';
+import { createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
-import { messages } from '../../messages/api-keys.messages';
-import { ApiKey } from '../../models/api-key';
-import { NotificationService } from '../../services/notification.service';
-import { UserService } from '../../services/user.service';
-import { BaseEffect } from '../BaseEffect';
+import type { ApiKey } from '@/app/core/models/api-key';
+
+import { messages } from '@/app/core/messages/api-keys.messages';
+import { UserService } from '@/app/core/services/user.service';
+import { BaseEffect } from '@/app/core/store/BaseEffect';
+
 import {
   keyAdd,
   keyAddError,
@@ -33,14 +34,7 @@ export class ApiKeysEffects extends BaseEffect<UserService> {
   public deleteKey!: Observable<Action>;
   public loadKeys!: Observable<Action>;
   public updateKey!: Observable<Action>;
-  public constructor(
-    actions: Actions,
-    notificationService: NotificationService,
-    router: Router,
-    service: UserService,
-  ) {
-    super(actions, notificationService, router, service);
-  }
+  protected readonly service: UserService = inject(UserService);
 
   private static keyUpdateSuccess(key: ApiKey, id: number): ReturnType<typeof keyUpdateSuccess> {
     const update: Update<ApiKey> = { changes: key, id };

@@ -1,4 +1,4 @@
-export enum ActionConfig {
-  clear = 'Wyczyść',
-  create = 'Utwórz',
-}
+export const ActionConfig = {
+  clear: 'Wyczyść',
+  create: 'Utwórz',
+} as const;

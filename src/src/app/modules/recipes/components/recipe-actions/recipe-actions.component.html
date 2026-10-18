@@ -1,0 +1,53 @@
+<div class="w-100 text-right">
+  <button
+    [disabled]="!recipe().public"
+    [matTooltip]="tooltips.share"
+    (click)="share()"
+    mat-icon-button
+    type="button"
+  >
+    <mat-icon>share</mat-icon>
+  </button>
+  <button
+    [matTooltip]="tooltips.favourite"
+    (click)="updateFavourite()"
+    mat-icon-button
+    type="button"
+  >
+    <mat-icon>{{ recipe().favourite ? 'star' : 'star_outline' }}</mat-icon>
+  </button>
+  <button
+    [matTooltip]="tooltips.toDo"
+    (click)="updateToDo()"
+    mat-icon-button
+    type="button"
+  >
+    <mat-icon>{{ recipe().toDo ? 'turned_in' : 'turned_in_not' }}</mat-icon>
+  </button>
+  @if (previewAvailable()) {
+    <button
+      [matTooltip]="tooltips.preview"
+      [routerLink]="recipe() | recipePreviewHref"
+      mat-icon-button
+      type="button"
+    >
+      <mat-icon>visibility</mat-icon>
+    </button>
+  }
+  <button
+    [matTooltip]="tooltips.delete"
+    (click)="delete()"
+    mat-icon-button
+    type="button"
+  >
+    <mat-icon>delete</mat-icon>
+  </button>
+  <button
+    [matTooltip]="tooltips.edit"
+    [routerLink]="recipe() | recipeEditHref"
+    mat-icon-button
+    type="button"
+  >
+    <mat-icon>edit</mat-icon>
+  </button>
+</div>

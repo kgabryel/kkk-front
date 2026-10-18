@@ -1,16 +1,17 @@
-import { ChangeDetectionStrategy, Component, input, InputSignal, OnInit } from '@angular/core';
+import type { InputSignal, OnInit } from '@angular/core';
 
-import { Ingredient } from '../../../../core/models/ingredient';
-import { IngredientEditComponent } from '../ingredient-edit/ingredient-edit.component';
-import { IngredientPreviewComponent } from '../ingredient-preview/ingredient-preview.component';
-import { OzaEditComponent } from '../oza-edit/oza-edit.component';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+
+import type { Ingredient } from '@/app/core/models/ingredient';
+
+import { IngredientEditComponent } from '@/app/modules/ingredients/components/ingredient-edit/ingredient-edit.component';
+import { IngredientPreviewComponent } from '@/app/modules/ingredients/components/ingredient-preview/ingredient-preview.component';
+import { OzaEditComponent } from '@/app/modules/ingredients/components/oza-edit/oza-edit.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [IngredientEditComponent, IngredientPreviewComponent, OzaEditComponent],
   selector: 'ingredients-ingredient-container',
-  standalone: true,
-  styleUrls: [],
   templateUrl: './ingredient-container.component.html',
 })
 export class IngredientContainerComponent implements OnInit {
@@ -24,7 +25,8 @@ export class IngredientContainerComponent implements OnInit {
   }
 
   public changeEdit(value: boolean[]): void {
-    this.edit = value[0]!;
-    this.oza = value[1]!;
+    const [edit = this.edit, oza = this.oza] = value;
+    this.edit = edit;
+    this.oza = oza;
   }
 }

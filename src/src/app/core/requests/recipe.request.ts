@@ -1,4 +1,4 @@
-import { TimerRequest } from './timer.request';
+import type { TimerRequest } from './timer.request';
 
 export interface RecipeRequest {
   name: string;

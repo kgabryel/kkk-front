@@ -1,6 +1,6 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
-import { PasswordValidator } from '../validators/password.validator';
+import { PasswordValidator } from '@/app/core/validators/password.validator';
 
 export interface ChangePasswordFormNames {
   oldPassword: string;

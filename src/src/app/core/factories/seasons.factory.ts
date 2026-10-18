@@ -1,10 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 
-import { State as IngredientsState } from '../store/ingredients/reducers';
-import { selectIngredientsWithoutSeason } from '../store/ingredients/selectors';
-import { SeasonsValidator } from '../validators/seasons.validator';
+import type { State as IngredientsState } from '@/app/core/store/ingredients/reducers';
+
+import { selectIngredientsWithoutSeason } from '@/app/core/store/ingredients/selectors';
+import { SeasonsValidator } from '@/app/core/validators/seasons.validator';
 
 export interface SeasonsFormNames {
   ingredient: string;
@@ -20,10 +21,7 @@ export const formNames: SeasonsFormNames = {
 
 @Injectable()
 export class SeasonsFormFactory {
-  private readonly ingredientsStore: Store<IngredientsState>;
-  public constructor(ingredientsStore: Store<IngredientsState>) {
-    this.ingredientsStore = ingredientsStore;
-  }
+  private readonly ingredientsStore: Store<IngredientsState> = inject<Store<IngredientsState>>(Store);
 
   public getCreateForm(): FormGroup {
     return new FormGroup({

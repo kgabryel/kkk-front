@@ -1,7 +1,10 @@
-import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
+import type { EntityAdapter, EntityState } from '@ngrx/entity';
+
+import { createEntityAdapter } from '@ngrx/entity';
 import { createReducer, on } from '@ngrx/store';
 
-import { Timer } from '../../models/timer';
+import type { Timer } from '@/app/core/models/timer';
+
 import {
   timerAdd,
   timerAddError,

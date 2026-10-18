@@ -1,11 +1,9 @@
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { enableProdMode } from '@angular/core';
+import { provideHttpClient, withInterceptors, withXhr } from '@angular/common/http';
+import { enableProdMode, provideZoneChangeDetection } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
-import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { provideEffects } from '@ngrx/effects';
 import { provideStore } from '@ngrx/store';
-import { provideToastr } from 'ngx-toastr';
 
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
@@ -19,15 +17,10 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
   providers: [
+    provideZoneChangeDetection(),
     provideRouter(routes),
-    provideHttpClient(withInterceptors([authInterceptor, tokenInterceptor])),
-    provideAnimations(),
+    provideHttpClient(withXhr(), withInterceptors([authInterceptor, tokenInterceptor])),
     provideStore(),
     provideEffects(),
-    provideToastr({
-      positionClass: 'toast-top-right',
-      preventDuplicates: true,
-      timeOut: 4000,
-    }),
   ],
 }).catch((err: unknown): void => console.error(err));

@@ -1,15 +1,16 @@
-import { ChangeDetectionStrategy, Component, input, InputSignal, OnInit } from '@angular/core';
+import type { InputSignal, OnInit } from '@angular/core';
 
-import { Season } from '../../../../core/models/season';
-import { SeasonEditComponent } from '../season-edit/season-edit.component';
-import { SeasonPreviewComponent } from '../season-preview/season-preview.component';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+
+import type { Season } from '@/app/core/models/season';
+
+import { SeasonEditComponent } from '@/app/modules/seasons/components/season-edit/season-edit.component';
+import { SeasonPreviewComponent } from '@/app/modules/seasons/components/season-preview/season-preview.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [SeasonEditComponent, SeasonPreviewComponent],
   selector: 'seasons-season-container',
-  standalone: true,
-  styleUrls: [],
   templateUrl: './season-container.component.html',
 })
 export class SeasonContainerComponent implements OnInit {

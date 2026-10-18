@@ -23,18 +23,31 @@ const config = createConfig()
       tsconfigRootDir: import.meta.dirname,
     },
   })
-  .setPrefixes(['app', 'account', 'auth', 'ingredients', 'layout', 'main', 'recipes', 'seasons', 'shared', 'tags', 'timers'])
+  .setPrefixes([
+    'app',
+    'account',
+    'auth',
+    'ingredients',
+    'layout',
+    'main',
+    'recipes',
+    'seasons',
+    'shared',
+    'tags',
+    'timers',
+  ])
   .addOverride(templateConfig)
   .addOverride({
     files: ['**/*.ts'],
     rules: {
-      '@typescript-eslint/no-unused-vars': [
-        'error',
-        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
-      ],
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+    },
+  })
+  .addOverride({
+    files: ['src/app/core/store/**/effects.ts'],
+    rules: {
+      'max-lines': ['error', { max: 400, skipBlankLines: true, skipComments: true }],
     },
   });
 
-export default tseslint.config(
-  ...config.get(),
-);
+export default tseslint.config(...config.get());

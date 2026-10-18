@@ -1,51 +1,6 @@
 export class StringUtils {
   public static clearPolishCharacters(text: string): string {
-    const find = [
-      'ą',
-      'ę',
-      'ć',
-      'ż',
-      'ź',
-      'ó',
-      'ł',
-      'ń',
-      'ś',
-      'Ą',
-      'Ę',
-      'Ć',
-      'Ż',
-      'Ź',
-      'Ó',
-      'Ł',
-      'Ń',
-      'Ś',
-    ];
-    const replace = [
-      'a',
-      'e',
-      'c',
-      'z',
-      'z',
-      'o',
-      'l',
-      'n',
-      's',
-      'A',
-      'E',
-      'C',
-      'Z',
-      'Z',
-      'O',
-      'L',
-      'N',
-      'S',
-    ];
-
-    for (let i = 0; i < find.length; i++) {
-      text = text.replace(find[i]!, replace[i]!);
-    }
-
-    return text;
+    return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
 
   public static compareString(a: string, b: string): number {

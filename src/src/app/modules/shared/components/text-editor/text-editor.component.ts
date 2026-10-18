@@ -1,11 +1,14 @@
-import { Component, input, InputSignal } from '@angular/core';
+import type { InputSignal } from '@angular/core';
+import type { Toolbar } from 'ngx-editor';
+
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { ControlContainer, FormGroupDirective, ReactiveFormsModule } from '@angular/forms';
-import { Editor, NgxEditorComponent, NgxEditorMenuComponent, Toolbar } from 'ngx-editor';
+import { Editor, NgxEditorComponent, NgxEditorMenuComponent } from 'ngx-editor';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgxEditorComponent, NgxEditorMenuComponent, ReactiveFormsModule],
   selector: 'shared-text-editor',
-  standalone: true,
   styleUrl: './text-editor.component.scss',
   templateUrl: './text-editor.component.html',
   viewProviders: [{ provide: ControlContainer, useExisting: FormGroupDirective }],

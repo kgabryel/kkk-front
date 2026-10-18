@@ -1,0 +1,26 @@
+.mat-mdc-snack-bar-container {
+  &[class*='notification-'] {
+    .mdc-snackbar__surface {
+      backdrop-filter: blur(6px);
+      border-radius: 5px;
+      box-shadow: 0 0 1rem 0 rgb(0 0 0 / 20%);
+    }
+
+    .mdc-snackbar__label {
+      color: black;
+      font-weight: 500;
+    }
+  }
+
+  &.notification-success .mdc-snackbar__surface {
+    background-color: #51a351;
+  }
+
+  &.notification-error .mdc-snackbar__surface {
+    background-color: #bd362f;
+  }
+
+  &.notification-warning .mdc-snackbar__surface {
+    background-color: #f89406;
+  }
+}

@@ -1,45 +1,34 @@
-import { ChangeDetectionStrategy, Component, OnInit, Signal } from '@angular/core';
+import type { OnInit, Signal } from '@angular/core';
+
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 
-import { Ingredient } from '../../../../core/models/ingredient';
-import { Recipe } from '../../../../core/models/recipe';
-import { State as IngredientsState } from '../../../../core/store/ingredients/reducers';
-import { selectById } from '../../../../core/store/ingredients/selectors';
-import { State as RecipesState } from '../../../../core/store/recipes/reducers';
-import { selectRecipesForIngredient } from '../../../../core/store/recipes/selectors';
-import { RouterUtils } from '../../../../core/utils/router.utils';
-import { SignalUtils } from '../../../../core/utils/signal.utils';
-import { BaseComponent } from '../../../base.component';
-import { DividerComponent } from '../../../layout/components/divider/divider.component';
-import { RecipesListComponent } from '../../../recipes/components/recipes-list/recipes-list.component';
+import type { Ingredient } from '@/app/core/models/ingredient';
+import type { Recipe } from '@/app/core/models/recipe';
+import type { State as IngredientsState } from '@/app/core/store/ingredients/reducers';
+import type { State as RecipesState } from '@/app/core/store/recipes/reducers';
+
+import { selectById } from '@/app/core/store/ingredients/selectors';
+import { selectRecipesForIngredient } from '@/app/core/store/recipes/selectors';
+import { RouterUtils } from '@/app/core/utils/router.utils';
+import { SignalUtils } from '@/app/core/utils/signal.utils';
+import { BaseComponent } from '@/app/modules/base.component';
+import { DividerComponent } from '@/app/modules/layout/components/divider/divider.component';
+import { RecipesListComponent } from '@/app/modules/recipes/components/recipes-list/recipes-list.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RecipesListComponent, DividerComponent],
   selector: 'ingredients-pages-recipes',
-  standalone: true,
-  styleUrls: [],
   templateUrl: './recipes.component.html',
 })
 export class RecipesComponent extends BaseComponent implements OnInit {
   public recipes!: Signal<Recipe[]>;
-  private ingredientsStore: Store<IngredientsState>;
-  private recipesStore: Store<RecipesState>;
-  private route: ActivatedRoute;
-  private readonly router: Router;
-  public constructor(
-    route: ActivatedRoute,
-    recipesStore: Store<RecipesState>,
-    ingredientsStore: Store<IngredientsState>,
-    router: Router,
-  ) {
-    super();
-    this.route = route;
-    this.recipesStore = recipesStore;
-    this.ingredientsStore = ingredientsStore;
-    this.router = router;
-  }
+  private ingredientsStore: Store<IngredientsState> = inject<Store<IngredientsState>>(Store);
+  private recipesStore: Store<RecipesState> = inject<Store<RecipesState>>(Store);
+  private route: ActivatedRoute = inject(ActivatedRoute);
+  private readonly router: Router = inject(Router);
 
   public ngOnInit(): void {
     const ingredientId = parseInt(this.route.snapshot.paramMap.get('id') ?? '') || 0;

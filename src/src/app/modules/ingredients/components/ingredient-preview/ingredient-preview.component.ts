@@ -1,12 +1,6 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  input,
-  InputSignal,
-  OnInit,
-  output,
-  Signal,
-} from '@angular/core';
+import type { InputSignal, OnInit, Signal, OutputEmitterRef } from '@angular/core';
+
+import { ChangeDetectionStrategy, Component, input, output, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
@@ -16,20 +10,18 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 
-import { Ingredient } from '../../../../core/models/ingredient';
-import { Recipe } from '../../../../core/models/recipe';
-import {
-  ingredientAvailableUpdate,
-  ingredientDelete,
-} from '../../../../core/store/ingredients/actions';
-import { State as IngredientsState } from '../../../../core/store/ingredients/reducers';
-import { State as RecipesState } from '../../../../core/store/recipes/reducers';
-import { selectRecipesForIngredient } from '../../../../core/store/recipes/selectors';
-import { SignalUtils } from '../../../../core/utils/signal.utils';
-import { DeleteDialogComponent } from '../../../shared/components/delete-dialog/delete-dialog.component';
-import { IngredientRecipesHrefPipe } from '../../../shared/pipes/ingredient-recipes-href.pipe';
-import { OzaSuccessPipe } from '../../../shared/pipes/oza-success.pipe';
-import { OzaSupplyPipe } from '../../../shared/pipes/oza-supply.pipe';
+import type { Ingredient } from '@/app/core/models/ingredient';
+import type { Recipe } from '@/app/core/models/recipe';
+import type { State as IngredientsState } from '@/app/core/store/ingredients/reducers';
+import type { State as RecipesState } from '@/app/core/store/recipes/reducers';
+
+import { ingredientAvailableUpdate, ingredientDelete } from '@/app/core/store/ingredients/actions';
+import { selectRecipesForIngredient } from '@/app/core/store/recipes/selectors';
+import { SignalUtils } from '@/app/core/utils/signal.utils';
+import { DeleteDialogComponent } from '@/app/modules/shared/components/delete-dialog/delete-dialog.component';
+import { IngredientRecipesHrefPipe } from '@/app/modules/shared/pipes/ingredient-recipes-href.pipe';
+import { OzaSuccessPipe } from '@/app/modules/shared/pipes/oza-success.pipe';
+import { OzaSupplyPipe } from '@/app/modules/shared/pipes/oza-supply.pipe';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -47,27 +39,17 @@ import { OzaSupplyPipe } from '../../../shared/pipes/oza-supply.pipe';
     MatSlideToggle,
   ],
   selector: 'ingredients-ingredient-preview',
-  standalone: true,
-  styleUrls: ['./ingredient-preview.component.scss'],
+  styleUrl: './ingredient-preview.component.scss',
   templateUrl: './ingredient-preview.component.html',
 })
 export class IngredientPreviewComponent implements OnInit {
   public ingredient: InputSignal<Ingredient> = input.required<Ingredient>();
   public ozaKey: InputSignal<string | null> = input.required<string | null>();
-  public edit = output<boolean[]>();
+  public edit: OutputEmitterRef<boolean[]> = output<boolean[]>();
   public recipesCount!: Signal<number>;
-  private dialog: MatDialog;
-  private ingredientsStore: Store<IngredientsState>;
-  private recipesStore: Store<RecipesState>;
-  public constructor(
-    store: Store<IngredientsState>,
-    recipesStore: Store<RecipesState>,
-    dialog: MatDialog,
-  ) {
-    this.ingredientsStore = store;
-    this.recipesStore = recipesStore;
-    this.dialog = dialog;
-  }
+  private dialog: MatDialog = inject(MatDialog);
+  private ingredientsStore: Store<IngredientsState> = inject<Store<IngredientsState>>(Store);
+  private recipesStore: Store<RecipesState> = inject<Store<RecipesState>>(Store);
 
   public ngOnInit(): void {
     this.recipesCount = SignalUtils.arrayToCount<Recipe>(
@@ -79,8 +61,7 @@ export class IngredientPreviewComponent implements OnInit {
     this.dialog.open(DeleteDialogComponent, {
       autoFocus: false,
       data: {
-        onClose: () =>
-          this.ingredientsStore.dispatch(ingredientDelete({ id: this.ingredient().id })),
+        onClose: () => this.ingredientsStore.dispatch(ingredientDelete({ id: this.ingredient().id })),
       },
       width: '800px',
     });

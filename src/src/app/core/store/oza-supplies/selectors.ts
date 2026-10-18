@@ -1,7 +1,12 @@
-import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
+import type { MemoizedSelector } from '@ngrx/store';
 
-import { OzaSupply } from '../../models/oza-supply';
-import { adapter, State, SUPPLIES_KEY } from './reducers';
+import { createFeatureSelector, createSelector } from '@ngrx/store';
+
+import type { OzaSupply } from '@/app/core/models/oza-supply';
+
+import type { State } from './reducers';
+
+import { adapter, SUPPLIES_KEY } from './reducers';
 
 const selectState = createFeatureSelector<State>(SUPPLIES_KEY);
 
@@ -11,17 +16,9 @@ const { selectAll } = adapter.getSelectors(suppliesState);
 
 export const selectSupplies = selectAll;
 
-export const selectIsLoaded = createSelector(
-  selectState,
-  (selectState: State) => selectState.loaded,
-);
+export const selectIsLoaded = createSelector(selectState, (selectState: State) => selectState.loaded);
 
-export const selectIsLoadedCorrectly = createSelector(
-  selectState,
-  (selectState: State) => selectState.success,
-);
+export const selectIsLoadedCorrectly = createSelector(selectState, (selectState: State) => selectState.success);
 
 export const selectById = (id: number): MemoizedSelector<object, OzaSupply | undefined> =>
-  createSelector(selectAll, (supplies: OzaSupply[]) =>
-    supplies.find((supply: OzaSupply) => supply.id === id),
-  );
+  createSelector(selectAll, (supplies: OzaSupply[]) => supplies.find((supply: OzaSupply) => supply.id === id));

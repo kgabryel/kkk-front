@@ -1,19 +1,20 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { Update } from '@ngrx/entity';
-import { Action } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import type { HttpErrorResponse } from '@angular/common/http';
+import type { Update } from '@ngrx/entity';
+import type { Action } from '@ngrx/store';
+import type { Observable } from 'rxjs';
+
+import { Injectable, inject } from '@angular/core';
+import { createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
-import { RoutingConfig } from '../../../config/routing.config';
-import { messages } from '../../messages/seasons.messages';
-import { Season } from '../../models/season';
-import { NotificationService } from '../../services/notification.service';
-import { SeasonsService } from '../../services/seasons.service';
-import { PathUtils } from '../../utils/path.utils';
-import { BaseEffect } from '../BaseEffect';
+import type { Season } from '@/app/core/models/season';
+
+import { RoutingConfig } from '@/app/config/routing.config';
+import { messages } from '@/app/core/messages/seasons.messages';
+import { SeasonsService } from '@/app/core/services/seasons.service';
+import { BaseEffect } from '@/app/core/store/BaseEffect';
+import { PathUtils } from '@/app/core/utils/path.utils';
+
 import {
   seasonAdd,
   seasonAddError,
@@ -35,19 +36,9 @@ export class SeasonsEffects extends BaseEffect<SeasonsService> {
   public deleteSeason!: Observable<Action>;
   public loadSeasons!: Observable<Action>;
   public updateSeason!: Observable<Action>;
-  public constructor(
-    actions: Actions,
-    seasonsService: SeasonsService,
-    router: Router,
-    notificationService: NotificationService,
-  ) {
-    super(actions, notificationService, router, seasonsService);
-  }
+  protected readonly service: SeasonsService = inject(SeasonsService);
 
-  private static seasonUpdateSuccess(
-    season: Season,
-    id: number,
-  ): ReturnType<typeof seasonUpdateSuccess> {
+  private static seasonUpdateSuccess(season: Season, id: number): ReturnType<typeof seasonUpdateSuccess> {
     const update: Update<Season> = { changes: season, id };
 
     return seasonUpdateSuccess({ season: update });

@@ -1,46 +1,37 @@
+import type { ElementRef, InputSignal, OnInit, Signal, WritableSignal } from '@angular/core';
+import type { AbstractControl, FormArray, FormGroup } from '@angular/forms';
+import type { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import type { MatChipInputEvent } from '@angular/material/chips';
+
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
-  ElementRef,
   input,
-  InputSignal,
-  OnInit,
   runInInjectionContext,
-  Signal,
   viewChild,
-  WritableSignal,
+  inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-  AbstractControl,
-  FormArray,
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-} from '@angular/forms';
-import {
-  MatAutocomplete,
-  MatAutocompleteSelectedEvent,
-  MatAutocompleteTrigger,
-  MatOption,
-} from '@angular/material/autocomplete';
-import { MatChip, MatChipGrid, MatChipInput, MatChipInputEvent } from '@angular/material/chips';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatAutocomplete, MatAutocompleteTrigger, MatOption } from '@angular/material/autocomplete';
+import { MatChip, MatChipGrid, MatChipInput } from '@angular/material/chips';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { Store } from '@ngrx/store';
 import { startWith } from 'rxjs/operators';
 
-import { Length } from '../../../../config/form.config';
-import { formNames, RecipesFormNames } from '../../../../core/factories/recipe.factory';
-import { Tag } from '../../../../core/models/tag';
-import { tagAddFromRecipe } from '../../../../core/store/tags/actions';
-import { State } from '../../../../core/store/tags/reducers';
-import { selectTags } from '../../../../core/store/tags/selectors';
-import { SignalUtils } from '../../../../core/utils/signal.utils';
-import { BaseComponent } from '../../../base.component';
+import type { RecipesFormNames } from '@/app/core/factories/recipe.factory';
+import type { Tag } from '@/app/core/models/tag';
+import type { State } from '@/app/core/store/tags/reducers';
+
+import { Length } from '@/app/config/form.config';
+import { formNames } from '@/app/core/factories/recipe.factory';
+import { tagAddFromRecipe } from '@/app/core/store/tags/actions';
+import { selectTags } from '@/app/core/store/tags/selectors';
+import { SignalUtils } from '@/app/core/utils/signal.utils';
+import { BaseComponent } from '@/app/modules/base.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -58,8 +49,7 @@ import { BaseComponent } from '../../../base.component';
     MatAutocompleteTrigger,
   ],
   selector: 'recipes-tags-select',
-  standalone: true,
-  styleUrls: ['./tags-select.component.scss'],
+  styleUrl: './tags-select.component.scss',
   templateUrl: './tags-select.component.html',
 })
 export class TagsSelectComponent extends BaseComponent implements OnInit {
@@ -67,22 +57,14 @@ export class TagsSelectComponent extends BaseComponent implements OnInit {
     viewChild<ElementRef<HTMLInputElement>>('searchInput');
   public formGroup: InputSignal<FormGroup> = input.required<FormGroup>();
   public filteredTags!: Tag[];
-  public formNames: RecipesFormNames;
-  public maxTagNameLength: number;
+  public formNames: RecipesFormNames = formNames;
+  public maxTagNameLength: number = Length.maxTagNameLength;
   public selectedTags!: WritableSignal<string[]>;
   public separatorKeysCodes: number[] = [ENTER, COMMA];
   public tags!: Signal<Tag[]>;
-  private store: Store<State>;
+  private store: Store<State> = inject<Store<State>>(Store);
   private tagsInput!: FormArray;
-  private destroyRef: DestroyRef;
-
-  public constructor(store: Store<State>, destroyRef: DestroyRef) {
-    super();
-    this.store = store;
-    this.formNames = formNames;
-    this.maxTagNameLength = Length.maxTagNameLength;
-    this.destroyRef = destroyRef;
-  }
+  private destroyRef: DestroyRef = inject(DestroyRef);
 
   public ngOnInit(): void {
     this.filteredTags = [];
@@ -126,9 +108,7 @@ export class TagsSelectComponent extends BaseComponent implements OnInit {
   }
 
   public remove(tag: string): void {
-    this.selectedTags.update((tags: string[]): string[] =>
-      tags.filter((item: string) => item !== tag),
-    );
+    this.selectedTags.update((tags: string[]): string[] => tags.filter((item: string) => item !== tag));
     const tags: string[] = this.selectedTags().map((tag: string) => tag);
     this.tagsInput.clear();
     tags.forEach((tag: string) => this.tagsInput.push(new FormControl(tag)));
@@ -162,30 +142,26 @@ export class TagsSelectComponent extends BaseComponent implements OnInit {
 
   private filter(): void {
     const search = this.formGroup().get(this.formNames.search) as AbstractControl;
-    search.valueChanges
-      .pipe(startWith(''), takeUntilDestroyed(this.destroyRef))
-      .subscribe((value: string) => {
-        if (value === '' || value === null) {
-          this.filteredTags = this.tags().filter(
-            (tag: Tag) => !this.selectedTags().includes(tag.name),
-          );
+    search.valueChanges.pipe(startWith(''), takeUntilDestroyed(this.destroyRef)).subscribe((value: string) => {
+      if (value === '' || value === null) {
+        this.filteredTags = this.tags().filter((tag: Tag) => !this.selectedTags().includes(tag.name));
 
-          return;
-        }
-        this.filteredTags = [];
-        this.tags().forEach((tag: Tag) => {
-          if (tag.name.toLocaleLowerCase().includes(value.toLocaleLowerCase())) {
-            if (!this.selectedTags().includes(tag.name)) {
-              this.filteredTags.push(tag);
-            }
+        return;
+      }
+      this.filteredTags = [];
+      this.tags().forEach((tag: Tag) => {
+        if (tag.name.toLocaleLowerCase().includes(value.toLocaleLowerCase())) {
+          if (!this.selectedTags().includes(tag.name)) {
+            this.filteredTags.push(tag);
           }
-        });
-        if (this.filteredTags.length === 0) {
-          this.filteredTags.push({
-            id: 0,
-            name: `Dodać: ${value}?`,
-          });
         }
       });
+      if (this.filteredTags.length === 0) {
+        this.filteredTags.push({
+          id: 0,
+          name: `Dodać: ${value}?`,
+        });
+      }
+    });
   }
 }

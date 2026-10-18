@@ -1,6 +1,9 @@
+import type { Signal } from '@angular/core';
+import type { AbstractControl, FormArray, FormGroup } from '@angular/forms';
+
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { Injectable, Injector, Signal } from '@angular/core';
-import { AbstractControl, FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Injectable, Injector, inject } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
@@ -10,22 +13,25 @@ import { MatStep, MatStepLabel, MatStepper } from '@angular/material/stepper';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 
-import { Length } from '../../config/form.config';
-import { GroupPositionsPartComponent } from '../../modules/recipes/components/group-positions-part/group-positions-part.component';
-import { TagsSelectComponent } from '../../modules/recipes/components/tags-select/tags-select.component';
-import { ErrorsContainerComponent } from '../../modules/shared/components/errors-container/errors-container.component';
-import { TextEditorComponent } from '../../modules/shared/components/text-editor/text-editor.component';
-import { AutocompletePipe } from '../../modules/shared/pipes/autocomplete.pipe';
-import { RecipePreviewHrefPipe } from '../../modules/shared/pipes/recipe-preview-href.pipe';
-import { FormComponent } from '../../modules/timers/components/form/form.component';
-import { recipeErrors, RecipeErrors } from '../errors/recipe.error';
-import { formNames, RecipeFormFactory, RecipesFormNames } from '../factories/recipe.factory';
-import { Recipe } from '../models/recipe';
-import { PositionsGroup, RecipeRequest } from '../requests/recipe.request';
-import { TimerRequest } from '../requests/timer.request';
-import { State } from '../store/recipes/reducers';
-import { FormUtils } from '../utils/form.utils';
-import { TimeUtils } from '../utils/time.utils';
+import type { RecipeErrors } from '@/app/core/errors/recipe.error';
+import type { RecipesFormNames } from '@/app/core/factories/recipe.factory';
+import type { Recipe } from '@/app/core/models/recipe';
+import type { PositionsGroup, RecipeRequest } from '@/app/core/requests/recipe.request';
+import type { TimerRequest } from '@/app/core/requests/timer.request';
+import type { State } from '@/app/core/store/recipes/reducers';
+
+import { Length } from '@/app/config/form.config';
+import { recipeErrors } from '@/app/core/errors/recipe.error';
+import { formNames, RecipeFormFactory } from '@/app/core/factories/recipe.factory';
+import { FormUtils } from '@/app/core/utils/form.utils';
+import { TimeUtils } from '@/app/core/utils/time.utils';
+import { GroupPositionsPartComponent } from '@/app/modules/recipes/components/group-positions-part/group-positions-part.component';
+import { TagsSelectComponent } from '@/app/modules/recipes/components/tags-select/tags-select.component';
+import { ErrorsContainerComponent } from '@/app/modules/shared/components/errors-container/errors-container.component';
+import { TextEditorComponent } from '@/app/modules/shared/components/text-editor/text-editor.component';
+import { AutocompletePipe } from '@/app/modules/shared/pipes/autocomplete.pipe';
+import { RecipePreviewHrefPipe } from '@/app/modules/shared/pipes/recipe-preview-href.pipe';
+import { FormComponent } from '@/app/modules/timers/components/form/form.component';
 
 export const imports = [
   ReactiveFormsModule,
@@ -57,36 +63,22 @@ export const providers = [RecipeFormFactory];
 export class RecipeFormService {
   public descriptionGroup!: FormGroup;
   public detailsGroup!: FormGroup;
-  public errors: RecipeErrors;
+  public errors: RecipeErrors = recipeErrors;
   public form!: FormGroup;
-  public formNames: RecipesFormNames;
-  public maxRecipeNameLength: number;
+  public formNames: RecipesFormNames = formNames;
+  public maxRecipeNameLength: number = Length.maxRecipeNameLength;
   public nameLength!: Signal<number>;
   public positions!: FormArray;
   public positionsGroup!: FormGroup;
-  public recipeFormFactory: RecipeFormFactory;
+  public recipeFormFactory: RecipeFormFactory = inject(RecipeFormFactory);
   public recipeModel!: Recipe | null;
-  public store: Store<State>;
+  public store: Store<State> = inject<Store<State>>(Store);
   public tagsGroup!: FormGroup;
   public timers!: FormArray;
-  public injector: Injector;
-  public constructor(
-    store: Store<State>,
-    recipeFormFactory: RecipeFormFactory,
-    injector: Injector,
-  ) {
-    this.store = store;
-    this.formNames = formNames;
-    this.errors = recipeErrors;
-    this.recipeFormFactory = recipeFormFactory;
-    this.maxRecipeNameLength = Length.maxRecipeNameLength;
-    this.injector = injector;
-  }
+  public injector: Injector = inject(Injector);
 
   public addPositionsGroup(): void {
-    this.positions.push(
-      RecipeFormFactory.getPositionsGroupPart('', [RecipeFormFactory.getPositionPart()]),
-    );
+    this.positions.push(RecipeFormFactory.getPositionsGroupPart('', [RecipeFormFactory.getPositionPart()]));
   }
 
   public addTimer(): void {
@@ -94,8 +86,7 @@ export class RecipeFormService {
   }
 
   public decreasePortion(): void {
-    const value =
-      this.form.get(this.formNames.detailsGroup)?.get(this.formNames.portions)?.value ?? 1;
+    const value = this.form.get(this.formNames.detailsGroup)?.get(this.formNames.portions)?.value ?? 1;
 
     if (value === 1) {
       return;
@@ -107,8 +98,7 @@ export class RecipeFormService {
   }
 
   public increasePortion(): void {
-    const value =
-      this.form.get(this.formNames.detailsGroup)?.get(this.formNames.portions)?.value ?? 0;
+    const value = this.form.get(this.formNames.detailsGroup)?.get(this.formNames.portions)?.value ?? 0;
     this.form
       .get(this.formNames.detailsGroup)
       ?.get(this.formNames.portions)
@@ -125,9 +115,7 @@ export class RecipeFormService {
 
   public prepareRequest(): RecipeRequest {
     let groups: PositionsGroup[] = [];
-    const groupsArray = this.form
-      .get(this.formNames.positionsGroup)
-      ?.get(this.formNames.positions) as FormArray;
+    const groupsArray = this.form.get(this.formNames.positionsGroup)?.get(this.formNames.positions) as FormArray;
     groupsArray.controls.forEach((element: AbstractControl) => {
       const group: PositionsGroup = {
         name: element.get(this.formNames.name)?.value ?? '',
@@ -168,17 +156,13 @@ export class RecipeFormService {
     groups = groups.filter((group: PositionsGroup) => group.positions.length > 0);
 
     return {
-      description: this.form.get(this.formNames.descriptionGroup)?.get(this.formNames.description)
-        ?.value,
+      description: this.form.get(this.formNames.descriptionGroup)?.get(this.formNames.description)?.value,
       favourite: this.form.get(this.formNames.detailsGroup)?.get(this.formNames.favourite)?.value,
       groups: groups,
       name: this.form.get(this.formNames.descriptionGroup)?.get(this.formNames.name)?.value,
       portions: this.form.get(this.formNames.detailsGroup)?.get(this.formNames.portions)?.value,
       public: this.form.get(this.formNames.detailsGroup)?.get(this.formNames.public)?.value,
-      tags: this.form
-        .get(this.formNames.detailsGroup)
-        ?.get(this.formNames.tagsGroup)
-        ?.get(this.formNames.tags)?.value,
+      tags: this.form.get(this.formNames.detailsGroup)?.get(this.formNames.tagsGroup)?.get(this.formNames.tags)?.value,
       timers: timers,
       toDo: this.form.get(this.formNames.detailsGroup)?.get(this.formNames.toDo)?.value,
       url: this.form.get(this.formNames.detailsGroup)?.get(this.formNames.url)?.value,
@@ -194,18 +178,12 @@ export class RecipeFormService {
   }
 
   public setUp(): void {
-    this.tagsGroup = this.form
-      .get(this.formNames.detailsGroup)
-      ?.get(this.formNames.tagsGroup) as FormGroup;
+    this.tagsGroup = this.form.get(this.formNames.detailsGroup)?.get(this.formNames.tagsGroup) as FormGroup;
     this.descriptionGroup = this.form.get(this.formNames.descriptionGroup) as FormGroup;
     this.detailsGroup = this.form.get(this.formNames.detailsGroup) as FormGroup;
     this.positionsGroup = this.form.get(this.formNames.positionsGroup) as FormGroup;
-    this.positions = this.form
-      .get(this.formNames.positionsGroup)
-      ?.get(this.formNames.positions) as FormArray;
-    this.timers = this.form
-      .get(this.formNames.detailsGroup)
-      ?.get(this.formNames.timersGroup) as FormArray;
+    this.positions = this.form.get(this.formNames.positionsGroup)?.get(this.formNames.positions) as FormArray;
+    this.timers = this.form.get(this.formNames.detailsGroup)?.get(this.formNames.timersGroup) as FormArray;
     this.nameLength = FormUtils.getLength(
       this.injector,
       this.form,

@@ -1,14 +1,16 @@
+import type { ResolveFn } from '@angular/router';
+
 import { inject } from '@angular/core';
-import { ResolveFn } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { combineLatest } from 'rxjs';
 import { filter, map, switchMap, take, tap } from 'rxjs/operators';
 
-import { keyNotExists, suppliesLoad } from '../store/oza-supplies/actions';
-import { State as SuppliesState } from '../store/oza-supplies/reducers';
-import { selectIsLoaded } from '../store/oza-supplies/selectors';
-import { State as SettingsState } from '../store/settings/reducers';
-import { selectIsLoaded as settingsLoaded, selectOzaKey } from '../store/settings/selectors';
+import type { State as SuppliesState } from '@/app/core/store/oza-supplies/reducers';
+import type { State as SettingsState } from '@/app/core/store/settings/reducers';
+
+import { keyNotExists, suppliesLoad } from '@/app/core/store/oza-supplies/actions';
+import { selectIsLoaded } from '@/app/core/store/oza-supplies/selectors';
+import { selectIsLoaded as settingsLoaded, selectOzaKey } from '@/app/core/store/settings/selectors';
 
 export const suppliesResolver: ResolveFn<boolean> = () => {
   const suppliesStore = inject<Store<SuppliesState>>(Store);

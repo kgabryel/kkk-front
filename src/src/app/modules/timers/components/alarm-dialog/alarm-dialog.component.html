@@ -8,12 +8,7 @@
     mat-button
     type="button"
   >
-    @if (paused) {
-      <mat-icon>volume_off</mat-icon>
-    }
-    @if (!paused) {
-      <mat-icon>volume_up</mat-icon>
-    }
+    <mat-icon>{{ paused ? 'volume_off' : 'volume_up' }}</mat-icon>
   </button>
   <p class="mb-0 ml-2 mr-2">{{ timer.name }} [{{ timer.time | timerTime }}]</p>
   <button

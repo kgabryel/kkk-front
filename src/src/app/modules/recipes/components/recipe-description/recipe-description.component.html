@@ -1,0 +1,11 @@
+@if (!(description() | emptyString)) {
+  <mat-expansion-panel
+    expanded
+    hideToggle
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title>Przepis</mat-panel-title>
+    </mat-expansion-panel-header>
+    <p [innerHTML]="description()"></p>
+  </mat-expansion-panel>
+}

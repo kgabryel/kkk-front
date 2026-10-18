@@ -1,19 +1,20 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { Update } from '@ngrx/entity';
-import { Action } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import type { HttpErrorResponse } from '@angular/common/http';
+import type { Update } from '@ngrx/entity';
+import type { Action } from '@ngrx/store';
+import type { Observable } from 'rxjs';
+
+import { Injectable, inject } from '@angular/core';
+import { createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
-import { RoutingConfig } from '../../../config/routing.config';
-import { messages } from '../../messages/tags.messages';
-import { Tag } from '../../models/tag';
-import { NotificationService } from '../../services/notification.service';
-import { TagsService } from '../../services/tags.service';
-import { PathUtils } from '../../utils/path.utils';
-import { BaseEffect } from '../BaseEffect';
+import type { Tag } from '@/app/core/models/tag';
+
+import { RoutingConfig } from '@/app/config/routing.config';
+import { messages } from '@/app/core/messages/tags.messages';
+import { TagsService } from '@/app/core/services/tags.service';
+import { BaseEffect } from '@/app/core/store/BaseEffect';
+import { PathUtils } from '@/app/core/utils/path.utils';
+
 import {
   tagAdd,
   tagAddError,
@@ -37,14 +38,7 @@ export class TagsEffects extends BaseEffect<TagsService> {
   public deleteTag!: Observable<Action>;
   public loadTags!: Observable<Action>;
   public updateTag!: Observable<Action>;
-  public constructor(
-    actions: Actions,
-    tagsService: TagsService,
-    router: Router,
-    notificationService: NotificationService,
-  ) {
-    super(actions, notificationService, router, tagsService);
-  }
+  protected readonly service: TagsService = inject(TagsService);
 
   private static tagUpdateSuccess(tag: Tag, id: number): ReturnType<typeof tagUpdateSuccess> {
     const update: Update<Tag> = { changes: tag, id };

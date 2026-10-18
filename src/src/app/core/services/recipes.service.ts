@@ -1,20 +1,19 @@
+import type { Observable } from 'rxjs';
+
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
 import { first, map } from 'rxjs/operators';
 
-import { PhotosConfig } from '../../config/photos.config';
-import { recipesRoutes } from '../../config/routes.config';
-import { Order, Photo } from '../models/photo';
-import { Recipe } from '../models/recipe';
-import { PhotoRequest, RecipeRequest } from '../requests/recipe.request';
+import type { PhotosConfig } from '@/app/config/photos.config';
+import type { Order, Photo } from '@/app/core/models/photo';
+import type { Recipe } from '@/app/core/models/recipe';
+import type { PhotoRequest, RecipeRequest } from '@/app/core/requests/recipe.request';
+
+import { recipesRoutes } from '@/app/config/routes.config';
 
 @Injectable()
 export class RecipesService {
-  private httpClient: HttpClient;
-  public constructor(httpClient: HttpClient) {
-    this.httpClient = httpClient;
-  }
+  private httpClient: HttpClient = inject(HttpClient);
 
   public static mapPhoto(photo: Photo, data: ArrayBuffer): string {
     const blob = new Blob([data], { type: photo.type });

@@ -1,19 +1,19 @@
+import type { Observable } from 'rxjs';
+
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
-import { apiKeysRoutes, settingsRoutes } from '../../config/routes.config';
-import { ApiKey } from '../models/api-key';
-import { Settings } from '../models/settings';
-import { ChangePasswordRequest } from '../requests/change-password.request';
+import type { ApiKey } from '@/app/core/models/api-key';
+import type { Settings } from '@/app/core/models/settings';
+import type { ChangePasswordRequest } from '@/app/core/requests/change-password.request';
+
+import { apiKeysRoutes, settingsRoutes } from '@/app/config/routes.config';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  private httpClient: HttpClient;
-  public constructor(httpClient: HttpClient) {
-    this.httpClient = httpClient;
-  }
+  private httpClient: HttpClient = inject(HttpClient);
 
   public changeOzaKey(key: string | null): Observable<Settings> {
     return this.httpClient.patch<Settings>(settingsRoutes.changeOzaKey, { key });

@@ -1,7 +1,10 @@
-import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
+import type { EntityAdapter, EntityState } from '@ngrx/entity';
+
+import { createEntityAdapter } from '@ngrx/entity';
 import { createReducer, on } from '@ngrx/store';
 
-import { Season } from '../../models/season';
+import type { Season } from '@/app/core/models/season';
+
 import {
   seasonAdd,
   seasonAddError,

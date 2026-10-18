@@ -1,13 +1,6 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  OnDestroy,
-  OnInit,
-  signal,
-  Signal,
-  WritableSignal,
-} from '@angular/core';
+import type { OnDestroy, OnInit, Signal, WritableSignal } from '@angular/core';
+
+import { ChangeDetectionStrategy, Component, computed, signal, inject } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogClose } from '@angular/material/dialog';
@@ -18,15 +11,17 @@ import { Store } from '@ngrx/store';
 import { cloneDeep } from 'lodash-unified';
 import { MatSelectSearchComponent } from 'ngx-mat-select-search';
 
-import { Month, months } from '../../../../config/months.config';
-import { Ingredient } from '../../../../core/models/ingredient';
-import { SearchService } from '../../../../core/services/search.service';
-import { SeasonsSearchService } from '../../../../core/services/seasons-search.service';
-import { State as IngredientsState } from '../../../../core/store/ingredients/reducers';
-import { selectIngredientsWithSeason } from '../../../../core/store/ingredients/selectors';
-import { State as SeasonsState } from '../../../../core/store/seasons/reducers';
-import { StringUtils } from '../../../../core/utils/string.utils';
-import { BaseComponent } from '../../../base.component';
+import type { Month } from '@/app/config/months.config';
+import type { Ingredient } from '@/app/core/models/ingredient';
+import type { State as IngredientsState } from '@/app/core/store/ingredients/reducers';
+import type { State as SeasonsState } from '@/app/core/store/seasons/reducers';
+
+import { months } from '@/app/config/months.config';
+import { SearchService } from '@/app/core/services/search.service';
+import { SeasonsSearchService } from '@/app/core/services/seasons-search.service';
+import { selectIngredientsWithSeason } from '@/app/core/store/ingredients/selectors';
+import { StringUtils } from '@/app/core/utils/string.utils';
+import { BaseComponent } from '@/app/modules/base.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -43,8 +38,6 @@ import { BaseComponent } from '../../../base.component';
     MatSelectSearchComponent,
   ],
   selector: 'seasons-search',
-  standalone: true,
-  styleUrls: [],
   templateUrl: './search.component.html',
 })
 export class SearchComponent extends BaseComponent implements OnInit, OnDestroy {
@@ -53,26 +46,17 @@ export class SearchComponent extends BaseComponent implements OnInit, OnDestroy 
   public ingredients!: Signal<Ingredient[]>;
   public searchValue: WritableSignal<string> = signal<string>('');
   public months: Month[];
-  public seasonsStore: Store<SeasonsState>;
+  public seasonsStore: Store<SeasonsState> = inject<Store<SeasonsState>>(Store);
   public selectedIngredients: FormControl;
   public selectedMonths: FormControl;
-  private ingredientsStore: Store<IngredientsState>;
-  private searchService: SearchService;
-  private seasonsSearchService: SeasonsSearchService;
-  public constructor(
-    ingredientsStore: Store<IngredientsState>,
-    seasonsStore: Store<SeasonsState>,
-    seasonsSearchService: SeasonsSearchService,
-    searchService: SearchService,
-  ) {
+  private ingredientsStore: Store<IngredientsState> = inject<Store<IngredientsState>>(Store);
+  private searchService: SearchService = inject(SearchService);
+  private seasonsSearchService: SeasonsSearchService = inject(SeasonsSearchService);
+  public constructor() {
     super();
     this.selectedIngredients = new FormControl();
     this.selectedMonths = new FormControl();
-    this.ingredientsStore = ingredientsStore;
-    this.seasonsStore = seasonsStore;
     this.months = cloneDeep(months);
-    this.seasonsSearchService = seasonsSearchService;
-    this.searchService = searchService;
   }
 
   public ngOnInit(): void {
@@ -86,11 +70,7 @@ export class SearchComponent extends BaseComponent implements OnInit, OnDestroy 
       return all.filter((i: Ingredient) => StringUtils.stringIncludes(i.name, search));
     });
 
-    this.onObservable(
-      () => this.search(),
-      this.selectedIngredients.valueChanges,
-      this.selectedMonths.valueChanges,
-    );
+    this.onObservable(() => this.search(), this.selectedIngredients.valueChanges, this.selectedMonths.valueChanges);
 
     if (this.isUpdated()) {
       this.search();

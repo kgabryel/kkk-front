@@ -1,14 +1,11 @@
-import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
+import type { EntityAdapter, EntityState } from '@ngrx/entity';
+
+import { createEntityAdapter } from '@ngrx/entity';
 import { createReducer, on } from '@ngrx/store';
 
-import { OzaSupply } from '../../models/oza-supply';
-import {
-  keyNotExists,
-  suppliesLoad,
-  suppliesLoadError,
-  suppliesLoadSuccess,
-  suppliesReset,
-} from './actions';
+import type { OzaSupply } from '@/app/core/models/oza-supply';
+
+import { keyNotExists, suppliesLoad, suppliesLoadError, suppliesLoadSuccess, suppliesReset } from './actions';
 
 export interface State {
   supplies: EntityState<OzaSupply>;

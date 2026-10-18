@@ -1,4 +1,6 @@
-import { Routes } from '@angular/router';
+import type { Routes } from '@angular/router';
+
+import { RecipesService } from '@/app/core/services/recipes.service';
 
 import { RoutingConfig } from './config/routing.config';
 import { authGuard } from './core/guards/auth.guard';
@@ -24,11 +26,10 @@ export const routes: Routes = [
     path: RoutingConfig.resetPassword,
   },
   { canActivate: [guestGuard], component: FbComponent, path: RoutingConfig.fb },
-  { component: PublicRecipeComponent, path: RoutingConfig.publicRecipe },
+  { component: PublicRecipeComponent, path: RoutingConfig.publicRecipe, providers: [RecipesService] },
   {
     canActivate: [authGuard],
-    loadChildren: () =>
-      import('./modules/main/main.routes').then((m: { routes: Routes }) => m.routes),
+    loadChildren: () => import('./modules/main/main.routes').then((m: { routes: Routes }) => m.routes),
     path: RoutingConfig.home,
   },
 ];

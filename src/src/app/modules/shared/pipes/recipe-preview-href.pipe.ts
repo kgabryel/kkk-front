@@ -1,12 +1,14 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import type { PipeTransform } from '@angular/core';
 
-import { RoutingConfig } from '../../../config/routing.config';
-import { Recipe } from '../../../core/models/recipe';
-import { PathUtils } from '../../../core/utils/path.utils';
+import { Pipe } from '@angular/core';
+
+import type { Recipe } from '@/app/core/models/recipe';
+
+import { RoutingConfig } from '@/app/config/routing.config';
+import { PathUtils } from '@/app/core/utils/path.utils';
 
 @Pipe({
   name: 'recipePreviewHref',
-  standalone: true,
 })
 export class RecipePreviewHrefPipe implements PipeTransform {
   public transform(recipe: Recipe): string {

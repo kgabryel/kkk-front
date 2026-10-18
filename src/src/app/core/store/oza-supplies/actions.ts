@@ -1,7 +1,8 @@
 import { createAction, props } from '@ngrx/store';
 
-import { OzaSupply } from '../../models/oza-supply';
-import { Actions, Prefixes } from '../actions.config';
+import type { OzaSupply } from '@/app/core/models/oza-supply';
+
+import { Actions, Prefixes } from '@/app/core/store/actions.config';
 
 export const suppliesLoad = createAction(`${Prefixes.ozaSupplies} ${Actions.load}`);
 

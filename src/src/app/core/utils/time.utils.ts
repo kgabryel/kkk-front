@@ -1,4 +1,4 @@
-import { Time } from '../models/time';
+import type { Time } from '@/app/core/models/time';
 
 export class TimeUtils {
   public static dateToTime(timeValue: Time): number {

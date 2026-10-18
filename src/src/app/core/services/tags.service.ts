@@ -1,17 +1,16 @@
+import type { Observable } from 'rxjs';
+
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
 import { map } from 'rxjs/operators';
 
-import { tagsRoutes } from '../../config/routes.config';
-import { Tag } from '../models/tag';
+import type { Tag } from '@/app/core/models/tag';
+
+import { tagsRoutes } from '@/app/config/routes.config';
 
 @Injectable()
 export class TagsService {
-  private httpClient: HttpClient;
-  public constructor(httpClient: HttpClient) {
-    this.httpClient = httpClient;
-  }
+  private httpClient: HttpClient = inject(HttpClient);
 
   public add(name: string): Observable<Tag> {
     return this.httpClient.post<Tag>(tagsRoutes.index, { name });

@@ -1,8 +1,12 @@
-import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
+import type { EntityAdapter, EntityState } from '@ngrx/entity';
+
+import { createEntityAdapter } from '@ngrx/entity';
 import { createReducer, on } from '@ngrx/store';
 
-import { Ingredient } from '../../models/ingredient';
-import { changeOzaKey } from '../settings/actions';
+import type { Ingredient } from '@/app/core/models/ingredient';
+
+import { changeOzaKey } from '@/app/core/store/settings/actions';
+
 import {
   ingredientAdd,
   ingredientAddError,
@@ -52,24 +56,18 @@ export const ingredientsReducer = createReducer(
   })),
   on(ingredientDelete, (state: State) => state),
   on(ingredientDeleteError, (state: State) => state),
-  on(
-    ingredientDeleteSuccess,
-    (state: State, action: ReturnType<typeof ingredientDeleteSuccess>) => ({
-      ...state,
-      ingredients: adapter.removeOne(action.id, state.ingredients),
-    }),
-  ),
+  on(ingredientDeleteSuccess, (state: State, action: ReturnType<typeof ingredientDeleteSuccess>) => ({
+    ...state,
+    ingredients: adapter.removeOne(action.id, state.ingredients),
+  })),
   on(ingredientNameUpdate, (state: State) => state),
   on(ingredientOzaIdUpdate, (state: State) => state),
   on(ingredientAvailableUpdate, (state: State) => state),
   on(ingredientUpdateError, (state: State) => state),
-  on(
-    ingredientUpdateSuccess,
-    (state: State, action: ReturnType<typeof ingredientUpdateSuccess>) => ({
-      ...state,
-      ingredients: adapter.updateOne(action.ingredient, state.ingredients),
-    }),
-  ),
+  on(ingredientUpdateSuccess, (state: State, action: ReturnType<typeof ingredientUpdateSuccess>) => ({
+    ...state,
+    ingredients: adapter.updateOne(action.ingredient, state.ingredients),
+  })),
   on(ingredientsReset, () => initialState),
   on(changeOzaKey, () => initialState),
 );

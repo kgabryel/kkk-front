@@ -23,6 +23,7 @@ recipes-recipe-preview {
   column-gap: 10px;
   column-width: 450px;
   margin: 0 auto;
+  width: calc(100vw - 80px);
 }
 
 .masonry-item {

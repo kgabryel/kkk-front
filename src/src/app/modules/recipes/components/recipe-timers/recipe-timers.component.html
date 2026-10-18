@@ -1,0 +1,15 @@
+@for (timer of recipe().timers; track timer) {
+  <recipes-timer
+    [timer]="timer"
+    (add)="addTimer(timer)"
+  ></recipes-timer>
+}
+<button
+  class="glassmorphism-button w-100 add-timers-btn mt-1"
+  (click)="addAllTimers()"
+  mat-button
+  type="button"
+>
+  <mat-icon>alarm</mat-icon>
+  Dodaj wszystkie minutniki
+</button>

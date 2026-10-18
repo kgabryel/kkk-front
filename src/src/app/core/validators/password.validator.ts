@@ -1,4 +1,4 @@
-import { AbstractControl, ValidatorFn } from '@angular/forms';
+import type { AbstractControl, ValidatorFn } from '@angular/forms';
 
 export class PasswordValidator {
   public static differentPasswords(name: string): ValidatorFn {

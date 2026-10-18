@@ -1,19 +1,18 @@
+import type { Observable } from 'rxjs';
+
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
 import { map } from 'rxjs/operators';
 
-import { ingredientsRoutes } from '../../config/routes.config';
-import { Ingredient } from '../models/ingredient';
-import { OzaSupply } from '../models/oza-supply';
-import { IngredientRequest } from '../requests/ingredient.request';
+import type { Ingredient } from '@/app/core/models/ingredient';
+import type { OzaSupply } from '@/app/core/models/oza-supply';
+import type { IngredientRequest } from '@/app/core/requests/ingredient.request';
+
+import { ingredientsRoutes } from '@/app/config/routes.config';
 
 @Injectable()
 export class IngredientsService {
-  private httpClient: HttpClient;
-  public constructor(httpClient: HttpClient) {
-    this.httpClient = httpClient;
-  }
+  private httpClient: HttpClient = inject(HttpClient);
 
   public add(ingredientRequest: IngredientRequest): Observable<Ingredient> {
     return this.httpClient.post<Ingredient>(ingredientsRoutes.index, ingredientRequest);

@@ -1,6 +1,6 @@
-import { AbstractControl, ValidatorFn } from '@angular/forms';
+import type { AbstractControl, ValidatorFn } from '@angular/forms';
 
-import { OzaSupply } from '../models/oza-supply';
+import type { OzaSupply } from '@/app/core/models/oza-supply';
 
 export class OzaValidator {
   public static exists(supplies: OzaSupply[]): ValidatorFn {

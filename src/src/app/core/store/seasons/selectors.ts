@@ -1,8 +1,13 @@
-import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
+import type { MemoizedSelector } from '@ngrx/store';
 
-import { Season } from '../../models/season';
-import { Search } from '../../services/seasons-search.service';
-import { adapter, SEASONS_KEY, State } from './reducers';
+import { createFeatureSelector, createSelector } from '@ngrx/store';
+
+import type { Season } from '@/app/core/models/season';
+import type { Search } from '@/app/core/services/seasons-search.service';
+
+import type { State } from './reducers';
+
+import { adapter, SEASONS_KEY } from './reducers';
 
 const selectState = createFeatureSelector<State>(SEASONS_KEY);
 
@@ -12,10 +17,7 @@ const { selectAll } = adapter.getSelectors(seasonsState);
 
 export const selectSeasons = selectAll;
 
-export const selectIsLoaded = createSelector(
-  selectState,
-  (selectState: State) => selectState.loaded,
-);
+export const selectIsLoaded = createSelector(selectState, (selectState: State) => selectState.loaded);
 
 export const searchSeasons = (search: Search): MemoizedSelector<object, Season[]> =>
   createSelector(selectSeasons, (seasons: Season[]) =>

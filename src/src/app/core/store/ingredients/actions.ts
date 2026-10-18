@@ -1,9 +1,11 @@
-import { Update } from '@ngrx/entity';
+import type { Update } from '@ngrx/entity';
+
 import { createAction, props } from '@ngrx/store';
 
-import { Ingredient } from '../../models/ingredient';
-import { IngredientRequest } from '../../requests/ingredient.request';
-import { Actions, Prefixes } from '../actions.config';
+import type { Ingredient } from '@/app/core/models/ingredient';
+import type { IngredientRequest } from '@/app/core/requests/ingredient.request';
+
+import { Actions, Prefixes } from '@/app/core/store/actions.config';
 
 export const ingredientsLoad = createAction(`${Prefixes.ingredients} ${Actions.load}`);
 
@@ -26,10 +28,7 @@ export const ingredientAddSuccess = createAction(
   props<{ ingredient: Ingredient }>(),
 );
 
-export const ingredientDelete = createAction(
-  `${Prefixes.ingredients} ${Actions.delete}`,
-  props<{ id: number }>(),
-);
+export const ingredientDelete = createAction(`${Prefixes.ingredients} ${Actions.delete}`, props<{ id: number }>());
 
 export const ingredientDeleteError = createAction(`${Prefixes.ingredients} ${Actions.deleteError}`);
 

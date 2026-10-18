@@ -1,12 +1,8 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-  signal,
-  Signal,
-  WritableSignal,
-} from '@angular/core';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import type { OnInit, Signal, WritableSignal } from '@angular/core';
+import type { FormGroup } from '@angular/forms';
+
+import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
@@ -14,22 +10,21 @@ import { MatInput } from '@angular/material/input';
 import { Router, RouterLink } from '@angular/router';
 import { take } from 'rxjs/operators';
 
-import { Length } from '../../../../config/form.config';
-import { RoutingConfig } from '../../../../config/routing.config';
-import { authErrors, AuthErrors } from '../../../../core/errors/auth.error';
-import {
-  AuthFormFactory,
-  AuthFormNames,
-  formNames,
-} from '../../../../core/factories/auth-form.factory';
-import { messages } from '../../../../core/messages/auth.messages';
-import { TokensData } from '../../../../core/models/auth';
-import { AuthService } from '../../../../core/services/auth.service';
-import { LoginService } from '../../../../core/services/login.service';
-import { FormUtils } from '../../../../core/utils/form.utils';
-import { PathUtils } from '../../../../core/utils/path.utils';
-import { BaseComponent } from '../../../base.component';
-import { ErrorsContainerComponent } from '../../../shared/components/errors-container/errors-container.component';
+import type { AuthErrors } from '@/app/core/errors/auth.error';
+import type { AuthFormNames } from '@/app/core/factories/auth-form.factory';
+import type { TokensData } from '@/app/core/models/auth';
+
+import { Length } from '@/app/config/form.config';
+import { RoutingConfig } from '@/app/config/routing.config';
+import { authErrors } from '@/app/core/errors/auth.error';
+import { AuthFormFactory, formNames } from '@/app/core/factories/auth-form.factory';
+import { messages } from '@/app/core/messages/auth.messages';
+import { AuthService } from '@/app/core/services/auth.service';
+import { LoginService } from '@/app/core/services/login.service';
+import { FormUtils } from '@/app/core/utils/form.utils';
+import { PathUtils } from '@/app/core/utils/path.utils';
+import { BaseComponent } from '@/app/modules/base.component';
+import { ErrorsContainerComponent } from '@/app/modules/shared/components/errors-container/errors-container.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -46,39 +41,25 @@ import { ErrorsContainerComponent } from '../../../shared/components/errors-cont
   ],
   providers: [LoginService],
   selector: 'auth-login-form',
-  standalone: true,
-  styleUrls: ['./login-form.component.scss'],
+  styleUrl: './login-form.component.scss',
   templateUrl: './login-form.component.html',
 })
 export class LoginFormComponent extends BaseComponent implements OnInit {
   public emailLength!: Signal<number>;
   public errorMessage: WritableSignal<string> = signal<string>('');
-  public errors: AuthErrors;
+  public errors: AuthErrors = authErrors;
   public form!: FormGroup;
-  public formNames: AuthFormNames;
-  public maxEmailLength: number;
-  public maxPasswordLength: number;
+  public formNames: AuthFormNames = formNames;
+  public maxEmailLength: number = Length.maxEmailLength;
+  public maxPasswordLength: number = Length.maxPasswordLength;
   public passwordLength!: Signal<number>;
-  public registerPath: string;
-  public resetPasswordPath: string;
-  private authService: AuthService;
-  private loginService: LoginService;
-  private router: Router;
-  public constructor(loginService: LoginService, authService: AuthService, router: Router) {
-    super();
-    this.loginService = loginService;
-    this.authService = authService;
-    this.router = router;
-    this.formNames = formNames;
-    this.maxPasswordLength = Length.maxPasswordLength;
-    this.maxEmailLength = Length.maxEmailLength;
-    this.errors = authErrors;
-    this.registerPath = PathUtils.concatPath(RoutingConfig.registration);
-    this.resetPasswordPath = PathUtils.concatPath(RoutingConfig.resetPassword);
-  }
+  public registerPath: string = PathUtils.concatPath(RoutingConfig.registration);
+  public resetPasswordPath: string = PathUtils.concatPath(RoutingConfig.resetPassword);
+  private authService: AuthService = inject(AuthService);
+  private loginService: LoginService = inject(LoginService);
+  private router: Router = inject(Router);
 
   public ngOnInit(): void {
-    this.errorMessage.set('');
     this.form = AuthFormFactory.getLoginForm();
     this.emailLength = FormUtils.getLength(this.injector, this.form, this.formNames.username);
     this.passwordLength = FormUtils.getLength(this.injector, this.form, this.formNames.password);

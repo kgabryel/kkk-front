@@ -1,42 +1,30 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import type { OnInit } from '@angular/core';
+
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { take } from 'rxjs/operators';
 
-import { RoutingConfig } from '../../../../config/routing.config';
-import { messages } from '../../../../core/messages/auth.messages';
-import { TokensData } from '../../../../core/models/auth';
-import { AuthService } from '../../../../core/services/auth.service';
-import { LoginService } from '../../../../core/services/login.service';
-import { NotificationService } from '../../../../core/services/notification.service';
-import { PathUtils } from '../../../../core/utils/path.utils';
+import type { TokensData } from '@/app/core/models/auth';
+
+import { RoutingConfig } from '@/app/config/routing.config';
+import { messages } from '@/app/core/messages/auth.messages';
+import { AuthService } from '@/app/core/services/auth.service';
+import { LoginService } from '@/app/core/services/login.service';
+import { NotificationService } from '@/app/core/services/notification.service';
+import { PathUtils } from '@/app/core/utils/path.utils';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [LoginService],
   selector: 'auth-pages-fb',
-  standalone: true,
-  styleUrls: [],
   templateUrl: './fb.component.html',
 })
 export class FbComponent implements OnInit {
-  private authService: AuthService;
-  private loginService: LoginService;
-  private notificationService: NotificationService;
-  private route: ActivatedRoute;
-  private router: Router;
-  public constructor(
-    route: ActivatedRoute,
-    loginService: LoginService,
-    authService: AuthService,
-    router: Router,
-    notificationService: NotificationService,
-  ) {
-    this.route = route;
-    this.loginService = loginService;
-    this.authService = authService;
-    this.router = router;
-    this.notificationService = notificationService;
-  }
+  private authService: AuthService = inject(AuthService);
+  private loginService: LoginService = inject(LoginService);
+  private notificationService: NotificationService = inject(NotificationService);
+  private route: ActivatedRoute = inject(ActivatedRoute);
+  private router: Router = inject(Router);
 
   public ngOnInit(): void {
     const authToken = this.route.snapshot.queryParams['code'];

@@ -1,10 +1,12 @@
-import { Update } from '@ngrx/entity';
+import type { Update } from '@ngrx/entity';
+
 import { createAction, props } from '@ngrx/store';
 
-import { Order } from '../../models/photo';
-import { Recipe } from '../../models/recipe';
-import { RecipeRequest } from '../../requests/recipe.request';
-import { Actions, Prefixes } from '../actions.config';
+import type { Order } from '@/app/core/models/photo';
+import type { Recipe } from '@/app/core/models/recipe';
+import type { RecipeRequest } from '@/app/core/requests/recipe.request';
+
+import { Actions, Prefixes } from '@/app/core/store/actions.config';
 
 export const recipesLoad = createAction(`${Prefixes.recipes} ${Actions.load}`);
 
@@ -15,22 +17,13 @@ export const recipesLoadSuccess = createAction(
   props<{ recipes: Recipe[] }>(),
 );
 
-export const recipeAdd = createAction(
-  `${Prefixes.recipes} ${Actions.add}`,
-  props<{ recipe: RecipeRequest }>(),
-);
+export const recipeAdd = createAction(`${Prefixes.recipes} ${Actions.add}`, props<{ recipe: RecipeRequest }>());
 
 export const recipeAddError = createAction(`${Prefixes.recipes} ${Actions.addError}`);
 
-export const recipeAddSuccess = createAction(
-  `${Prefixes.recipes} ${Actions.addSuccess}`,
-  props<{ recipe: Recipe }>(),
-);
+export const recipeAddSuccess = createAction(`${Prefixes.recipes} ${Actions.addSuccess}`, props<{ recipe: Recipe }>());
 
-export const recipeDelete = createAction(
-  `${Prefixes.recipes} ${Actions.delete}`,
-  props<{ id: number }>(),
-);
+export const recipeDelete = createAction(`${Prefixes.recipes} ${Actions.delete}`, props<{ id: number }>());
 
 export const recipeDeleteError = createAction(`${Prefixes.recipes} ${Actions.deleteError}`);
 
@@ -63,10 +56,7 @@ export const recipeUpdateSuccess = createAction(
 
 export const recipesReset = createAction(`${Prefixes.recipes} ${Actions.reset}`);
 
-export const photoAdd = createAction(
-  `${Prefixes.photos} ${Actions.add}`,
-  props<{ id: number; photo: string }>(),
-);
+export const photoAdd = createAction(`${Prefixes.photos} ${Actions.add}`, props<{ id: number; photo: string }>());
 
 export const photoAddError = createAction(`${Prefixes.photos} ${Actions.addError}`);
 

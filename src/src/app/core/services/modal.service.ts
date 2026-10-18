@@ -1,4 +1,6 @@
-import { Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import type { Signal, WritableSignal } from '@angular/core';
+
+import { Injectable, signal } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class ModalService {

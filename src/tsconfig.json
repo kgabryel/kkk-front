@@ -1,7 +1,8 @@
 {
   "extends": "@kgabryel-dev/code-quality/tsconfig/angular.json",
   "compilerOptions": {
-    "baseUrl": ".",
+    "esModuleInterop": true,
+    "moduleResolution": "bundler",
     "paths": {
       "@/*": ["./src/*"]
     }

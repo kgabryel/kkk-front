@@ -1,28 +1,23 @@
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { Action } from '@ngrx/store';
-import { Observable, of } from 'rxjs';
+import type { Action } from '@ngrx/store';
+import type { Observable } from 'rxjs';
+
+import { Injectable, inject } from '@angular/core';
+import { createEffect, ofType } from '@ngrx/effects';
+import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
-import { messages } from '../../messages/oza.messages';
-import { OzaSupply } from '../../models/oza-supply';
-import { IngredientsService } from '../../services/ingredients.service';
-import { NotificationService } from '../../services/notification.service';
-import { BaseEffect } from '../BaseEffect';
+import type { OzaSupply } from '@/app/core/models/oza-supply';
+
+import { messages } from '@/app/core/messages/oza.messages';
+import { IngredientsService } from '@/app/core/services/ingredients.service';
+import { BaseEffect } from '@/app/core/store/BaseEffect';
+
 import { suppliesLoad, suppliesLoadError, suppliesLoadSuccess } from './actions';
 
 @Injectable()
 export class OzaSuppliesEffects extends BaseEffect<IngredientsService> {
   public loadSupplies!: Observable<Action>;
-  public constructor(
-    actions: Actions,
-    ingredientsService: IngredientsService,
-    router: Router,
-    notificationService: NotificationService,
-  ) {
-    super(actions, notificationService, router, ingredientsService);
-  }
+  protected readonly service: IngredientsService = inject(IngredientsService);
 
   protected initEffects(): void {
     this.createLoadEffect();

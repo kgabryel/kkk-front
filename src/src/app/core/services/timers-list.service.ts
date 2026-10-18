@@ -1,6 +1,8 @@
-import { Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import type { Signal, WritableSignal } from '@angular/core';
 
-import { Timer } from '../models/timer';
+import { Injectable, signal } from '@angular/core';
+
+import type { Timer } from '@/app/core/models/timer';
 
 @Injectable({ providedIn: 'root' })
 export class TimersListService {

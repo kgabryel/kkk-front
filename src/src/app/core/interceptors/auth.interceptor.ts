@@ -1,21 +1,20 @@
-import {
-  HttpInterceptorFn,
-  HttpRequest,
-  HttpHandlerFn,
-  HttpErrorResponse,
-  HttpEvent,
-} from '@angular/common/http';
-import { inject, signal, WritableSignal } from '@angular/core';
+import type { HttpInterceptorFn, HttpRequest, HttpHandlerFn, HttpEvent } from '@angular/common/http';
+import type { WritableSignal } from '@angular/core';
+import type { Observable } from 'rxjs';
+
+import { HttpErrorResponse } from '@angular/common/http';
+import { inject, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { Observable, throwError } from 'rxjs';
+import { throwError } from 'rxjs';
 import { catchError, filter, finalize, switchMap, take } from 'rxjs/operators';
 
-import { RoutingConfig } from '../../config/routing.config';
-import { RefreshTokenData } from '../models/auth';
-import { AuthService } from '../services/auth.service';
-import { StoreService } from '../services/store.service';
-import { PathUtils } from '../utils/path.utils';
+import type { RefreshTokenData } from '@/app/core/models/auth';
+
+import { RoutingConfig } from '@/app/config/routing.config';
+import { AuthService } from '@/app/core/services/auth.service';
+import { StoreService } from '@/app/core/services/store.service';
+import { PathUtils } from '@/app/core/utils/path.utils';
 
 let isRefreshing = false;
 const refreshed: WritableSignal<boolean> = signal<boolean>(false);

@@ -1,6 +1,8 @@
-import { Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import type { Signal, WritableSignal } from '@angular/core';
 
-import { SearchServiceInterface } from './search-service.interface';
+import { Injectable, signal } from '@angular/core';
+
+import type { SearchServiceInterface } from './search-service.interface';
 
 @Injectable({ providedIn: 'root' })
 export class TagsSearchService implements SearchServiceInterface<string> {

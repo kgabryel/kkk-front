@@ -1,11 +1,6 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  input,
-  InputSignal,
-  OnInit,
-  Signal,
-} from '@angular/core';
+import type { InputSignal, OnInit, Signal } from '@angular/core';
+
+import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatLine } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -15,28 +10,21 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 
-import { Recipe } from '../../../../core/models/recipe';
-import { State } from '../../../../core/store/recipes/reducers';
-import { selectRecipeAvailable } from '../../../../core/store/recipes/selectors';
-import { RecipesTooltips, tooltips } from '../../../../core/tooltips/recipes.tooltips';
-import { SignalUtils } from '../../../../core/utils/signal.utils';
-import { RecipePreviewHrefPipe } from '../../../shared/pipes/recipe-preview-href.pipe';
-import { RecipeDialogComponent } from '../recipe-dialog/recipe-dialog.component';
+import type { Recipe } from '@/app/core/models/recipe';
+import type { State } from '@/app/core/store/recipes/reducers';
+import type { RecipesTooltips } from '@/app/core/tooltips/recipes.tooltips';
+
+import { selectRecipeAvailable } from '@/app/core/store/recipes/selectors';
+import { tooltips } from '@/app/core/tooltips/recipes.tooltips';
+import { SignalUtils } from '@/app/core/utils/signal.utils';
+import { RecipeDialogComponent } from '@/app/modules/recipes/components/recipe-dialog/recipe-dialog.component';
+import { RecipePreviewHrefPipe } from '@/app/modules/shared/pipes/recipe-preview-href.pipe';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatListItem,
-    MatIcon,
-    MatTooltip,
-    MatIconButton,
-    MatLine,
-    RouterLink,
-    RecipePreviewHrefPipe,
-  ],
+  imports: [MatListItem, MatIcon, MatTooltip, MatIconButton, MatLine, RouterLink, RecipePreviewHrefPipe],
   selector: 'recipes-recipe-position',
-  standalone: true,
-  styleUrls: ['./recipe-position.component.scss'],
+  styleUrl: './recipe-position.component.scss',
   templateUrl: './recipe-position.component.html',
 })
 export class RecipePositionComponent implements OnInit {
@@ -45,14 +33,9 @@ export class RecipePositionComponent implements OnInit {
   public amount: InputSignal<string | null> = input.required<string | null>();
   public additional: InputSignal<boolean> = input.required<boolean>();
   public available!: Signal<boolean>;
-  public tooltips: RecipesTooltips;
-  private dialog: MatDialog;
-  private readonly store: Store<State>;
-  public constructor(store: Store<State>, dialog: MatDialog) {
-    this.store = store;
-    this.dialog = dialog;
-    this.tooltips = tooltips;
-  }
+  public tooltips: RecipesTooltips = tooltips;
+  private dialog: MatDialog = inject(MatDialog);
+  private readonly store: Store<State> = inject<Store<State>>(Store);
 
   public ngOnInit(): void {
     this.available = SignalUtils.map<Recipe, boolean>(this.recipe, (recipe: Recipe) =>

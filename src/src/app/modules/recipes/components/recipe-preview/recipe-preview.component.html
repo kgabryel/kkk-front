@@ -1,146 +1,32 @@
 <div class="container d-inline-block pa-1">
   <div
     class="preview pa-1"
-    [ngClass]="{ 'in-masonry': previewAvailable }"
+    [class.in-masonry]="previewAvailable()"
   >
     <div>
       <h3 class="mb-0 ma-1 text-uppercase">
         {{ recipe().name }}
       </h3>
       <div class="mb-1 d-flex">
-        @if (!(recipe().url | emptyString)) {
-          <a
-            [href]="recipe().url"
-            target="_blank"
-          >
-            <button
-              class="glassmorphism-button"
-              mat-raised-button
-              type="button"
-            >
-              Link
-            </button>
-          </a>
-        }
+        <recipes-recipe-url [url]="recipe().url"></recipes-recipe-url>
         @if (buttons()) {
-          <div class="w-100 text-right">
-            <button
-              [disabled]="!recipe().public"
-              [matTooltip]="tooltips.share"
-              (click)="share()"
-              mat-icon-button
-              type="button"
-            >
-              <mat-icon>share</mat-icon>
-            </button>
-            <button
-              [matTooltip]="tooltips.favourite"
-              (click)="updateFavourite()"
-              mat-icon-button
-              type="button"
-            >
-              @if (!recipe().favourite) {
-                <mat-icon>star_outline</mat-icon>
-              }
-              @if (recipe().favourite) {
-                <mat-icon>star</mat-icon>
-              }
-            </button>
-            <button
-              [matTooltip]="tooltips.toDo"
-              (click)="updateToDo()"
-              mat-icon-button
-              type="button"
-            >
-              @if (!recipe().toDo) {
-                <mat-icon>turned_in_not</mat-icon>
-              }
-              @if (recipe().toDo) {
-                <mat-icon>turned_in</mat-icon>
-              }
-            </button>
-            @if (previewAvailable()) {
-              <button
-                [matTooltip]="tooltips.preview"
-                [routerLink]="recipe() | recipePreviewHref"
-                mat-icon-button
-                type="button"
-              >
-                <mat-icon>visibility</mat-icon>
-              </button>
-            }
-            <button
-              [matTooltip]="tooltips.delete"
-              (click)="delete()"
-              mat-icon-button
-              type="button"
-            >
-              <mat-icon>delete</mat-icon>
-            </button>
-            <button
-              [matTooltip]="tooltips.edit"
-              [routerLink]="recipe() | recipeEditHref"
-              mat-icon-button
-              type="button"
-            >
-              <mat-icon>edit</mat-icon>
-            </button>
-          </div>
+          <recipes-recipe-actions
+            [recipe]="recipe()"
+            [previewAvailable]="previewAvailable()"
+          ></recipes-recipe-actions>
         }
       </div>
       @if (buttons() && recipe().timers.length > 0) {
         <div class="w-100">
-          @for (timer of recipe().timers; track timer) {
-            <recipes-timer
-              [timer]="timer"
-              (add)="addTimer(timer)"
-            ></recipes-timer>
-          }
-          <button
-            class="glassmorphism-button w-100 add-timers-btn mt-1"
-            (click)="addAllTimers()"
-            mat-button
-            type="button"
-          >
-            <mat-icon>alarm</mat-icon>
-            Dodaj wszystkie minutniki
-          </button>
+          <recipes-recipe-timers [recipe]="recipe()"></recipes-recipe-timers>
         </div>
       }
     </div>
     <div class="mt-1 mb-1">
-      @if (recipe().photos.length > 0) {
-        <swiper-container
-          slides-per-view="1"
-          navigation="true"
-          pagination="true"
-          centered-slides="true"
-          zoom="true"
-        >
-          @for (photo of recipe().photos; track photo) {
-            <swiper-slide>
-              @if (getPhoto(photo)(); as image) {
-                <div class="swiper-zoom-container">
-                  <img
-                    [src]="image"
-                    (click)="showPhoto(photo)"
-                    alt="photo"
-                  />
-                </div>
-              } @else {
-                <div class="swiper-zoom-container">
-                  <img
-                    [src]="loadingGif"
-                    height="150"
-                    width="200"
-                    alt="loading"
-                  />
-                </div>
-              }
-            </swiper-slide>
-          }
-        </swiper-container>
-      }
+      <recipes-recipe-photos
+        [photos]="recipe().photos"
+        [recipeId]="recipe().id"
+      />
     </div>
     @if (tags().length > 0) {
       <div class="pb-1 ml--1">
@@ -157,17 +43,7 @@
       </div>
     }
     <mat-accordion multi>
-      @if (!(recipe().description | emptyString)) {
-        <mat-expansion-panel
-          expanded
-          hideToggle
-        >
-          <mat-expansion-panel-header>
-            <mat-panel-title>Przepis</mat-panel-title>
-          </mat-expansion-panel-header>
-          <p [innerHTML]="recipe().description"></p>
-        </mat-expansion-panel>
-      }
+      <recipes-recipe-description [description]="recipe().description" />
       @if (recipe().groups.length > 0) {
         <mat-expansion-panel
           expanded

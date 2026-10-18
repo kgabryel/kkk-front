@@ -1,10 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 
-import { Length } from '../../config/form.config';
-import { State } from '../store/ingredients/reducers';
-import { IngredientsValidator } from '../validators/ingredients.validator';
+import type { State } from '@/app/core/store/ingredients/reducers';
+
+import { Length } from '@/app/config/form.config';
+import { IngredientsValidator } from '@/app/core/validators/ingredients.validator';
 
 export interface IngredientsFormNames {
   name: string;
@@ -22,10 +23,7 @@ export const formNames: IngredientsFormNames = {
 
 @Injectable()
 export class IngredientFormFactory {
-  private readonly store: Store<State>;
-  public constructor(store: Store<State>) {
-    this.store = store;
-  }
+  private readonly store: Store<State> = inject<Store<State>>(Store);
 
   public getCreateForm(): FormGroup {
     return new FormGroup({

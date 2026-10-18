@@ -1,0 +1,30 @@
+@if (photos().length > 0) {
+  <swiper-container
+    slides-per-view="1"
+    navigation="true"
+    pagination="true"
+    centered-slides="true"
+    zoom="true"
+  >
+    @for (photo of photos(); track photo) {
+      <swiper-slide>
+        <div class="swiper-zoom-container">
+          @if (getPhoto(photo)(); as image) {
+            <img
+              [src]="image"
+              (click)="showPhoto(photo)"
+              alt="photo"
+            />
+          } @else {
+            <img
+              [src]="loadingGif"
+              height="150"
+              width="200"
+              alt="loading"
+            />
+          }
+        </div>
+      </swiper-slide>
+    }
+  </swiper-container>
+}

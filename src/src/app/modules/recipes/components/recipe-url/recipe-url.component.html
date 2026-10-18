@@ -1,0 +1,11 @@
+@if (!(url() | emptyString)) {
+  <a
+    class="glassmorphism-button"
+    [href]="url()"
+    mat-raised-button
+    rel="noopener noreferrer"
+    target="_blank"
+  >
+    Link
+  </a>
+}

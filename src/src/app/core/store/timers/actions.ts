@@ -1,9 +1,11 @@
-import { Update } from '@ngrx/entity';
+import type { Update } from '@ngrx/entity';
+
 import { createAction, props } from '@ngrx/store';
 
-import { Timer } from '../../models/timer';
-import { TimerRequest } from '../../requests/timer.request';
-import { Actions, Prefixes } from '../actions.config';
+import type { Timer } from '@/app/core/models/timer';
+import type { TimerRequest } from '@/app/core/requests/timer.request';
+
+import { Actions, Prefixes } from '@/app/core/store/actions.config';
 
 export const timersLoad = createAction(`${Prefixes.timers} ${Actions.load}`);
 
@@ -14,29 +16,17 @@ export const timersLoadSuccess = createAction(
   props<{ timers: Timer[] }>(),
 );
 
-export const timerAdd = createAction(
-  `${Prefixes.timers} ${Actions.add}`,
-  props<{ timer: TimerRequest }>(),
-);
+export const timerAdd = createAction(`${Prefixes.timers} ${Actions.add}`, props<{ timer: TimerRequest }>());
 
 export const timerAddError = createAction(`${Prefixes.timers} ${Actions.addError}`);
 
-export const timerAddSuccess = createAction(
-  `${Prefixes.timers} ${Actions.addSuccess}`,
-  props<{ timer: Timer }>(),
-);
+export const timerAddSuccess = createAction(`${Prefixes.timers} ${Actions.addSuccess}`, props<{ timer: Timer }>());
 
-export const timerDelete = createAction(
-  `${Prefixes.timers} ${Actions.delete}`,
-  props<{ id: number }>(),
-);
+export const timerDelete = createAction(`${Prefixes.timers} ${Actions.delete}`, props<{ id: number }>());
 
 export const timerDeleteError = createAction(`${Prefixes.timers} ${Actions.deleteError}`);
 
-export const timerDeleteSuccess = createAction(
-  `${Prefixes.timers} ${Actions.deleteSuccess}`,
-  props<{ id: number }>(),
-);
+export const timerDeleteSuccess = createAction(`${Prefixes.timers} ${Actions.deleteSuccess}`, props<{ id: number }>());
 
 export const timerUpdate = createAction(
   `${Prefixes.timers} ${Actions.update}`,

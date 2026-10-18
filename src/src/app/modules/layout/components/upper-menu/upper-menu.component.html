@@ -10,7 +10,7 @@
   @if (searchAvailable) {
     <button
       class="glassmorphism-button search-btn"
-      [ngClass]="{ filtered: filtered() }"
+      [class.filtered]="filtered()"
       (click)="openModal()"
       mat-button
       type="button"

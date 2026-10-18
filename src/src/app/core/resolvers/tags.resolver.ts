@@ -1,10 +1,11 @@
+import type { ResolveFn } from '@angular/router';
+
 import { inject } from '@angular/core';
-import { ResolveFn } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { filter, take, tap } from 'rxjs/operators';
 
-import { tagsLoad } from '../store/tags/actions';
-import { selectIsLoaded } from '../store/tags/selectors';
+import { tagsLoad } from '@/app/core/store/tags/actions';
+import { selectIsLoaded } from '@/app/core/store/tags/selectors';
 
 export const tagsResolver: ResolveFn<boolean> = () => {
   const store = inject(Store);

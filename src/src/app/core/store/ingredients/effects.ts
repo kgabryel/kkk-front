@@ -1,19 +1,20 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { Update } from '@ngrx/entity';
-import { Action } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import type { HttpErrorResponse } from '@angular/common/http';
+import type { Update } from '@ngrx/entity';
+import type { Action } from '@ngrx/store';
+import type { Observable } from 'rxjs';
+
+import { Injectable, inject } from '@angular/core';
+import { createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
-import { RoutingConfig } from '../../../config/routing.config';
-import { messages } from '../../messages/ingredients.messages';
-import { Ingredient } from '../../models/ingredient';
-import { IngredientsService } from '../../services/ingredients.service';
-import { NotificationService } from '../../services/notification.service';
-import { PathUtils } from '../../utils/path.utils';
-import { BaseEffect } from '../BaseEffect';
+import type { Ingredient } from '@/app/core/models/ingredient';
+
+import { RoutingConfig } from '@/app/config/routing.config';
+import { messages } from '@/app/core/messages/ingredients.messages';
+import { IngredientsService } from '@/app/core/services/ingredients.service';
+import { BaseEffect } from '@/app/core/store/BaseEffect';
+import { PathUtils } from '@/app/core/utils/path.utils';
+
 import {
   ingredientAdd,
   ingredientAddError,
@@ -39,14 +40,7 @@ export class IngredientsEffects extends BaseEffect<IngredientsService> {
   public updateIngredientAvailable!: Observable<Action>;
   public updateIngredientName!: Observable<Action>;
   public updateIngredientOzaId!: Observable<Action>;
-  public constructor(
-    actions: Actions,
-    ingredientsService: IngredientsService,
-    router: Router,
-    notificationService: NotificationService,
-  ) {
-    super(actions, notificationService, router, ingredientsService);
-  }
+  protected readonly service: IngredientsService = inject(IngredientsService);
 
   private static ingredientUpdateSuccess(
     ingredient: Ingredient,
@@ -120,9 +114,7 @@ export class IngredientsEffects extends BaseEffect<IngredientsService> {
         switchMap((action: ReturnType<typeof ingredientAvailableUpdate>) =>
           this.service.updateAvailable(action.id, action.available).pipe(
             tap(() => this.notificationService.showMessage(messages.ingredientUpdated)),
-            map((ingredient: Ingredient) =>
-              IngredientsEffects.ingredientUpdateSuccess(ingredient, action.id),
-            ),
+            map((ingredient: Ingredient) => IngredientsEffects.ingredientUpdateSuccess(ingredient, action.id)),
             catchError((error: HttpErrorResponse) => this.error(error, ingredientUpdateError())),
           ),
         ),
@@ -137,9 +129,7 @@ export class IngredientsEffects extends BaseEffect<IngredientsService> {
         switchMap((action: ReturnType<typeof ingredientNameUpdate>) =>
           this.service.updateName(action.id, action.name).pipe(
             tap(() => this.notificationService.showMessage(messages.ingredientUpdated)),
-            map((ingredient: Ingredient) =>
-              IngredientsEffects.ingredientUpdateSuccess(ingredient, action.id),
-            ),
+            map((ingredient: Ingredient) => IngredientsEffects.ingredientUpdateSuccess(ingredient, action.id)),
             catchError((error: HttpErrorResponse) => this.error(error, ingredientUpdateError())),
           ),
         ),
@@ -154,9 +144,7 @@ export class IngredientsEffects extends BaseEffect<IngredientsService> {
         switchMap((action: ReturnType<typeof ingredientOzaIdUpdate>) =>
           this.service.updateOzaId(action.id, action.ozaId).pipe(
             tap(() => this.notificationService.showMessage(messages.ingredientUpdated)),
-            map((ingredient: Ingredient) =>
-              IngredientsEffects.ingredientUpdateSuccess(ingredient, action.id),
-            ),
+            map((ingredient: Ingredient) => IngredientsEffects.ingredientUpdateSuccess(ingredient, action.id)),
             catchError((error: HttpErrorResponse) => this.error(error, ingredientUpdateError())),
           ),
         ),

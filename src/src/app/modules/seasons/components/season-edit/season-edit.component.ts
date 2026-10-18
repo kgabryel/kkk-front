@@ -1,12 +1,8 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  input,
-  InputSignal,
-  OnInit,
-  output,
-} from '@angular/core';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import type { InputSignal, OnInit, OutputEmitterRef } from '@angular/core';
+import type { FormGroup } from '@angular/forms';
+
+import { ChangeDetectionStrategy, Component, input, output, inject } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
 import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
@@ -16,20 +12,20 @@ import { Store } from '@ngrx/store';
 import { cloneDeep } from 'lodash-unified';
 import { EMPTY } from 'rxjs';
 
-import { Month, months } from '../../../../config/months.config';
-import { seasonErrors, SeasonErrors } from '../../../../core/errors/season.error';
-import {
-  formNames,
-  SeasonsFormFactory,
-  SeasonsFormNames,
-} from '../../../../core/factories/seasons.factory';
-import { Season } from '../../../../core/models/season';
-import { UpdateSeasonRequest } from '../../../../core/requests/season.request';
-import { seasonUpdate } from '../../../../core/store/seasons/actions';
-import { State } from '../../../../core/store/seasons/reducers';
-import { BaseComponent } from '../../../base.component';
-import { ErrorsContainerComponent } from '../../../shared/components/errors-container/errors-container.component';
-import { AutocompletePipe } from '../../../shared/pipes/autocomplete.pipe';
+import type { Month } from '@/app/config/months.config';
+import type { SeasonErrors } from '@/app/core/errors/season.error';
+import type { SeasonsFormNames } from '@/app/core/factories/seasons.factory';
+import type { Season } from '@/app/core/models/season';
+import type { UpdateSeasonRequest } from '@/app/core/requests/season.request';
+import type { State } from '@/app/core/store/seasons/reducers';
+
+import { months } from '@/app/config/months.config';
+import { seasonErrors } from '@/app/core/errors/season.error';
+import { formNames, SeasonsFormFactory } from '@/app/core/factories/seasons.factory';
+import { seasonUpdate } from '@/app/core/store/seasons/actions';
+import { BaseComponent } from '@/app/modules/base.component';
+import { ErrorsContainerComponent } from '@/app/modules/shared/components/errors-container/errors-container.component';
+import { AutocompletePipe } from '@/app/modules/shared/pipes/autocomplete.pipe';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -48,28 +44,23 @@ import { AutocompletePipe } from '../../../shared/pipes/autocomplete.pipe';
   ],
   providers: [SeasonsFormFactory],
   selector: 'seasons-season-edit',
-  standalone: true,
-  styleUrls: ['./season-edit.component.scss'],
+  styleUrl: './season-edit.component.scss',
   templateUrl: './season-edit.component.html',
 })
 export class SeasonEditComponent extends BaseComponent implements OnInit {
   public season: InputSignal<Season> = input.required<Season>();
-  public edit = output<boolean>();
+  public edit: OutputEmitterRef<boolean> = output<boolean>();
   public endMonths: Month[];
-  public errors: SeasonErrors;
+  public errors: SeasonErrors = seasonErrors;
   public form!: FormGroup;
-  public formNames: SeasonsFormNames;
+  public formNames: SeasonsFormNames = formNames;
   public startMonths: Month[];
-  private seasonFormFactory: SeasonsFormFactory;
-  private store: Store<State>;
-  public constructor(store: Store<State>, seasonFormFactory: SeasonsFormFactory) {
+  private seasonFormFactory: SeasonsFormFactory = inject(SeasonsFormFactory);
+  private store: Store<State> = inject<Store<State>>(Store);
+  public constructor() {
     super();
-    this.store = store;
-    this.formNames = formNames;
-    this.errors = seasonErrors;
     this.startMonths = cloneDeep(months);
     this.endMonths = cloneDeep(months);
-    this.seasonFormFactory = seasonFormFactory;
   }
 
   public ngOnInit(): void {

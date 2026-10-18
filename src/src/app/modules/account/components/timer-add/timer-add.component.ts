@@ -1,32 +1,31 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import type { OnInit } from '@angular/core';
+import type { FormGroup } from '@angular/forms';
+
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 
-import { formNames, TimerFactory, TimerFormNames } from '../../../../core/factories/timer.factory';
-import { TimerRequest } from '../../../../core/requests/timer.request';
-import { timerAdd } from '../../../../core/store/timers/actions';
-import { State } from '../../../../core/store/timers/reducers';
-import { FormUtils } from '../../../../core/utils/form.utils';
-import { TimeUtils } from '../../../../core/utils/time.utils';
-import { AutocompletePipe } from '../../../shared/pipes/autocomplete.pipe';
-import { FormComponent } from '../../../timers/components/form/form.component';
+import type { TimerFormNames } from '@/app/core/factories/timer.factory';
+import type { TimerRequest } from '@/app/core/requests/timer.request';
+import type { State } from '@/app/core/store/timers/reducers';
+
+import { formNames, TimerFactory } from '@/app/core/factories/timer.factory';
+import { timerAdd } from '@/app/core/store/timers/actions';
+import { FormUtils } from '@/app/core/utils/form.utils';
+import { TimeUtils } from '@/app/core/utils/time.utils';
+import { AutocompletePipe } from '@/app/modules/shared/pipes/autocomplete.pipe';
+import { FormComponent } from '@/app/modules/timers/components/form/form.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ReactiveFormsModule, FormComponent, AutocompletePipe],
   selector: 'account-timer-add',
-  standalone: true,
-  styleUrls: [],
   templateUrl: './timer-add.component.html',
 })
 export class TimerAddComponent implements OnInit {
   public form!: FormGroup;
-  public formNames: TimerFormNames;
-  private store: Store<State>;
-  public constructor(store: Store<State>) {
-    this.formNames = formNames;
-    this.store = store;
-  }
+  public formNames: TimerFormNames = formNames;
+  private store: Store<State> = inject<Store<State>>(Store);
 
   public ngOnInit(): void {
     this.form = TimerFactory.getCreateForm();

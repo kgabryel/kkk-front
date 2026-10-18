@@ -1,20 +1,8 @@
-import {
-  CdkDrag,
-  CdkDragDrop,
-  CdkDragHandle,
-  CdkDropList,
-  moveItemInArray,
-} from '@angular/cdk/drag-drop';
-import {
-  Component,
-  input,
-  InputSignal,
-  OnChanges,
-  OnInit,
-  Signal,
-  signal,
-  WritableSignal,
-} from '@angular/core';
+import type { CdkDragDrop } from '@angular/cdk/drag-drop';
+import type { InputSignal, OnChanges, OnInit, Signal, WritableSignal } from '@angular/core';
+
+import { CdkDrag, CdkDragHandle, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
+import { Component, input, signal, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
@@ -22,48 +10,39 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { take } from 'rxjs/operators';
 
-import { ImagesConfig } from '../../../../config/images.config';
-import { PhotosConfig } from '../../../../config/photos.config';
-import { Photo, PhotoOrder } from '../../../../core/models/photo';
-import { Recipe } from '../../../../core/models/recipe';
-import { PhotoService } from '../../../../core/services/photo.service';
-import { RecipesService } from '../../../../core/services/recipes.service';
-import { photoDelete, photosReorder } from '../../../../core/store/recipes/actions';
-import { State } from '../../../../core/store/recipes/reducers';
-import { RecipesTooltips, tooltips } from '../../../../core/tooltips/recipes.tooltips';
-import { DeleteDialogComponent } from '../../../shared/components/delete-dialog/delete-dialog.component';
-import { AddPhotoDialogComponent } from '../add-photo/add-photo-dialog.component';
+import type { Photo, PhotoOrder } from '@/app/core/models/photo';
+import type { Recipe } from '@/app/core/models/recipe';
+import type { State } from '@/app/core/store/recipes/reducers';
+import type { RecipesTooltips } from '@/app/core/tooltips/recipes.tooltips';
+
+import { ImagesConfig } from '@/app/config/images.config';
+import { PhotosConfig } from '@/app/config/photos.config';
+import { PhotoService } from '@/app/core/services/photo.service';
+import { RecipesService } from '@/app/core/services/recipes.service';
+import { photoDelete, photosReorder } from '@/app/core/store/recipes/actions';
+import { tooltips } from '@/app/core/tooltips/recipes.tooltips';
+import { AddPhotoDialogComponent } from '@/app/modules/recipes/components/add-photo/add-photo-dialog.component';
+import { DeleteDialogComponent } from '@/app/modules/shared/components/delete-dialog/delete-dialog.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatIcon, CdkDropList, CdkDrag, MatButton, CdkDragHandle, MatTooltip, MatIconButton],
   selector: 'recipes-gallery',
-  standalone: true,
-  styleUrls: ['./gallery.component.scss'],
+  styleUrl: './gallery.component.scss',
   templateUrl: './gallery.component.html',
 })
 export class GalleryComponent implements OnInit, OnChanges {
   public recipe: InputSignal<Recipe> = input.required<Recipe>();
-  public loadingGif: string;
+  public loadingGif: string = ImagesConfig.loading;
   public photos!: PhotoOrder[];
   public photosPaths: Map<number, WritableSignal<string>>;
-  public tooltips: RecipesTooltips;
-  private dialog: MatDialog;
-  private photoService: PhotoService;
-  private recipesService: RecipesService;
-  private store: Store<State>;
-  public constructor(
-    dialog: MatDialog,
-    recipesService: RecipesService,
-    store: Store<State>,
-    photoService: PhotoService,
-  ) {
-    this.dialog = dialog;
+  public tooltips: RecipesTooltips = tooltips;
+  private dialog: MatDialog = inject(MatDialog);
+  private photoService: PhotoService = inject(PhotoService);
+  private recipesService: RecipesService = inject(RecipesService);
+  private store: Store<State> = inject<Store<State>>(Store);
+  public constructor() {
     this.photosPaths = new Map();
-    this.loadingGif = ImagesConfig.loading;
-    this.recipesService = recipesService;
-    this.store = store;
-    this.photoService = photoService;
-    this.tooltips = tooltips;
   }
 
   public ngOnInit(): void {

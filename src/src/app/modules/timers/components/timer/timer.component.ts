@@ -1,5 +1,6 @@
-import { NgClass } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input, InputSignal, output } from '@angular/core';
+import type { InputSignal, OutputEmitterRef } from '@angular/core';
+
+import { ChangeDetectionStrategy, Component, input, output, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
@@ -7,43 +8,32 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { take } from 'rxjs/operators';
 
-import { Time } from '../../../../core/models/time';
-import { FullTimer } from '../../../../core/models/timer';
-import { TimersTooltips, tooltips } from '../../../../core/tooltips/timers.tooltips';
-import { TimerTimePipe } from '../../../shared/pipes/timer-time.pipe';
-import { EditDialogComponent, EditDialogResult } from '../edit-dialog/edit-dialog.component';
+import type { Time } from '@/app/core/models/time';
+import type { FullTimer } from '@/app/core/models/timer';
+import type { TimersTooltips } from '@/app/core/tooltips/timers.tooltips';
+import type { EditDialogResult } from '@/app/modules/timers/components/edit-dialog/edit-dialog.component';
+
+import { tooltips } from '@/app/core/tooltips/timers.tooltips';
+import { TimerTimePipe } from '@/app/modules/shared/pipes/timer-time.pipe';
+import { EditDialogComponent } from '@/app/modules/timers/components/edit-dialog/edit-dialog.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    TimerTimePipe,
-    MatTooltip,
-    NgClass,
-    MatButton,
-    MatIcon,
-    MatMenuTrigger,
-    MatMenu,
-    MatMenuItem,
-  ],
+  imports: [TimerTimePipe, MatTooltip, MatButton, MatIcon, MatMenuTrigger, MatMenu, MatMenuItem],
   selector: 'timers-timer',
-  standalone: true,
-  styleUrls: ['./timer.component.scss'],
+  styleUrl: './timer.component.scss',
   templateUrl: './timer.component.html',
 })
 export class TimerComponent {
   public timer: InputSignal<FullTimer> = input.required<FullTimer>();
   public leftTime: InputSignal<number> = input.required<number>();
-  public switch = output<void>();
-  public delete = output<void>();
-  public restart = output<void>();
-  public nameUpdate = output<string | null>();
-  public timeUpdate = output<Time>();
-  public tooltips: TimersTooltips;
-  private dialog: MatDialog;
-  public constructor(dialog: MatDialog) {
-    this.dialog = dialog;
-    this.tooltips = tooltips;
-  }
+  public switch: OutputEmitterRef<void> = output<void>();
+  public delete: OutputEmitterRef<void> = output<void>();
+  public restart: OutputEmitterRef<void> = output<void>();
+  public nameUpdate: OutputEmitterRef<string | null> = output<string | null>();
+  public timeUpdate: OutputEmitterRef<Time> = output<Time>();
+  public tooltips: TimersTooltips = tooltips;
+  private dialog: MatDialog = inject(MatDialog);
 
   public emitDelete(): void {
     this.delete.emit();

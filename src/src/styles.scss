@@ -1,7 +1,7 @@
-@use "./styles/toast";
-@use "./styles/layout";
-@use "./styles/reset";
-@use "./styles/glassmorphism";
+@use './styles/notification';
+@use './styles/layout';
+@use './styles/reset';
+@use './styles/glassmorphism';
 
 .close-btn {
   min-width: 36px !important;
@@ -23,7 +23,7 @@ hr {
   width: 100%;
 }
 
-input[type="number"] {
+input[type='number'] {
   appearance: textfield;
 }
 

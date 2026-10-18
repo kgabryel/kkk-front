@@ -1,32 +1,24 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  input,
-  InputSignal,
-  OnInit,
-  output,
-  signal,
-  Signal,
-  WritableSignal,
-} from '@angular/core';
-import { AbstractControl, FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import type { InputSignal, OnInit, Signal, WritableSignal, OutputEmitterRef } from '@angular/core';
+import type { AbstractControl, FormArray, FormGroup } from '@angular/forms';
+
+import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { map } from 'rxjs/operators';
 
-import { Length } from '../../../../config/form.config';
-import { RecipeErrors, recipeErrors } from '../../../../core/errors/recipe.error';
-import {
-  formNames,
-  RecipeFormFactory,
-  RecipesFormNames,
-} from '../../../../core/factories/recipe.factory';
-import { FormUtils } from '../../../../core/utils/form.utils';
-import { BaseComponent } from '../../../base.component';
-import { ErrorsContainerComponent } from '../../../shared/components/errors-container/errors-container.component';
-import { PositionsPartComponent } from '../positions-part/positions-part.component';
+import type { RecipeErrors } from '@/app/core/errors/recipe.error';
+import type { PositionFormValue, RecipesFormNames } from '@/app/core/factories/recipe.factory';
+
+import { Length } from '@/app/config/form.config';
+import { recipeErrors } from '@/app/core/errors/recipe.error';
+import { formNames, RecipeFormFactory } from '@/app/core/factories/recipe.factory';
+import { FormUtils } from '@/app/core/utils/form.utils';
+import { BaseComponent } from '@/app/modules/base.component';
+import { PositionsPartComponent } from '@/app/modules/recipes/components/positions-part/positions-part.component';
+import { ErrorsContainerComponent } from '@/app/modules/shared/components/errors-container/errors-container.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,27 +34,20 @@ import { PositionsPartComponent } from '../positions-part/positions-part.compone
     PositionsPartComponent,
   ],
   selector: 'recipes-group-positions-part',
-  standalone: true,
-  styleUrls: ['./group-positions-part.component.scss'],
+  styleUrl: './group-positions-part.component.scss',
   templateUrl: './group-positions-part.component.html',
 })
 export class GroupPositionsPartComponent extends BaseComponent implements OnInit {
   public formPart: InputSignal<AbstractControl> = input.required<AbstractControl>();
-  public delete = output<void>();
-  public errors: RecipeErrors;
+  public delete: OutputEmitterRef<void> = output<void>();
+  public errors: RecipeErrors = recipeErrors;
   public formGroup!: FormGroup;
-  public formNames: RecipesFormNames;
-  public maxNameLength: number;
+  public formNames: RecipesFormNames = formNames;
+  public maxNameLength: number = Length.maxIngredientsGroupNameLength;
   public nameLength!: Signal<number>;
   public positions!: FormArray;
   public usedIngredients: WritableSignal<number[]> = signal<number[]>([]);
   public usedRecipes!: number[];
-  public constructor() {
-    super();
-    this.formNames = formNames;
-    this.errors = recipeErrors;
-    this.maxNameLength = Length.maxIngredientsGroupNameLength;
-  }
 
   public ngOnInit(): void {
     this.formGroup = this.formPart() as FormGroup;
@@ -76,18 +61,18 @@ export class GroupPositionsPartComponent extends BaseComponent implements OnInit
 
     this.usedIngredients.set(
       this.positions.value
-        .filter((position: any) => position.type === 'ingredient')
-        .map((position: any) => position.ingredient),
+        .filter((position: PositionFormValue) => position.type === 'ingredient')
+        .map((position: PositionFormValue) => position.ingredient),
     );
 
     this.usedRecipes = this.positions.value
-      .filter((position: any) => position.type === 'recipe')
-      .map((position: any) => position.ingredient);
+      .filter((position: PositionFormValue) => position.type === 'recipe')
+      .map((position: PositionFormValue) => position.ingredient);
 
     this.onObservableValue(
-      (data) => this.usedIngredients.set(data),
+      (data: number[]) => this.usedIngredients.set(data),
       this.positions.valueChanges.pipe(
-        map((positions: any) => positions.map((position: any) => position.ingredient)),
+        map((positions: PositionFormValue[]) => positions.map((position: PositionFormValue) => position.ingredient)),
       ),
       [],
     );

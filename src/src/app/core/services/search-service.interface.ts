@@ -1,4 +1,4 @@
-import { Signal } from '@angular/core';
+import type { Signal } from '@angular/core';
 
 export interface SearchServiceInterface<T> {
   getState(): Signal<T>;

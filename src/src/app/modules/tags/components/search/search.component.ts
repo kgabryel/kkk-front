@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import type { OnDestroy, OnInit } from '@angular/core';
+
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogClose } from '@angular/material/dialog';
@@ -6,11 +8,11 @@ import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 
-import { Length } from '../../../../config/form.config';
-import { SearchService } from '../../../../core/services/search.service';
-import { TagsSearchService } from '../../../../core/services/tags-search.service';
-import { BaseComponent } from '../../../base.component';
-import { AutocompletePipe } from '../../../shared/pipes/autocomplete.pipe';
+import { Length } from '@/app/config/form.config';
+import { SearchService } from '@/app/core/services/search.service';
+import { TagsSearchService } from '@/app/core/services/tags-search.service';
+import { BaseComponent } from '@/app/modules/base.component';
+import { AutocompletePipe } from '@/app/modules/shared/pipes/autocomplete.pipe';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,23 +27,17 @@ import { AutocompletePipe } from '../../../shared/pipes/autocomplete.pipe';
     MatButton,
   ],
   selector: 'tags-search',
-  standalone: true,
-  styleUrls: [],
   templateUrl: './search.component.html',
 })
 export class SearchComponent extends BaseComponent implements OnInit, OnDestroy {
-  private static search: string = '';
-  public maxNameLength: number;
+  private static search = '';
+  public maxNameLength: number = Length.maxTagNameLength;
   public name: FormControl;
-  private searchService: SearchService;
-  private tagsSearchService: TagsSearchService;
-  public constructor(tagsSearchService: TagsSearchService, searchService: SearchService) {
+  private searchService: SearchService = inject(SearchService);
+  private tagsSearchService: TagsSearchService = inject(TagsSearchService);
+  public constructor() {
     super();
-    this.name = new FormControl();
-    this.name.setValue(SearchComponent.search);
-    this.tagsSearchService = tagsSearchService;
-    this.searchService = searchService;
-    this.maxNameLength = Length.maxTagNameLength;
+    this.name = new FormControl(SearchComponent.search);
   }
 
   public ngOnInit(): void {

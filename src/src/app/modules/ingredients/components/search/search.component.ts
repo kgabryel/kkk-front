@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import type { OnDestroy, OnInit } from '@angular/core';
+
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogClose } from '@angular/material/dialog';
@@ -7,11 +9,11 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatSelect, MatOption } from '@angular/material/select';
 
-import { Length } from '../../../../config/form.config';
-import { IngredientsSearchService } from '../../../../core/services/ingredients-search.service';
-import { SearchService } from '../../../../core/services/search.service';
-import { BaseComponent } from '../../../base.component';
-import { AutocompletePipe } from '../../../shared/pipes/autocomplete.pipe';
+import { Length } from '@/app/config/form.config';
+import { IngredientsSearchService } from '@/app/core/services/ingredients-search.service';
+import { SearchService } from '@/app/core/services/search.service';
+import { BaseComponent } from '@/app/modules/base.component';
+import { AutocompletePipe } from '@/app/modules/shared/pipes/autocomplete.pipe';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -28,30 +30,20 @@ import { AutocompletePipe } from '../../../shared/pipes/autocomplete.pipe';
     MatInput,
   ],
   selector: 'ingredients-search',
-  standalone: true,
-  styleUrls: [],
   templateUrl: './search.component.html',
 })
 export class SearchComponent extends BaseComponent implements OnInit, OnDestroy {
   private static searchAvailable: boolean | null = null;
-  private static searchName: string = '';
+  private static searchName = '';
   public available: FormControl;
-  public maxNameLength: number;
+  public maxNameLength: number = Length.maxIngredientNameLength;
   public name: FormControl;
-  private ingredientsSearchService: IngredientsSearchService;
-  private searchService: SearchService;
-  public constructor(
-    ingredientsSearchService: IngredientsSearchService,
-    searchService: SearchService,
-  ) {
+  private ingredientsSearchService: IngredientsSearchService = inject(IngredientsSearchService);
+  private searchService: SearchService = inject(SearchService);
+  public constructor() {
     super();
-    this.name = new FormControl();
-    this.available = new FormControl();
-    this.name.setValue(SearchComponent.searchName);
-    this.available.setValue(SearchComponent.searchAvailable);
-    this.ingredientsSearchService = ingredientsSearchService;
-    this.searchService = searchService;
-    this.maxNameLength = Length.maxIngredientNameLength;
+    this.name = new FormControl(SearchComponent.searchName);
+    this.available = new FormControl(SearchComponent.searchAvailable);
   }
 
   public ngOnInit(): void {

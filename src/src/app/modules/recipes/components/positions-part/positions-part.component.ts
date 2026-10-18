@@ -1,22 +1,9 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  input,
-  InputSignal,
-  OnInit,
-  output,
-  signal,
-  Signal,
-  WritableSignal,
-} from '@angular/core';
-import { AbstractControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import {
-  MatAutocomplete,
-  MatAutocompleteTrigger,
-  MatOptgroup,
-  MatOption,
-} from '@angular/material/autocomplete';
+import type { InputSignal, OnInit, Signal, WritableSignal, OutputEmitterRef } from '@angular/core';
+import type { AbstractControl, FormGroup } from '@angular/forms';
+
+import { ChangeDetectionStrategy, Component, computed, input, output, signal, inject } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatAutocomplete, MatAutocompleteTrigger, MatOptgroup, MatOption } from '@angular/material/autocomplete';
 import { MatButton } from '@angular/material/button';
 import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
@@ -25,19 +12,22 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { Store } from '@ngrx/store';
 import { take } from 'rxjs/operators';
 
-import { Length } from '../../../../config/form.config';
-import { recipeErrors, RecipeErrors } from '../../../../core/errors/recipe.error';
-import { formNames, RecipesFormNames } from '../../../../core/factories/recipe.factory';
-import { Ingredient } from '../../../../core/models/ingredient';
-import { Recipe, RecipePosition, RecipePositionsGroup } from '../../../../core/models/recipe';
-import { State as IngredientsState } from '../../../../core/store/ingredients/reducers';
-import { selectIngredients } from '../../../../core/store/ingredients/selectors';
-import { State as RecipesState } from '../../../../core/store/recipes/reducers';
-import { selectRecipes } from '../../../../core/store/recipes/selectors';
-import { FormUtils } from '../../../../core/utils/form.utils';
-import { StringUtils } from '../../../../core/utils/string.utils';
-import { BaseComponent } from '../../../base.component';
-import { ErrorsContainerComponent } from '../../../shared/components/errors-container/errors-container.component';
+import type { RecipeErrors } from '@/app/core/errors/recipe.error';
+import type { RecipesFormNames } from '@/app/core/factories/recipe.factory';
+import type { Ingredient } from '@/app/core/models/ingredient';
+import type { Recipe, RecipePosition, RecipePositionsGroup } from '@/app/core/models/recipe';
+import type { State as IngredientsState } from '@/app/core/store/ingredients/reducers';
+import type { State as RecipesState } from '@/app/core/store/recipes/reducers';
+
+import { Length } from '@/app/config/form.config';
+import { recipeErrors } from '@/app/core/errors/recipe.error';
+import { formNames } from '@/app/core/factories/recipe.factory';
+import { selectIngredients } from '@/app/core/store/ingredients/selectors';
+import { selectRecipes } from '@/app/core/store/recipes/selectors';
+import { FormUtils } from '@/app/core/utils/form.utils';
+import { StringUtils } from '@/app/core/utils/string.utils';
+import { BaseComponent } from '@/app/modules/base.component';
+import { ErrorsContainerComponent } from '@/app/modules/shared/components/errors-container/errors-container.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -57,8 +47,7 @@ import { ErrorsContainerComponent } from '../../../shared/components/errors-cont
     MatOptgroup,
   ],
   selector: 'recipes-positions-part',
-  standalone: true,
-  styleUrls: ['./positions-part.component.scss'],
+  styleUrl: './positions-part.component.scss',
   templateUrl: './positions-part.component.html',
 })
 export class PositionsPartComponent extends BaseComponent implements OnInit {
@@ -66,46 +55,41 @@ export class PositionsPartComponent extends BaseComponent implements OnInit {
   public formPart: InputSignal<AbstractControl> = input.required<AbstractControl>();
   public usedIngredients: InputSignal<number[]> = input.required<number[]>();
   public usedRecipes: InputSignal<number[]> = input.required<number[]>();
-  public delete = output<void>();
-  public errors: RecipeErrors;
+  public delete: OutputEmitterRef<void> = output<void>();
+  public errors: RecipeErrors = recipeErrors;
   public filteredIngredients: WritableSignal<Ingredient[]> = signal<Ingredient[]>([]);
   public filteredMeasures: WritableSignal<string[]> = signal<string[]>([]);
   public filteredRecipes: WritableSignal<Recipe[]> = signal<Recipe[]>([]);
   public formGroup!: FormGroup;
-  public formNames: RecipesFormNames;
+  public formNames: RecipesFormNames = formNames;
   public ingredients!: Signal<Ingredient[]>;
-  public maxIngredientNameLength: number;
-  public maxMeasureLength: number;
+  public maxIngredientNameLength: number = Length.maxIngredientNameLength;
+  public maxMeasureLength: number = Length.maxMeasureLength;
   public measureLength!: Signal<number>;
   public recipes!: Signal<Recipe[]>;
-  private readonly ingredientsStore: Store<IngredientsState>;
-  private readonly recipesStore: Store<RecipesState>;
-  public constructor(ingredientsStore: Store<IngredientsState>, recipesStore: Store<RecipesState>) {
+  private readonly ingredientsStore: Store<IngredientsState> = inject<Store<IngredientsState>>(Store);
+  private readonly recipesStore: Store<RecipesState> = inject<Store<RecipesState>>(Store);
+  public constructor() {
     super();
-    this.formNames = formNames;
-    this.ingredientsStore = ingredientsStore;
-    this.recipesStore = recipesStore;
-    this.maxMeasureLength = Length.maxMeasureLength;
-    this.maxIngredientNameLength = Length.maxIngredientNameLength;
-    this.errors = recipeErrors;
-    if (PositionsPartComponent.measures.length === 0) {
-      this.recipesStore
-        .select(selectRecipes)
-        .pipe(take(1))
-        .subscribe((recipes: Recipe[]) => {
-          const measures = recipes
-            .flatMap((recipe: Recipe) => recipe.groups)
-            .flatMap((group: RecipePositionsGroup) => group.positions)
-            .map((position: RecipePosition) => position.measure)
-            .filter(
-              (measure: string, index: number, self: string[]) =>
-                !PositionsPartComponent.measures.includes(measure) &&
-                self.indexOf(measure) === index,
-            );
-
-          PositionsPartComponent.measures.push(...measures);
-        });
+    if (PositionsPartComponent.measures.length !== 0) {
+      return;
     }
+
+    this.recipesStore
+      .select(selectRecipes)
+      .pipe(take(1))
+      .subscribe((recipes: Recipe[]) => {
+        const measures = recipes
+          .flatMap((recipe: Recipe) => recipe.groups)
+          .flatMap((group: RecipePositionsGroup) => group.positions)
+          .map((position: RecipePosition) => position.measure)
+          .filter(
+            (measure: string, index: number, self: string[]) =>
+              !PositionsPartComponent.measures.includes(measure) && self.indexOf(measure) === index,
+          );
+
+        PositionsPartComponent.measures.push(...measures);
+      });
   }
 
   public ngOnInit(): void {
@@ -115,9 +99,7 @@ export class PositionsPartComponent extends BaseComponent implements OnInit {
     this.recipes = computed(() => {
       const recipes = this.recipesStore.selectSignal(selectRecipes);
 
-      return [...recipes()].sort((a: Recipe, b: Recipe) =>
-        StringUtils.compareString(a.name, b.name),
-      );
+      return [...recipes()].sort((a: Recipe, b: Recipe) => StringUtils.compareString(a.name, b.name));
     });
     const search = this.formPart().get(this.formNames.ingredientSearch) as AbstractControl;
     const search2 = this.formPart().get(this.formNames.measure) as AbstractControl;
@@ -160,8 +142,7 @@ export class PositionsPartComponent extends BaseComponent implements OnInit {
             return (
               StringUtils.clearPolishCharacters(
                 StringUtils.clearPolishCharacters(ingredient.name.toLowerCase()),
-              ).includes(StringUtils.clearPolishCharacters(search.toLowerCase())) &&
-              !used.includes(ingredient.id)
+              ).includes(StringUtils.clearPolishCharacters(search.toLowerCase())) && !used.includes(ingredient.id)
             );
           }),
         ),
@@ -180,9 +161,9 @@ export class PositionsPartComponent extends BaseComponent implements OnInit {
             }
 
             return (
-              StringUtils.clearPolishCharacters(
-                StringUtils.clearPolishCharacters(recipe.name.toLowerCase()),
-              ).includes(StringUtils.clearPolishCharacters(search)) && !used.includes(recipe.id)
+              StringUtils.clearPolishCharacters(StringUtils.clearPolishCharacters(recipe.name.toLowerCase())).includes(
+                StringUtils.clearPolishCharacters(search),
+              ) && !used.includes(recipe.id)
             );
           }),
         ),
@@ -222,9 +203,7 @@ export class PositionsPartComponent extends BaseComponent implements OnInit {
     if (measure.startsWith('Dodać "') && measure.endsWith('"?')) {
       measure = measure.slice(7, measure.length - 2);
       PositionsPartComponent.measures.push(measure);
-      PositionsPartComponent.measures.sort((a: string, b: string) =>
-        StringUtils.compareString(a, b),
-      );
+      PositionsPartComponent.measures.sort((a: string, b: string) => StringUtils.compareString(a, b));
     }
     this.formPart().get(this.formNames.measure)?.setValue(measure);
   }

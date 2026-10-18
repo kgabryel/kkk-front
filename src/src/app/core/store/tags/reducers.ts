@@ -1,7 +1,10 @@
-import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
+import type { EntityAdapter, EntityState } from '@ngrx/entity';
+
+import { createEntityAdapter } from '@ngrx/entity';
 import { createReducer, on } from '@ngrx/store';
 
-import { Tag } from '../../models/tag';
+import type { Tag } from '@/app/core/models/tag';
+
 import {
   tagAdd,
   tagAddError,

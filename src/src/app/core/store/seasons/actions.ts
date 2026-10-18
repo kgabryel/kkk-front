@@ -1,9 +1,11 @@
-import { Update } from '@ngrx/entity';
+import type { Update } from '@ngrx/entity';
+
 import { createAction, props } from '@ngrx/store';
 
-import { Season } from '../../models/season';
-import { SeasonRequest, UpdateSeasonRequest } from '../../requests/season.request';
-import { Actions, Prefixes } from '../actions.config';
+import type { Season } from '@/app/core/models/season';
+import type { SeasonRequest, UpdateSeasonRequest } from '@/app/core/requests/season.request';
+
+import { Actions, Prefixes } from '@/app/core/store/actions.config';
 
 export const seasonsLoad = createAction(`${Prefixes.seasons} ${Actions.load}`);
 
@@ -14,22 +16,13 @@ export const seasonsLoadSuccess = createAction(
   props<{ seasons: Season[] }>(),
 );
 
-export const seasonAdd = createAction(
-  `${Prefixes.seasons} ${Actions.add}`,
-  props<{ season: SeasonRequest }>(),
-);
+export const seasonAdd = createAction(`${Prefixes.seasons} ${Actions.add}`, props<{ season: SeasonRequest }>());
 
 export const seasonAddError = createAction(`${Prefixes.seasons} ${Actions.addError}`);
 
-export const seasonAddSuccess = createAction(
-  `${Prefixes.seasons} ${Actions.addSuccess}`,
-  props<{ season: Season }>(),
-);
+export const seasonAddSuccess = createAction(`${Prefixes.seasons} ${Actions.addSuccess}`, props<{ season: Season }>());
 
-export const seasonDelete = createAction(
-  `${Prefixes.seasons} ${Actions.delete}`,
-  props<{ id: number }>(),
-);
+export const seasonDelete = createAction(`${Prefixes.seasons} ${Actions.delete}`, props<{ id: number }>());
 
 export const seasonDeleteError = createAction(`${Prefixes.seasons} ${Actions.deleteError}`);
 

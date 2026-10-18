@@ -1,58 +1,44 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 
-import { RoutingConfig } from '../../config/routing.config';
-import { messages } from '../messages/shared.messages';
-import { PathUtils } from '../utils/path.utils';
+import { RoutingConfig } from '@/app/config/routing.config';
+import { messages } from '@/app/core/messages/shared.messages';
+import { PathUtils } from '@/app/core/utils/path.utils';
+
+type NotificationType = 'error' | 'success' | 'warning';
+
+const NOTIFICATION_DURATION = 40000;
 
 @Injectable({ providedIn: 'root' })
 export class NotificationService {
-  private router: Router;
-  private toastrService: ToastrService;
-  public constructor(toastrService: ToastrService, router: Router) {
-    this.toastrService = toastrService;
-    this.router = router;
-  }
+  private router: Router = inject(Router);
+  private snackBar: MatSnackBar = inject(MatSnackBar);
 
   public showError(error: number): void {
     if (error === 401) {
       void this.router.navigateByUrl(PathUtils.concatPath(RoutingConfig.login));
     } else if (error === 400 || error === 404 || error === 422) {
-      this.showSnackBar('error', messages.invalidData);
+      this.show('error', messages.invalidData);
     } else if (error >= 500) {
-      this.showSnackBar('error', messages.serverError);
+      this.show('error', messages.serverError);
     }
   }
 
   public showErrorMessage(message: string): void {
-    this.showSnackBar('error', message);
+    this.show('error', message);
   }
 
   public showMessage(message: string): void {
-    this.showSnackBar('success', message);
+    this.show('success', message);
   }
 
-  private showSnackBar(type: string, message: string): void {
-    if (type === 'success') {
-      this.toastrService.success(message, undefined, {
-        progressAnimation: 'decreasing',
-        progressBar: true,
-      });
-    }
-
-    if (type === 'error') {
-      this.toastrService.error(message, undefined, {
-        progressAnimation: 'decreasing',
-        progressBar: true,
-      });
-    }
-
-    if (type === 'warning') {
-      this.toastrService.warning(message, undefined, {
-        progressAnimation: 'decreasing',
-        progressBar: true,
-      });
-    }
+  private show(type: NotificationType, message: string): void {
+    this.snackBar.open(message, undefined, {
+      duration: NOTIFICATION_DURATION,
+      horizontalPosition: 'right',
+      panelClass: `notification-${type}`,
+      verticalPosition: 'top',
+    });
   }
 }

@@ -1,12 +1,8 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-  signal,
-  Signal,
-  WritableSignal,
-} from '@angular/core';
-import { AbstractControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import type { OnInit, Signal, WritableSignal } from '@angular/core';
+import type { AbstractControl, FormGroup } from '@angular/forms';
+
+import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatAutocomplete, MatAutocompleteTrigger, MatOption } from '@angular/material/autocomplete';
 import { MatButton } from '@angular/material/button';
 import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
@@ -18,27 +14,24 @@ import { cloneDeep } from 'lodash-unified';
 import { EMPTY } from 'rxjs';
 import { take } from 'rxjs/operators';
 
-import { Month, months } from '../../../../config/months.config';
-import { seasonErrors, SeasonErrors } from '../../../../core/errors/season.error';
-import {
-  formNames,
-  SeasonsFormFactory,
-  SeasonsFormNames,
-} from '../../../../core/factories/seasons.factory';
-import { Ingredient } from '../../../../core/models/ingredient';
-import { SeasonRequest } from '../../../../core/requests/season.request';
-import { State as IngredientsState } from '../../../../core/store/ingredients/reducers';
-import {
-  selectByName,
-  selectIngredientsWithoutSeason,
-} from '../../../../core/store/ingredients/selectors';
-import { seasonAdd } from '../../../../core/store/seasons/actions';
-import { State as SeasonsState } from '../../../../core/store/seasons/reducers';
-import { FormUtils } from '../../../../core/utils/form.utils';
-import { StringUtils } from '../../../../core/utils/string.utils';
-import { BaseComponent } from '../../../base.component';
-import { ErrorsContainerComponent } from '../../../shared/components/errors-container/errors-container.component';
-import { AutocompletePipe } from '../../../shared/pipes/autocomplete.pipe';
+import type { Month } from '@/app/config/months.config';
+import type { SeasonErrors } from '@/app/core/errors/season.error';
+import type { SeasonsFormNames } from '@/app/core/factories/seasons.factory';
+import type { Ingredient } from '@/app/core/models/ingredient';
+import type { SeasonRequest } from '@/app/core/requests/season.request';
+import type { State as IngredientsState } from '@/app/core/store/ingredients/reducers';
+import type { State as SeasonsState } from '@/app/core/store/seasons/reducers';
+
+import { months } from '@/app/config/months.config';
+import { seasonErrors } from '@/app/core/errors/season.error';
+import { formNames, SeasonsFormFactory } from '@/app/core/factories/seasons.factory';
+import { selectByName, selectIngredientsWithoutSeason } from '@/app/core/store/ingredients/selectors';
+import { seasonAdd } from '@/app/core/store/seasons/actions';
+import { FormUtils } from '@/app/core/utils/form.utils';
+import { StringUtils } from '@/app/core/utils/string.utils';
+import { BaseComponent } from '@/app/modules/base.component';
+import { ErrorsContainerComponent } from '@/app/modules/shared/components/errors-container/errors-container.component';
+import { AutocompletePipe } from '@/app/modules/shared/pipes/autocomplete.pipe';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -59,34 +52,24 @@ import { AutocompletePipe } from '../../../shared/pipes/autocomplete.pipe';
   ],
   providers: [SeasonsFormFactory],
   selector: 'seasons-create',
-  standalone: true,
-  styleUrls: ['./create.component.scss'],
+  styleUrl: './create.component.scss',
   templateUrl: './create.component.html',
 })
 export class CreateComponent extends BaseComponent implements OnInit {
   public endMonths: Month[];
-  public errors: SeasonErrors;
+  public errors: SeasonErrors = seasonErrors;
   public filteredIngredients: WritableSignal<Ingredient[]> = signal<Ingredient[]>([]);
   public form!: FormGroup;
-  public formNames: SeasonsFormNames;
+  public formNames: SeasonsFormNames = formNames;
   public ingredients!: Signal<Ingredient[]>;
-  public seasonsStore: Store<SeasonsState>;
+  public seasonsStore: Store<SeasonsState> = inject<Store<SeasonsState>>(Store);
   public startMonths: Month[];
-  private ingredientsStore: Store<IngredientsState>;
-  private seasonsFormFactory: SeasonsFormFactory;
-  public constructor(
-    ingredientsStore: Store<IngredientsState>,
-    seasonsStore: Store<SeasonsState>,
-    seasonsFormFactory: SeasonsFormFactory,
-  ) {
+  private ingredientsStore: Store<IngredientsState> = inject<Store<IngredientsState>>(Store);
+  private seasonsFormFactory: SeasonsFormFactory = inject(SeasonsFormFactory);
+  public constructor() {
     super();
     this.startMonths = cloneDeep(months);
     this.endMonths = cloneDeep(months);
-    this.formNames = formNames;
-    this.ingredientsStore = ingredientsStore;
-    this.seasonsStore = seasonsStore;
-    this.errors = seasonErrors;
-    this.seasonsFormFactory = seasonsFormFactory;
   }
 
   public ngOnInit(): void {
@@ -121,9 +104,7 @@ export class CreateComponent extends BaseComponent implements OnInit {
     this.onObservableValue(
       (search: string) =>
         this.filteredIngredients.set(
-          this.ingredients().filter((ingredient: Ingredient) =>
-            StringUtils.stringIncludes(ingredient.name, search),
-          ),
+          this.ingredients().filter((ingredient: Ingredient) => StringUtils.stringIncludes(ingredient.name, search)),
         ),
       ingredientInput.valueChanges,
       '',

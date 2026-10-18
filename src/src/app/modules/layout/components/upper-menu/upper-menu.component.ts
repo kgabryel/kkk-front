@@ -1,44 +1,41 @@
-import { NgClass } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, Signal } from '@angular/core';
+import type { OnInit, Signal } from '@angular/core';
+import type { Event } from '@angular/router';
+
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatToolbar } from '@angular/material/toolbar';
-import { Event, NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
-import { ImagesConfig } from '../../../../config/images.config';
-import { ItemNames, MenuConfig, MenuItems, Names } from '../../../../config/menu.config';
-import { ModalService } from '../../../../core/services/modal.service';
-import { SearchService } from '../../../../core/services/search.service';
-import { BaseComponent } from '../../../base.component';
-import { UpperMenuItemComponent } from '../upper-menu-item/upper-menu-item.component';
+import type { MenuConfig, Names } from '@/app/config/menu.config';
+
+import { ImagesConfig } from '@/app/config/images.config';
+import { ItemNames, MenuItems } from '@/app/config/menu.config';
+import { ModalService } from '@/app/core/services/modal.service';
+import { SearchService } from '@/app/core/services/search.service';
+import { BaseComponent } from '@/app/modules/base.component';
+import { UpperMenuItemComponent } from '@/app/modules/layout/components/upper-menu-item/upper-menu-item.component';
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.Default,
-  imports: [MatToolbar, UpperMenuItemComponent, NgClass, MatButton, MatIcon],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatToolbar, UpperMenuItemComponent, MatButton, MatIcon],
   selector: 'layout-upper-menu',
-  standalone: true,
-  styleUrls: ['./upper-menu.component.scss'],
+  styleUrl: './upper-menu.component.scss',
   templateUrl: './upper-menu.component.html',
 })
 export class UpperMenuComponent extends BaseComponent implements OnInit {
   public filtered: Signal<boolean>;
-  public logoPath: string;
-  public menuItems: Map<string, MenuConfig>;
-  public menuNames: Names;
+  public logoPath: string = ImagesConfig.logoPath;
+  public menuItems: Map<string, MenuConfig> = MenuItems;
+  public menuNames: Names = ItemNames;
   public searchAvailable!: boolean;
-  private modalService: ModalService;
-  private router: Router;
-  private searchService: SearchService;
-  public constructor(modalService: ModalService, router: Router, searchService: SearchService) {
+  private modalService: ModalService = inject(ModalService);
+  private router: Router = inject(Router);
+  private searchService: SearchService = inject(SearchService);
+  public constructor() {
     super();
-    this.modalService = modalService;
-    this.logoPath = ImagesConfig.logoPath;
-    this.menuItems = MenuItems;
-    this.menuNames = ItemNames;
-    this.router = router;
-    this.filtered = searchService.getState();
-    this.searchService = searchService;
+    this.filtered = this.searchService.getState();
   }
 
   public ngOnInit(): void {
@@ -52,9 +49,7 @@ export class UpperMenuComponent extends BaseComponent implements OnInit {
         this.searchService.updateSearch(false);
         this.searchAvailable = SearchService.searchIsActive(redirect.url);
       },
-      this.router.events.pipe(
-        filter((evt: Event): evt is NavigationEnd => evt instanceof NavigationEnd),
-      ),
+      this.router.events.pipe(filter((evt: Event): evt is NavigationEnd => evt instanceof NavigationEnd)),
       undefined,
     );
   }

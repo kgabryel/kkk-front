@@ -1,5 +1,8 @@
-import { ChangeDetectionStrategy, Component, input, OnInit, output, Signal } from '@angular/core';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import type { InputSignal, OnInit, Signal, OutputEmitterRef } from '@angular/core';
+import type { FormGroup } from '@angular/forms';
+
+import { ChangeDetectionStrategy, Component, input, output, inject } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
 import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
@@ -7,16 +10,19 @@ import { MatInput } from '@angular/material/input';
 import { MatListItem } from '@angular/material/list';
 import { Store } from '@ngrx/store';
 
-import { Length } from '../../../../config/form.config';
-import { TagErrors, tagErrors } from '../../../../core/errors/tag.error';
-import { formNames, TagFormFactory, TagsFormNames } from '../../../../core/factories/tag.factory';
-import { Tag } from '../../../../core/models/tag';
-import { tagUpdate } from '../../../../core/store/tags/actions';
-import { State } from '../../../../core/store/tags/reducers';
-import { FormUtils } from '../../../../core/utils/form.utils';
-import { BaseComponent } from '../../../base.component';
-import { ErrorsContainerComponent } from '../../../shared/components/errors-container/errors-container.component';
-import { AutocompletePipe } from '../../../shared/pipes/autocomplete.pipe';
+import type { TagErrors } from '@/app/core/errors/tag.error';
+import type { TagsFormNames } from '@/app/core/factories/tag.factory';
+import type { Tag } from '@/app/core/models/tag';
+import type { State } from '@/app/core/store/tags/reducers';
+
+import { Length } from '@/app/config/form.config';
+import { tagErrors } from '@/app/core/errors/tag.error';
+import { formNames, TagFormFactory } from '@/app/core/factories/tag.factory';
+import { tagUpdate } from '@/app/core/store/tags/actions';
+import { FormUtils } from '@/app/core/utils/form.utils';
+import { BaseComponent } from '@/app/modules/base.component';
+import { ErrorsContainerComponent } from '@/app/modules/shared/components/errors-container/errors-container.component';
+import { AutocompletePipe } from '@/app/modules/shared/pipes/autocomplete.pipe';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,39 +40,25 @@ import { AutocompletePipe } from '../../../shared/pipes/autocomplete.pipe';
   ],
   providers: [TagFormFactory],
   selector: 'tags-tag-edit',
-  standalone: true,
-  styleUrls: ['./tag-edit.component.scss'],
+  styleUrl: './tag-edit.component.scss',
   templateUrl: './tag-edit.component.html',
 })
 export class TagEditComponent extends BaseComponent implements OnInit {
-  public tag = input.required<Tag>();
-  public edit = output<boolean>();
-  public errors: TagErrors;
+  public tag: InputSignal<Tag> = input.required<Tag>();
+  public edit: OutputEmitterRef<boolean> = output<boolean>();
+  public errors: TagErrors = tagErrors;
   public form!: FormGroup;
-  public formNames: TagsFormNames;
-  public maxNameLength: number;
+  public formNames: TagsFormNames = formNames;
+  public maxNameLength: number = Length.maxTagNameLength;
   public name!: string;
   public nameLength!: Signal<number>;
-  private store: Store<State>;
-  private tagFormFactory: TagFormFactory;
-  public constructor(store: Store<State>, tagFormFactory: TagFormFactory) {
-    super();
-    this.formNames = formNames;
-    this.store = store;
-    this.tagFormFactory = tagFormFactory;
-    this.errors = tagErrors;
-    this.maxNameLength = Length.maxTagNameLength;
-  }
+  private store: Store<State> = inject<Store<State>>(Store);
+  private tagFormFactory: TagFormFactory = inject(TagFormFactory);
 
   public ngOnInit(): void {
     this.name = this.tag().name;
     this.form = this.tagFormFactory.getForm(this.tag().id);
-    this.nameLength = FormUtils.getLength(
-      this.injector,
-      this.form,
-      this.formNames.name,
-      this.tag().name,
-    );
+    this.nameLength = FormUtils.getLength(this.injector, this.form, this.formNames.name, this.tag().name);
 
     this.form.get(this.formNames.name)?.setValue(this.tag().name, { emitEvent: true });
   }

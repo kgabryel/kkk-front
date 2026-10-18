@@ -1,18 +1,17 @@
+import type { Observable } from 'rxjs';
+
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
 import { map } from 'rxjs/operators';
 
-import { seasonsRoutes } from '../../config/routes.config';
-import { Season } from '../models/season';
-import { SeasonRequest, UpdateSeasonRequest } from '../requests/season.request';
+import type { Season } from '@/app/core/models/season';
+import type { SeasonRequest, UpdateSeasonRequest } from '@/app/core/requests/season.request';
+
+import { seasonsRoutes } from '@/app/config/routes.config';
 
 @Injectable()
 export class SeasonsService {
-  private httpClient: HttpClient;
-  public constructor(httpClient: HttpClient) {
-    this.httpClient = httpClient;
-  }
+  private httpClient: HttpClient = inject(HttpClient);
 
   public add(season: SeasonRequest): Observable<Season> {
     return this.httpClient.post<Season>(seasonsRoutes.index, season);

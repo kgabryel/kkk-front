@@ -1,12 +1,17 @@
-import { HttpClient, HttpRequest } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import type { HttpRequest } from '@angular/common/http';
+import type { Observable } from 'rxjs';
+
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 
-import { authRoutes } from '../../config/routes.config';
-import { RefreshTokenData, Tokens } from '../models/auth';
-import { ChangePasswordRequest, ResetPasswordRequest } from '../requests/auth.request';
+import type { RefreshTokenData, Tokens } from '@/app/core/models/auth';
+import type { ChangePasswordRequest, ResetPasswordRequest } from '@/app/core/requests/auth.request';
+
+import { authRoutes } from '@/app/config/routes.config';
+
 import { StoreService } from './store.service';
 
 const ACCESS_TOKEN = 'access_token';
@@ -14,12 +19,8 @@ const REFRESH_TOKEN = 'refresh_token';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private httpClient: HttpClient;
-  private readonly storeService: StoreService;
-  public constructor(httpClient: HttpClient, storeService: StoreService) {
-    this.httpClient = httpClient;
-    this.storeService = storeService;
-  }
+  private httpClient: HttpClient = inject(HttpClient);
+  private readonly storeService: StoreService = inject(StoreService);
 
   public static clearTokens(storeService: StoreService): void {
     localStorage.removeItem(ACCESS_TOKEN);
@@ -53,10 +54,7 @@ export class AuthService {
     });
   }
 
-  public changePassword(
-    changePasswordRequest: ChangePasswordRequest,
-    token: string,
-  ): Observable<boolean> {
+  public changePassword(changePasswordRequest: ChangePasswordRequest, token: string): Observable<boolean> {
     return this.httpClient.post<null>(authRoutes.changePassword(token), changePasswordRequest).pipe(
       map(() => true),
       catchError(() => of(false)),

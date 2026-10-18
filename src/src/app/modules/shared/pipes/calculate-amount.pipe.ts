@@ -1,8 +1,9 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import type { PipeTransform } from '@angular/core';
+
+import { Pipe } from '@angular/core';
 
 @Pipe({
   name: 'calculateAmount',
-  standalone: true,
 })
 export class CalculateAmountPipe implements PipeTransform {
   public transform(value: number | null, quantity: number | null): string {

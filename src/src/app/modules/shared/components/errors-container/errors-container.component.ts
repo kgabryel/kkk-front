@@ -1,14 +1,14 @@
+import type { InputSignal } from '@angular/core';
+import type { AbstractControl } from '@angular/forms';
+
 import { KeyValuePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular/core';
-import { AbstractControl } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatHint } from '@angular/material/form-field';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatHint, KeyValuePipe],
   selector: 'shared-errors-container',
-  standalone: true,
-  styleUrls: [],
   templateUrl: './errors-container.component.html',
 })
 export class ErrorsContainerComponent {

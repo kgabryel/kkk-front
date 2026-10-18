@@ -1,7 +1,8 @@
 import { createAction, props } from '@ngrx/store';
 
-import { Settings } from '../../models/settings';
-import { Actions, Prefixes } from '../actions.config';
+import type { Settings } from '@/app/core/models/settings';
+
+import { Actions, Prefixes } from '@/app/core/store/actions.config';
 
 export const settingsLoad = createAction(`${Prefixes.settings} ${Actions.load}`);
 
@@ -12,9 +13,7 @@ export const settingsLoadSuccess = createAction(
   props<{ settings: Settings }>(),
 );
 
-export const switchAutocomplete = createAction(
-  `${Prefixes.settings} ${Actions.switchAutocomplete}`,
-);
+export const switchAutocomplete = createAction(`${Prefixes.settings} ${Actions.switchAutocomplete}`);
 
 export const changeOzaKey = createAction(
   `${Prefixes.settings} ${Actions.changeOzaKey}`,

@@ -1,8 +1,10 @@
-import { inject, Injector, runInInjectionContext, Signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { Observable } from 'rxjs';
+import type { Signal } from '@angular/core';
+import type { Observable } from 'rxjs';
 
-import { SignalUtils } from '../core/utils/signal.utils';
+import { inject, Injector, runInInjectionContext } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+
+import { SignalUtils } from '@/app/core/utils/signal.utils';
 
 export abstract class BaseComponent {
   protected readonly injector: Injector = inject(Injector);
@@ -21,24 +23,14 @@ export abstract class BaseComponent {
     );
   }
 
-  protected onObservableValue<T>(
-    callback: (value: T) => void,
-    observable: Observable<T>,
-    initialValue: T,
-  ): void {
+  protected onObservableValue<T>(callback: (value: T) => void, observable: Observable<T>, initialValue: T): void {
     runInInjectionContext(this.injector, () =>
       SignalUtils.reactToSignalValue(toSignal(observable, { initialValue }), callback),
     );
   }
 
-  protected mapToSignal<T, R>(
-    input: Observable<T>,
-    callback: (value: T) => R,
-    initialValue: T,
-  ): Signal<R> {
-    return runInInjectionContext(this.injector, () =>
-      SignalUtils.map(toSignal(input, { initialValue }), callback),
-    );
+  protected mapToSignal<T, R>(input: Observable<T>, callback: (value: T) => R, initialValue: T): Signal<R> {
+    return runInInjectionContext(this.injector, () => SignalUtils.map(toSignal(input, { initialValue }), callback));
   }
   protected onSignalValue<T>(callback: (value: T) => void, signal: Signal<T>): void {
     runInInjectionContext(this.injector, () => SignalUtils.reactToSignalValue(signal, callback));

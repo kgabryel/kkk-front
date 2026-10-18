@@ -1,4 +1,6 @@
-import { computed, effect, signal, Signal, WritableSignal } from '@angular/core';
+import type { Signal, WritableSignal } from '@angular/core';
+
+import { computed, effect, signal, untracked } from '@angular/core';
 
 export class SignalUtils {
   public static watchSignalValue(
@@ -6,10 +8,19 @@ export class SignalUtils {
     signal: Signal<unknown>,
     ...additional: Signal<unknown>[]
   ): void {
+    let initialized = false;
+
     effect(() => {
       signal();
       additional.forEach((s: Signal<unknown>) => s());
-      callback();
+
+      if (!initialized) {
+        initialized = true;
+
+        return;
+      }
+
+      untracked(() => callback());
     });
   }
 

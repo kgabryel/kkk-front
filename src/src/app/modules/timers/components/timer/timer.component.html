@@ -10,17 +10,12 @@
       class="glassmorphism-button"
       [disabled]="leftTime() === 0"
       [matTooltip]="timer().running ? tooltips.stop : tooltips.start"
-      [ngClass]="{ 'green-glass': !timer().running, 'red-glass': timer().running }"
+      [class]="timer().running ? 'red-glass' : 'green-glass'"
       (click)="emitSwitch()"
       mat-button
       type="button"
     >
-      @if (timer().running) {
-        <mat-icon>pause_circle</mat-icon>
-      }
-      @if (!timer().running) {
-        <mat-icon>play_circle</mat-icon>
-      }
+      <mat-icon>{{ timer().running ? 'pause_circle' : 'play_circle' }}</mat-icon>
     </button>
     <button
       class="glassmorphism-button mt-1"

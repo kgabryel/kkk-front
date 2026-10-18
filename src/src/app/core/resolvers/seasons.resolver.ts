@@ -1,10 +1,11 @@
+import type { ResolveFn } from '@angular/router';
+
 import { inject } from '@angular/core';
-import { ResolveFn } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { filter, take, tap } from 'rxjs/operators';
 
-import { seasonsLoad } from '../store/seasons/actions';
-import { selectIsLoaded } from '../store/seasons/selectors';
+import { seasonsLoad } from '@/app/core/store/seasons/actions';
+import { selectIsLoaded } from '@/app/core/store/seasons/selectors';
 
 export const seasonsResolver: ResolveFn<boolean> = () => {
   const store = inject(Store);

@@ -1,5 +1,7 @@
-import { PathUtils } from '../core/utils/path.utils';
-import { MenuConfig } from './menu.config';
+import { PathUtils } from '@/app/core/utils/path.utils';
+
+import type { MenuConfig } from './menu.config';
+
 import { RoutingConfig } from './routing.config';
 
 export interface Names {

@@ -1,16 +1,17 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { Action } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import type { HttpErrorResponse } from '@angular/common/http';
+import type { Action } from '@ngrx/store';
+import type { Observable } from 'rxjs';
+
+import { Injectable, inject } from '@angular/core';
+import { createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
-import { messages } from '../../messages/account.messages';
-import { Settings } from '../../models/settings';
-import { NotificationService } from '../../services/notification.service';
-import { UserService } from '../../services/user.service';
-import { BaseEffect } from '../BaseEffect';
+import type { Settings } from '@/app/core/models/settings';
+
+import { messages } from '@/app/core/messages/account.messages';
+import { UserService } from '@/app/core/services/user.service';
+import { BaseEffect } from '@/app/core/store/BaseEffect';
+
 import {
   settingsLoad,
   settingsLoadError,
@@ -26,14 +27,7 @@ export class SettingsEffects extends BaseEffect<UserService> {
   public changeOzaKey!: Observable<Action>;
   public loadSettings!: Observable<Action>;
   public switchAutocomplete!: Observable<Action>;
-  public constructor(
-    actions: Actions,
-    notificationService: NotificationService,
-    router: Router,
-    service: UserService,
-  ) {
-    super(actions, notificationService, router, service);
-  }
+  protected readonly service: UserService = inject(UserService);
 
   protected initEffects(): void {
     this.createLoadEffect();

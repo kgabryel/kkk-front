@@ -1,19 +1,20 @@
+import type { Observable } from 'rxjs';
+
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { firstValueFrom, Observable, of } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { firstValueFrom, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
-import { authRoutes } from '../../config/routes.config';
-import { Tokens, TokensData, Url } from '../models/auth';
-import { LoginRequest } from '../requests/auth.request';
+import type { Tokens, TokensData, Url } from '@/app/core/models/auth';
+import type { LoginRequest } from '@/app/core/requests/auth.request';
+
+import { authRoutes } from '@/app/config/routes.config';
+
 import { AuthService } from './auth.service';
 
 @Injectable()
 export class LoginService {
-  private httpClient: HttpClient;
-  public constructor(httpClient: HttpClient) {
-    this.httpClient = httpClient;
-  }
+  private httpClient: HttpClient = inject(HttpClient);
 
   public async fbRedirect(): Promise<void> {
     const data = await firstValueFrom(this.httpClient.get<Url>(authRoutes.fbRedirect));

@@ -1,6 +1,7 @@
-import { Routes } from '@angular/router';
+import type { Routes } from '@angular/router';
 
-import { RoutingConfig } from '../../config/routing.config';
+import { RoutingConfig } from '@/app/config/routing.config';
+
 import { MainComponent } from './components/main/main.component';
 import { CreateComponent } from './pages/create/create.component';
 import { EditComponent } from './pages/edit/edit.component';

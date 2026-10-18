@@ -1,20 +1,20 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogClose, MatDialogTitle } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { interval } from 'rxjs';
 
-import { ImagesConfig } from '../../../../config/images.config';
-import { FullTimer } from '../../../../core/models/timer';
-import { TimerTimePipe } from '../../../shared/pipes/timer-time.pipe';
+import type { FullTimer } from '@/app/core/models/timer';
+
+import { ImagesConfig } from '@/app/config/images.config';
+import { TimerTimePipe } from '@/app/modules/shared/pipes/timer-time.pipe';
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatIcon, MatDialogTitle, MatButton, TimerTimePipe, MatDialogClose],
   selector: 'timers-alarm-dialog',
-  standalone: true,
-  styleUrls: ['./alarm-dialog.component.scss'],
+  styleUrl: './alarm-dialog.component.scss',
   templateUrl: './alarm-dialog.component.html',
 })
 export class AlarmDialogComponent {
@@ -24,7 +24,9 @@ export class AlarmDialogComponent {
   public readonly timer: FullTimer;
   private readonly onPause: EventEmitter<void>;
   private readonly onPlay: EventEmitter<void>;
-  public constructor(@Inject(MAT_DIALOG_DATA) data: AlarmDialogInput) {
+  public constructor() {
+    const data = inject<AlarmDialogInput>(MAT_DIALOG_DATA);
+
     this.timer = data.timer;
     this.paused = false;
     this.alarm = ImagesConfig.alarm;

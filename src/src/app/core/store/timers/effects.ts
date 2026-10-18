@@ -1,17 +1,18 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { Update } from '@ngrx/entity';
-import { Action } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import type { HttpErrorResponse } from '@angular/common/http';
+import type { Update } from '@ngrx/entity';
+import type { Action } from '@ngrx/store';
+import type { Observable } from 'rxjs';
+
+import { Injectable, inject } from '@angular/core';
+import { createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
-import { messages } from '../../messages/timers.messages';
-import { Timer } from '../../models/timer';
-import { NotificationService } from '../../services/notification.service';
-import { TimersService } from '../../services/timers.service';
-import { BaseEffect } from '../BaseEffect';
+import type { Timer } from '@/app/core/models/timer';
+
+import { messages } from '@/app/core/messages/timers.messages';
+import { TimersService } from '@/app/core/services/timers.service';
+import { BaseEffect } from '@/app/core/store/BaseEffect';
+
 import {
   timerAdd,
   timerAddError,
@@ -33,19 +34,9 @@ export class TimersEffects extends BaseEffect<TimersService> {
   public deleteTimer!: Observable<Action>;
   public loadTimers!: Observable<Action>;
   public updateTimer!: Observable<Action>;
-  public constructor(
-    actions: Actions,
-    timersService: TimersService,
-    router: Router,
-    notificationService: NotificationService,
-  ) {
-    super(actions, notificationService, router, timersService);
-  }
+  protected readonly service: TimersService = inject(TimersService);
 
-  private static timerUpdateSuccess(
-    timer: Timer,
-    id: number,
-  ): ReturnType<typeof timerUpdateSuccess> {
+  private static timerUpdateSuccess(timer: Timer, id: number): ReturnType<typeof timerUpdateSuccess> {
     const update: Update<Timer> = { changes: timer, id };
 
     return timerUpdateSuccess({ timer: update });

@@ -1,5 +1,5 @@
-import { Ingredient } from '../models/ingredient';
-import { Recipe, RecipePosition, RecipePositionsGroup } from '../models/recipe';
+import type { Ingredient } from '@/app/core/models/ingredient';
+import type { Recipe, RecipePosition, RecipePositionsGroup } from '@/app/core/models/recipe';
 
 export interface RecipeIngredient {
   additional: boolean;
@@ -41,9 +41,7 @@ export class RecipeIngredientsService {
         }
       }
       if (position.ingredient !== null) {
-        const find = this.ingredients.find(
-          (ingredient: Ingredient) => ingredient.id === position.ingredient,
-        );
+        const find = this.ingredients.find((ingredient: Ingredient) => ingredient.id === position.ingredient);
 
         if (find !== undefined) {
           this.processIngredient(find, position.additional);
@@ -57,9 +55,7 @@ export class RecipeIngredientsService {
 
     if (found !== undefined) {
       if (!additional && found.additional) {
-        const id = this.usedIngredients.findIndex(
-          (used: RecipeIngredient) => used.id === ingredient.id,
-        );
+        const id = this.usedIngredients.findIndex((used: RecipeIngredient) => used.id === ingredient.id);
         this.usedIngredients[id] = { ...ingredient, additional };
       }
 

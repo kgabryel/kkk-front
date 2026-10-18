@@ -1,18 +1,17 @@
+import type { Observable } from 'rxjs';
+
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
 import { map } from 'rxjs/operators';
 
-import { timersRoutes } from '../../config/routes.config';
-import { Timer } from '../models/timer';
-import { TimerRequest } from '../requests/timer.request';
+import type { Timer } from '@/app/core/models/timer';
+import type { TimerRequest } from '@/app/core/requests/timer.request';
+
+import { timersRoutes } from '@/app/config/routes.config';
 
 @Injectable()
 export class TimersService {
-  private httpClient: HttpClient;
-  public constructor(httpClient: HttpClient) {
-    this.httpClient = httpClient;
-  }
+  private httpClient: HttpClient = inject(HttpClient);
 
   public add(timer: TimerRequest): Observable<Timer> {
     return this.httpClient.post<Timer>(timersRoutes.index, timer);

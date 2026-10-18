@@ -1,26 +1,20 @@
-import { HttpErrorResponse } from '@angular/common/http';
+import type { HttpErrorResponse } from '@angular/common/http';
+import type { Action } from '@ngrx/store';
+import type { Observable } from 'rxjs';
+
+import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Actions } from '@ngrx/effects';
-import { Action } from '@ngrx/store';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 
-import { NotificationService } from '../services/notification.service';
+import { NotificationService } from '@/app/core/services/notification.service';
 
 export abstract class BaseEffect<T> {
-  protected actions: Actions;
-  protected notificationService: NotificationService;
-  protected service: T;
-  protected router: Router;
-  protected constructor(
-    actions: Actions,
-    notificationService: NotificationService,
-    router: Router,
-    service: T,
-  ) {
-    this.actions = actions;
-    this.notificationService = notificationService;
-    this.router = router;
-    this.service = service;
+  protected actions: Actions = inject(Actions);
+  protected notificationService: NotificationService = inject(NotificationService);
+  protected abstract readonly service: T;
+  protected router: Router = inject(Router);
+  public constructor() {
     this.initEffects();
   }
 

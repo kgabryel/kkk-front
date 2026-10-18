@@ -1,6 +1,6 @@
-import { AbstractControl, ValidatorFn } from '@angular/forms';
+import type { AbstractControl, ValidatorFn } from '@angular/forms';
 
-import { Time } from '../models/time';
+import type { Time } from '@/app/core/models/time';
 
 export class TimeValidator {
   public static greaterThanZero(): ValidatorFn {

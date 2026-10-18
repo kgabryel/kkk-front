@@ -1,37 +1,33 @@
-import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
+import type { MemoizedSelector } from '@ngrx/store';
 
-import { Ingredient } from '../../models/ingredient';
-import { Season } from '../../models/season';
-import { Search } from '../../services/ingredients-search.service';
-import { StringUtils } from '../../utils/string.utils';
-import { selectSeasons } from '../seasons/selectors';
-import { adapter, INGREDIENTS_KEY, State } from './reducers';
+import { createFeatureSelector, createSelector } from '@ngrx/store';
+
+import type { Ingredient } from '@/app/core/models/ingredient';
+import type { Season } from '@/app/core/models/season';
+import type { Search } from '@/app/core/services/ingredients-search.service';
+
+import { selectSeasons } from '@/app/core/store/seasons/selectors';
+import { StringUtils } from '@/app/core/utils/string.utils';
+
+import type { State } from './reducers';
+
+import { adapter, INGREDIENTS_KEY } from './reducers';
 
 const selectState = createFeatureSelector<State>(INGREDIENTS_KEY);
 
-const ingredientsState = createSelector(
-  selectState,
-  (selectState: State) => selectState.ingredients,
-);
+const ingredientsState = createSelector(selectState, (selectState: State) => selectState.ingredients);
 
 const { selectAll } = adapter.getSelectors(ingredientsState);
 
 export const selectIngredients = createSelector(selectAll, (ingredients: Ingredient[]) =>
-  [...ingredients].sort((a: Ingredient, b: Ingredient) =>
-    StringUtils.compareString(a.name, b.name),
-  ),
+  [...ingredients].sort((a: Ingredient, b: Ingredient) => StringUtils.compareString(a.name, b.name)),
 );
 
-export const selectIsLoaded = createSelector(
-  selectState,
-  (selectState: State) => selectState.loaded,
-);
+export const selectIsLoaded = createSelector(selectState, (selectState: State) => selectState.loaded);
 
 export const selectByName = (name: string): MemoizedSelector<object, Ingredient | undefined> =>
   createSelector(selectIngredients, (ingredients: Ingredient[]) =>
-    ingredients.find(
-      (ingredient: Ingredient) => ingredient.name.toLowerCase() === name.toLowerCase(),
-    ),
+    ingredients.find((ingredient: Ingredient) => ingredient.name.toLowerCase() === name.toLowerCase()),
   );
 
 export const selectById = (id: number): MemoizedSelector<object, Ingredient | undefined> =>

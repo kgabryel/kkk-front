@@ -1,17 +1,21 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import type { PipeTransform } from '@angular/core';
+
+import { Pipe, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 
-import { State as SettingsState } from '../../../core/store/settings/reducers';
-import { selectAutocomplete } from '../../../core/store/settings/selectors';
-import { SignalUtils } from '../../../core/utils/signal.utils';
+import type { State as SettingsState } from '@/app/core/store/settings/reducers';
+
+import { selectAutocomplete } from '@/app/core/store/settings/selectors';
+import { SignalUtils } from '@/app/core/utils/signal.utils';
 
 @Pipe({
   name: 'autocomplete',
-  standalone: true,
 })
 export class AutocompletePipe implements PipeTransform {
   private autocomplete: boolean;
-  public constructor(settingsStore: Store<SettingsState>) {
+  public constructor() {
+    const settingsStore = inject<Store<SettingsState>>(Store);
+
     this.autocomplete = true;
     SignalUtils.reactToSignalValue(
       settingsStore.selectSignal(selectAutocomplete),

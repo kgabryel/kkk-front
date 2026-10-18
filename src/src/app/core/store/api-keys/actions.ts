@@ -1,8 +1,10 @@
-import { Update } from '@ngrx/entity';
+import type { Update } from '@ngrx/entity';
+
 import { createAction, props } from '@ngrx/store';
 
-import { ApiKey } from '../../models/api-key';
-import { Actions, Prefixes } from '../actions.config';
+import type { ApiKey } from '@/app/core/models/api-key';
+
+import { Actions, Prefixes } from '@/app/core/store/actions.config';
 
 export const keysLoad = createAction(`${Prefixes.apiKeys} ${Actions.load}`);
 
@@ -17,27 +19,15 @@ export const keyAdd = createAction(`${Prefixes.apiKeys} ${Actions.add}`);
 
 export const keyAddError = createAction(`${Prefixes.apiKeys} ${Actions.addError}`);
 
-export const keyAddSuccess = createAction(
-  `${Prefixes.apiKeys} ${Actions.addSuccess}`,
-  props<{ apiKey: ApiKey }>(),
-);
+export const keyAddSuccess = createAction(`${Prefixes.apiKeys} ${Actions.addSuccess}`, props<{ apiKey: ApiKey }>());
 
-export const keyDelete = createAction(
-  `${Prefixes.apiKeys} ${Actions.delete}`,
-  props<{ id: number }>(),
-);
+export const keyDelete = createAction(`${Prefixes.apiKeys} ${Actions.delete}`, props<{ id: number }>());
 
 export const keyDeleteError = createAction(`${Prefixes.apiKeys} ${Actions.deleteError}`);
 
-export const keyDeleteSuccess = createAction(
-  `${Prefixes.apiKeys} ${Actions.deleteSuccess}`,
-  props<{ id: number }>(),
-);
+export const keyDeleteSuccess = createAction(`${Prefixes.apiKeys} ${Actions.deleteSuccess}`, props<{ id: number }>());
 
-export const keyUpdate = createAction(
-  `${Prefixes.apiKeys} ${Actions.update}`,
-  props<{ id: number }>(),
-);
+export const keyUpdate = createAction(`${Prefixes.apiKeys} ${Actions.update}`, props<{ id: number }>());
 
 export const keyUpdateSuccess = createAction(
   `${Prefixes.apiKeys} ${Actions.updateSuccess}`,

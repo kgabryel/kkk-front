@@ -1,24 +1,25 @@
-import { NgClass } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Signal } from '@angular/core';
+import type { Signal } from '@angular/core';
+
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
-import { ModalService } from '../../../../core/services/modal.service';
-import { SearchService } from '../../../../core/services/search.service';
+import { ModalService } from '@/app/core/services/modal.service';
+import { SearchService } from '@/app/core/services/search.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIcon, NgClass, MatFabButton],
+  imports: [MatIcon, MatFabButton],
   selector: 'layout-search-button',
-  standalone: true,
-  styleUrls: ['./search-button.component.scss'],
+  styleUrl: './search-button.component.scss',
   templateUrl: './search-button.component.html',
 })
 export class SearchButtonComponent {
   public filtered: Signal<boolean>;
-  private modalService: ModalService;
-  public constructor(modalService: ModalService, searchService: SearchService) {
-    this.modalService = modalService;
+  private modalService: ModalService = inject(ModalService);
+  public constructor() {
+    const searchService = inject(SearchService);
+
     this.filtered = searchService.getState();
   }
 

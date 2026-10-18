@@ -5,79 +5,30 @@
         {{ recipe().name }}
       </h3>
       <div class="mb-1 d-flex">
-        @if (!(recipe().url | emptyString)) {
-          <a
-            [href]="recipe().url"
-            target="_blank"
-          >
-            <button
-              class="glassmorphism-button"
-              mat-raised-button
-              type="button"
-            >
-              Link
-            </button>
-          </a>
-        }
+        <recipes-recipe-url [url]="recipe().url"></recipes-recipe-url>
       </div>
     </div>
     <div class="mt-1 mb-1">
-      @if (recipe().photos.length > 0) {
-        <swiper-container
-          slides-per-view="1"
-          navigation="true"
-          pagination="true"
-          centered-slides="true"
-          zoom="true"
-        >
-          @for (photo of recipe().photos; track photo) {
-            <swiper-slide>
-              @if (getPhoto(photo)(); as image) {
-                <div class="swiper-zoom-container">
-                  <img
-                    [src]="image"
-                    (click)="showPhoto(photo)"
-                    alt="photo"
-                  />
-                </div>
-              } @else {
-                <div class="swiper-zoom-container">
-                  <img
-                    [src]="loadingGif"
-                    height="150"
-                    width="200"
-                    alt="loading"
-                  />
-                </div>
-              }
-            </swiper-slide>
-          }
-        </swiper-container>
-      }
+      <recipes-recipe-photos
+        [photos]="recipe().photos"
+        [recipeId]="recipe().id"
+      />
     </div>
-    <div class="pb-1 ml--1">
-      @for (tag of recipe().tags; track tag) {
-        <button
-          class="glassmorphism-button ma-1"
-          mat-button
-          type="button"
-        >
-          {{ tag }}
-        </button>
-      }
-    </div>
+    @if (recipe().tags.length > 0) {
+      <div class="pb-1 ml--1">
+        @for (tag of recipe().tags; track tag) {
+          <button
+            class="glassmorphism-button ma-1"
+            mat-button
+            type="button"
+          >
+            {{ tag }}
+          </button>
+        }
+      </div>
+    }
     <mat-accordion multi>
-      @if (!(recipe().description | emptyString)) {
-        <mat-expansion-panel
-          expanded
-          hideToggle
-        >
-          <mat-expansion-panel-header>
-            <mat-panel-title>Przepis</mat-panel-title>
-          </mat-expansion-panel-header>
-          <p [innerHTML]="recipe().description"></p>
-        </mat-expansion-panel>
-      }
+      <recipes-recipe-description [description]="recipe().description" />
       @if (recipe().groups.length > 0) {
         <mat-expansion-panel
           expanded

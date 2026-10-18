@@ -1,6 +1,8 @@
 <div
   class="timers d-flex"
-  [ngClass]="{ 'only-time': step === 1, all: step === 0, 'on-recipe': onRecipesPage() }"
+  [class.only-time]="step === 1"
+  [class.all]="step === 0"
+  [class.on-recipe]="onRecipesPage()"
 >
   <div class="activator">
     <button
@@ -27,7 +29,7 @@
           <button
             class="glassmorphism-button"
             [matTooltip]="tooltips.open"
-            [ngClass]="{ 'active-step': step === 0 }"
+            [class.active-step]="step === 0"
             (click)="setStep(0)"
             mat-button
             type="button"
@@ -37,7 +39,7 @@
           <button
             class="glassmorphism-button"
             [matTooltip]="tooltips.onlyTime"
-            [ngClass]="{ 'active-step': step === 1 }"
+            [class.active-step]="step === 1"
             (click)="setStep(1)"
             mat-button
             type="button"
@@ -47,7 +49,7 @@
           <button
             class="glassmorphism-button"
             [matTooltip]="tooltips.hidden"
-            [ngClass]="{ 'active-step': step === 2 }"
+            [class.active-step]="step === 2"
             (click)="setStep(2)"
             mat-button
             type="button"

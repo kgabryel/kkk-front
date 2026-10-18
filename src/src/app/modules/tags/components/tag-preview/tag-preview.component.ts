@@ -1,12 +1,6 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  input,
-  InputSignal,
-  OnInit,
-  output,
-  Signal,
-} from '@angular/core';
+import type { InputSignal, OnInit, Signal, OutputEmitterRef } from '@angular/core';
+
+import { ChangeDetectionStrategy, Component, input, output, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
@@ -15,49 +9,31 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 
-import { Recipe } from '../../../../core/models/recipe';
-import { Tag } from '../../../../core/models/tag';
-import { State as RecipesState } from '../../../../core/store/recipes/reducers';
-import { selectRecipesForTag } from '../../../../core/store/recipes/selectors';
-import { tagDelete } from '../../../../core/store/tags/actions';
-import { State as TagsState } from '../../../../core/store/tags/reducers';
-import { SignalUtils } from '../../../../core/utils/signal.utils';
-import { DeleteDialogComponent } from '../../../shared/components/delete-dialog/delete-dialog.component';
-import { TagRecipesHrefPipe } from '../../../shared/pipes/tag-recipes-href.pipe';
+import type { Recipe } from '@/app/core/models/recipe';
+import type { Tag } from '@/app/core/models/tag';
+import type { State as RecipesState } from '@/app/core/store/recipes/reducers';
+import type { State as TagsState } from '@/app/core/store/tags/reducers';
+
+import { selectRecipesForTag } from '@/app/core/store/recipes/selectors';
+import { tagDelete } from '@/app/core/store/tags/actions';
+import { SignalUtils } from '@/app/core/utils/signal.utils';
+import { DeleteDialogComponent } from '@/app/modules/shared/components/delete-dialog/delete-dialog.component';
+import { TagRecipesHrefPipe } from '@/app/modules/shared/pipes/tag-recipes-href.pipe';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatListItem,
-    MatMenuTrigger,
-    MatIcon,
-    MatIconButton,
-    MatMenu,
-    RouterLink,
-    TagRecipesHrefPipe,
-    MatMenuItem,
-  ],
+  imports: [MatListItem, MatMenuTrigger, MatIcon, MatIconButton, MatMenu, RouterLink, TagRecipesHrefPipe, MatMenuItem],
   selector: 'tags-tag-preview',
-  standalone: true,
-  styleUrls: ['./tag-preview.component.scss'],
+  styleUrl: './tag-preview.component.scss',
   templateUrl: './tag-preview.component.html',
 })
 export class TagPreviewComponent implements OnInit {
   public tag: InputSignal<Tag> = input.required<Tag>();
-  public edit = output<boolean>();
+  public edit: OutputEmitterRef<boolean> = output<boolean>();
   public recipesCount!: Signal<number>;
-  private dialog: MatDialog;
-  private recipesStore: Store<RecipesState>;
-  private tagsStore: Store<TagsState>;
-  public constructor(
-    tagsStore: Store<TagsState>,
-    recipesStore: Store<RecipesState>,
-    dialog: MatDialog,
-  ) {
-    this.tagsStore = tagsStore;
-    this.recipesStore = recipesStore;
-    this.dialog = dialog;
-  }
+  private dialog: MatDialog = inject(MatDialog);
+  private recipesStore: Store<RecipesState> = inject<Store<RecipesState>>(Store);
+  private tagsStore: Store<TagsState> = inject<Store<TagsState>>(Store);
 
   public ngOnInit(): void {
     this.recipesCount = SignalUtils.map<Recipe[], number>(

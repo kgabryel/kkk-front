@@ -1,19 +1,20 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { Update } from '@ngrx/entity';
-import { Action } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import type { HttpErrorResponse } from '@angular/common/http';
+import type { Update } from '@ngrx/entity';
+import type { Action } from '@ngrx/store';
+import type { Observable } from 'rxjs';
+
+import { Injectable, inject } from '@angular/core';
+import { createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
-import { RoutingConfig } from '../../../config/routing.config';
-import { messages } from '../../messages/recipes.messages';
-import { Recipe } from '../../models/recipe';
-import { NotificationService } from '../../services/notification.service';
-import { RecipesService } from '../../services/recipes.service';
-import { PathUtils } from '../../utils/path.utils';
-import { BaseEffect } from '../BaseEffect';
+import type { Recipe } from '@/app/core/models/recipe';
+
+import { RoutingConfig } from '@/app/config/routing.config';
+import { messages } from '@/app/core/messages/recipes.messages';
+import { RecipesService } from '@/app/core/services/recipes.service';
+import { BaseEffect } from '@/app/core/store/BaseEffect';
+import { PathUtils } from '@/app/core/utils/path.utils';
+
 import {
   photoAdd,
   photoAddError,
@@ -47,14 +48,7 @@ export class RecipesEffects extends BaseEffect<RecipesService> {
   public updateRecipe!: Observable<Action>;
   public updateRecipeFavourite!: Observable<Action>;
   public updateRecipeToDo!: Observable<Action>;
-  public constructor(
-    actions: Actions,
-    recipesService: RecipesService,
-    router: Router,
-    notificationService: NotificationService,
-  ) {
-    super(actions, notificationService, router, recipesService);
-  }
+  protected readonly service: RecipesService = inject(RecipesService);
 
   private static photoAddSuccess(recipe: Recipe, id: number): ReturnType<typeof photoAddSuccess> {
     const update: Update<Recipe> = { changes: recipe, id };
@@ -62,10 +56,7 @@ export class RecipesEffects extends BaseEffect<RecipesService> {
     return photoAddSuccess({ recipe: update });
   }
 
-  private static recipeUpdateSuccess(
-    recipe: Recipe,
-    id: number,
-  ): ReturnType<typeof recipeUpdateSuccess> {
+  private static recipeUpdateSuccess(recipe: Recipe, id: number): ReturnType<typeof recipeUpdateSuccess> {
     const update: Update<Recipe> = { changes: recipe, id };
 
     return recipeUpdateSuccess({ recipe: update });
@@ -155,9 +146,7 @@ export class RecipesEffects extends BaseEffect<RecipesService> {
     this.loadRecipes = createEffect(() =>
       this.actions.pipe(
         ofType(recipesLoad),
-        switchMap(() =>
-          this.service.getAll().pipe(map((recipes: Recipe[]) => recipesLoadSuccess({ recipes }))),
-        ),
+        switchMap(() => this.service.getAll().pipe(map((recipes: Recipe[]) => recipesLoadSuccess({ recipes })))),
         catchError((error: HttpErrorResponse) => this.error(error, recipesLoadError())),
       ),
     );

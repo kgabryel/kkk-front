@@ -1,25 +1,21 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatToolbar } from '@angular/material/toolbar';
 
-import { ImagesConfig } from '../../../../config/images.config';
-import { ItemNames, MenuConfig, MenuItems, Names } from '../../../../config/menu.config';
-import { UpperMenuItemComponent } from '../upper-menu-item/upper-menu-item.component';
+import type { MenuConfig, Names } from '@/app/config/menu.config';
+
+import { ImagesConfig } from '@/app/config/images.config';
+import { ItemNames, MenuItems } from '@/app/config/menu.config';
+import { UpperMenuItemComponent } from '@/app/modules/layout/components/upper-menu-item/upper-menu-item.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatToolbar, UpperMenuItemComponent],
   selector: 'layout-header',
-  standalone: true,
-  styleUrls: ['./header.component.scss'],
+  styleUrl: './header.component.scss',
   templateUrl: './header.component.html',
 })
 export class HeaderComponent {
-  public logoPath: string;
-  public menuItems: Map<string, MenuConfig>;
-  public menuNames: Names;
-  public constructor() {
-    this.logoPath = ImagesConfig.logoPath;
-    this.menuItems = MenuItems;
-    this.menuNames = ItemNames;
-  }
+  public logoPath: string = ImagesConfig.logoPath;
+  public menuItems: Map<string, MenuConfig> = MenuItems;
+  public menuNames: Names = ItemNames;
 }

@@ -1,6 +1,8 @@
-import { Injector, runInInjectionContext, Signal } from '@angular/core';
+import type { Injector, Signal } from '@angular/core';
+import type { FormGroup } from '@angular/forms';
+
+import { runInInjectionContext } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { FormGroup } from '@angular/forms';
 import { EMPTY } from 'rxjs';
 
 import { SignalUtils } from './signal.utils';
@@ -14,12 +16,7 @@ export abstract class FormUtils {
     });
   }
 
-  public static getLength(
-    injector: Injector,
-    form: FormGroup,
-    fieldName: string,
-    initialValue: string = '',
-  ): Signal<number> {
+  public static getLength(injector: Injector, form: FormGroup, fieldName: string, initialValue = ''): Signal<number> {
     return runInInjectionContext(injector, () =>
       SignalUtils.map<string, number>(
         toSignal(form.get(fieldName)?.valueChanges ?? EMPTY, { initialValue }),

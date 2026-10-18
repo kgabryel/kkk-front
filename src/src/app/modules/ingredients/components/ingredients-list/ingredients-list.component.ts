@@ -1,42 +1,33 @@
-import { ChangeDetectionStrategy, Component, OnInit, Signal } from '@angular/core';
+import type { OnInit, Signal } from '@angular/core';
+
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatList } from '@angular/material/list';
 import { Store } from '@ngrx/store';
 
-import { Ingredient } from '../../../../core/models/ingredient';
-import {
-  IngredientsSearchService,
-  Search,
-} from '../../../../core/services/ingredients-search.service';
-import { State as IngredientState } from '../../../../core/store/ingredients/reducers';
-import { searchIngredients } from '../../../../core/store/ingredients/selectors';
-import { State as SettingsState } from '../../../../core/store/settings/reducers';
-import { selectOzaKey } from '../../../../core/store/settings/selectors';
-import { SearchUtils } from '../../../../core/utils/search.utils';
-import { IngredientContainerComponent } from '../ingredient-container/ingredient-container.component';
+import type { Ingredient } from '@/app/core/models/ingredient';
+import type { Search } from '@/app/core/services/ingredients-search.service';
+import type { State as IngredientState } from '@/app/core/store/ingredients/reducers';
+import type { State as SettingsState } from '@/app/core/store/settings/reducers';
+
+import { IngredientsSearchService } from '@/app/core/services/ingredients-search.service';
+import { searchIngredients } from '@/app/core/store/ingredients/selectors';
+import { selectOzaKey } from '@/app/core/store/settings/selectors';
+import { SearchUtils } from '@/app/core/utils/search.utils';
+import { IngredientContainerComponent } from '@/app/modules/ingredients/components/ingredient-container/ingredient-container.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [IngredientContainerComponent, MatList],
   selector: 'ingredients-ingredients-list',
-  standalone: true,
-  styleUrls: ['./ingredients-list.component.scss'],
+  styleUrl: './ingredients-list.component.scss',
   templateUrl: './ingredients-list.component.html',
 })
 export class IngredientsListComponent implements OnInit {
   public ingredients!: Signal<Ingredient[]>;
   public ozaKey!: Signal<string | null>;
-  private readonly ingredientsSearchService: IngredientsSearchService;
-  private readonly ingredientStore: Store<IngredientState>;
-  private settingsStore: Store<SettingsState>;
-  public constructor(
-    ingredientStore: Store<IngredientState>,
-    ingredientsSearchService: IngredientsSearchService,
-    settingsStore: Store<SettingsState>,
-  ) {
-    this.ingredientStore = ingredientStore;
-    this.ingredientsSearchService = ingredientsSearchService;
-    this.settingsStore = settingsStore;
-  }
+  private readonly ingredientsSearchService: IngredientsSearchService = inject(IngredientsSearchService);
+  private readonly ingredientStore: Store<IngredientState> = inject<Store<IngredientState>>(Store);
+  private settingsStore: Store<SettingsState> = inject<Store<SettingsState>>(Store);
 
   public ngOnInit(): void {
     this.ingredients = SearchUtils.search<Search, Ingredient, IngredientState>(

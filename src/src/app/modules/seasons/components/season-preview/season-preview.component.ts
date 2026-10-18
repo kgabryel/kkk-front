@@ -1,12 +1,6 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  input,
-  InputSignal,
-  OnInit,
-  output,
-  Signal,
-} from '@angular/core';
+import type { InputSignal, OnInit, Signal, OutputEmitterRef } from '@angular/core';
+
+import { ChangeDetectionStrategy, Component, input, output, inject } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
@@ -15,68 +9,49 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 
-import { Month, months } from '../../../../config/months.config';
-import { RoutingConfig } from '../../../../config/routing.config';
-import { Ingredient } from '../../../../core/models/ingredient';
-import { Recipe } from '../../../../core/models/recipe';
-import { Season } from '../../../../core/models/season';
-import { State as IngredientsState } from '../../../../core/store/ingredients/reducers';
-import { selectById } from '../../../../core/store/ingredients/selectors';
-import { State as RecipesState } from '../../../../core/store/recipes/reducers';
-import { selectRecipesForIngredient } from '../../../../core/store/recipes/selectors';
-import { seasonDelete } from '../../../../core/store/seasons/actions';
-import { State as SeasonsState } from '../../../../core/store/seasons/reducers';
-import { PathUtils } from '../../../../core/utils/path.utils';
-import { SignalUtils } from '../../../../core/utils/signal.utils';
-import { DeleteDialogComponent } from '../../../shared/components/delete-dialog/delete-dialog.component';
+import type { Month } from '@/app/config/months.config';
+import type { Ingredient } from '@/app/core/models/ingredient';
+import type { Recipe } from '@/app/core/models/recipe';
+import type { Season } from '@/app/core/models/season';
+import type { State as IngredientsState } from '@/app/core/store/ingredients/reducers';
+import type { State as RecipesState } from '@/app/core/store/recipes/reducers';
+import type { State as SeasonsState } from '@/app/core/store/seasons/reducers';
+
+import { months } from '@/app/config/months.config';
+import { RoutingConfig } from '@/app/config/routing.config';
+import { selectById } from '@/app/core/store/ingredients/selectors';
+import { selectRecipesForIngredient } from '@/app/core/store/recipes/selectors';
+import { seasonDelete } from '@/app/core/store/seasons/actions';
+import { PathUtils } from '@/app/core/utils/path.utils';
+import { SignalUtils } from '@/app/core/utils/signal.utils';
+import { DeleteDialogComponent } from '@/app/modules/shared/components/delete-dialog/delete-dialog.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatListItem,
-    MatIcon,
-    MatButton,
-    MatMenuTrigger,
-    MatIconButton,
-    MatMenu,
-    RouterLink,
-    MatMenuItem,
-  ],
+  imports: [MatListItem, MatIcon, MatButton, MatMenuTrigger, MatIconButton, MatMenu, RouterLink, MatMenuItem],
   selector: 'seasons-season-preview',
-  standalone: true,
-  styleUrls: ['./season-preview.component.scss'],
+  styleUrl: './season-preview.component.scss',
   templateUrl: './season-preview.component.html',
 })
 export class SeasonPreviewComponent implements OnInit {
   public season: InputSignal<Season> = input.required<Season>();
-  public edit = output<boolean>();
+  public edit: OutputEmitterRef<boolean> = output<boolean>();
   public href!: string;
   public ingredient!: Signal<Ingredient>;
   public recipesCount!: Signal<number>;
   public seasonStep: number;
   public startMonth!: string;
   public stopMonth!: string;
-  private dialog: MatDialog;
-  private ingredientsStore: Store<IngredientsState>;
-  private recipesStore: Store<RecipesState>;
-  private seasonsStore: Store<SeasonsState>;
-  public constructor(
-    ingredientsStore: Store<IngredientsState>,
-    seasonsStore: Store<SeasonsState>,
-    recipesStore: Store<RecipesState>,
-    dialog: MatDialog,
-  ) {
-    this.ingredientsStore = ingredientsStore;
-    this.seasonsStore = seasonsStore;
+  private dialog: MatDialog = inject(MatDialog);
+  private ingredientsStore: Store<IngredientsState> = inject<Store<IngredientsState>>(Store);
+  private recipesStore: Store<RecipesState> = inject<Store<RecipesState>>(Store);
+  private seasonsStore: Store<SeasonsState> = inject<Store<SeasonsState>>(Store);
+  public constructor() {
     this.seasonStep = 0;
-    this.recipesStore = recipesStore;
-    this.dialog = dialog;
   }
 
   public ngOnInit(): void {
-    this.ingredient = this.ingredientsStore.selectSignal(
-      selectById(this.season().ingredientId),
-    ) as Signal<Ingredient>;
+    this.ingredient = this.ingredientsStore.selectSignal(selectById(this.season().ingredientId)) as Signal<Ingredient>;
     this.startMonth = months.find((month: Month) => month.value == this.season().start)?.key ?? '';
     this.stopMonth = months.find((month: Month) => month.value == this.season().stop)?.key ?? '';
     const currentMonth = new Date().getMonth() + 1;

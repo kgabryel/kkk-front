@@ -1,8 +1,9 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import type { PipeTransform } from '@angular/core';
+
+import { Pipe } from '@angular/core';
 
 @Pipe({
   name: 'emptyString',
-  standalone: true,
 })
 export class EmptyStringPipe implements PipeTransform {
   public transform(value: string | null): boolean {

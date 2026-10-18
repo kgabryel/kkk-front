@@ -1,13 +1,15 @@
-import { AbstractControl, AsyncValidatorFn } from '@angular/forms';
-import { Store } from '@ngrx/store';
+import type { AbstractControl, AsyncValidatorFn } from '@angular/forms';
+import type { Store } from '@ngrx/store';
+
 import { first, map } from 'rxjs/operators';
 
-import { Tag } from '../models/tag';
-import { State } from '../store/tags/reducers';
-import { selectTagByName } from '../store/tags/selectors';
+import type { Tag } from '@/app/core/models/tag';
+import type { State } from '@/app/core/store/tags/reducers';
+
+import { selectTagByName } from '@/app/core/store/tags/selectors';
 
 export class TagsValidator {
-  public static unique(store: Store<State>, expect: number = 0): AsyncValidatorFn {
+  public static unique(store: Store<State>, expect = 0): AsyncValidatorFn {
     return (control: AbstractControl) => {
       return store.select(selectTagByName(control.value)).pipe(
         map((tag: Tag | undefined) => {

@@ -1,4 +1,4 @@
-import { Photo } from './photo';
+import type { Photo } from './photo';
 
 export interface FullRecipe {
   name: string;

@@ -1,7 +1,9 @@
-import { computed, Signal } from '@angular/core';
-import { MemoizedSelector, Store } from '@ngrx/store';
+import type { Signal } from '@angular/core';
+import type { MemoizedSelector, Store } from '@ngrx/store';
 
-import { SearchServiceInterface } from '../services/search-service.interface';
+import { computed } from '@angular/core';
+
+import type { SearchServiceInterface } from '@/app/core/services/search-service.interface';
 
 export class SearchUtils {
   public static search<T, R, V>(

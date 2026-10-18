@@ -1,11 +1,6 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnDestroy,
-  OnInit,
-  signal,
-  WritableSignal,
-} from '@angular/core';
+import type { OnDestroy, OnInit, WritableSignal } from '@angular/core';
+
+import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogClose } from '@angular/material/dialog';
@@ -16,18 +11,19 @@ import { MatSelect, MatOption } from '@angular/material/select';
 import { Store } from '@ngrx/store';
 import { MatSelectSearchComponent } from 'ngx-mat-select-search';
 
-import { Length } from '../../../../config/form.config';
-import { Ingredient } from '../../../../core/models/ingredient';
-import { Tag } from '../../../../core/models/tag';
-import { RecipesSearchService } from '../../../../core/services/recipes-search.service';
-import { SearchService } from '../../../../core/services/search.service';
-import { State as IngredientsState } from '../../../../core/store/ingredients/reducers';
-import { selectIngredients } from '../../../../core/store/ingredients/selectors';
-import { State as TagsState } from '../../../../core/store/tags/reducers';
-import { selectTags } from '../../../../core/store/tags/selectors';
-import { StringUtils } from '../../../../core/utils/string.utils';
-import { BaseComponent } from '../../../base.component';
-import { AutocompletePipe } from '../../../shared/pipes/autocomplete.pipe';
+import type { Ingredient } from '@/app/core/models/ingredient';
+import type { Tag } from '@/app/core/models/tag';
+import type { State as IngredientsState } from '@/app/core/store/ingredients/reducers';
+import type { State as TagsState } from '@/app/core/store/tags/reducers';
+
+import { Length } from '@/app/config/form.config';
+import { RecipesSearchService } from '@/app/core/services/recipes-search.service';
+import { SearchService } from '@/app/core/services/search.service';
+import { selectIngredients } from '@/app/core/store/ingredients/selectors';
+import { selectTags } from '@/app/core/store/tags/selectors';
+import { StringUtils } from '@/app/core/utils/string.utils';
+import { BaseComponent } from '@/app/modules/base.component';
+import { AutocompletePipe } from '@/app/modules/shared/pipes/autocomplete.pipe';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -46,8 +42,6 @@ import { AutocompletePipe } from '../../../shared/pipes/autocomplete.pipe';
     MatSelectSearchComponent,
   ],
   selector: 'recipes-search',
-  standalone: true,
-  styleUrls: [],
   templateUrl: './search.component.html',
 })
 export class SearchComponent extends BaseComponent implements OnInit, OnDestroy {
@@ -55,12 +49,12 @@ export class SearchComponent extends BaseComponent implements OnInit, OnDestroy 
   private static searchFavourite: boolean | null = null;
   private static searchHasLink: boolean | null = null;
   private static searchIngredients: number[] = [];
-  private static searchName: string = '';
+  private static searchName = '';
   private static searchTags: number[] = [];
   private static searchToDo: boolean | null = null;
   public filteredIngredients: WritableSignal<Ingredient[]> = signal<Ingredient[]>([]);
   public filteredTags: WritableSignal<Tag[]> = signal<Tag[]>([]);
-  public maxNameLength: number;
+  public maxNameLength: number = Length.maxRecipeNameLength;
   public selectedAvailable: FormControl;
   public selectedFavourite: FormControl;
   public selectedHasLink: FormControl;
@@ -70,36 +64,19 @@ export class SearchComponent extends BaseComponent implements OnInit, OnDestroy 
   public selectedToDo: FormControl;
   private ingredientSearch: WritableSignal<string> = signal<string>('');
   private tagSearch: WritableSignal<string> = signal<string>('');
-  private ingredientsState: Store<IngredientsState>;
-  private recipesSearchService: RecipesSearchService;
-  private searchService: SearchService;
-  private tagsState: Store<TagsState>;
-  public constructor(
-    recipesSearchService: RecipesSearchService,
-    searchService: SearchService,
-    ingredientsState: Store<IngredientsState>,
-    tagsState: Store<TagsState>,
-  ) {
+  private ingredientsState: Store<IngredientsState> = inject<Store<IngredientsState>>(Store);
+  private recipesSearchService: RecipesSearchService = inject(RecipesSearchService);
+  private searchService: SearchService = inject(SearchService);
+  private tagsState: Store<TagsState> = inject<Store<TagsState>>(Store);
+  public constructor() {
     super();
-    this.selectedTags = new FormControl();
-    this.selectedIngredients = new FormControl();
-    this.selectedName = new FormControl();
-    this.selectedFavourite = new FormControl();
-    this.selectedToDo = new FormControl();
-    this.selectedHasLink = new FormControl();
-    this.selectedAvailable = new FormControl();
-    this.ingredientsState = ingredientsState;
-    this.tagsState = tagsState;
-    this.selectedFavourite.setValue(SearchComponent.searchFavourite);
-    this.selectedToDo.setValue(SearchComponent.searchToDo);
-    this.selectedHasLink.setValue(SearchComponent.searchHasLink);
-    this.selectedTags.setValue(SearchComponent.searchTags);
-    this.selectedIngredients.setValue(SearchComponent.searchIngredients);
-    this.selectedName.setValue(SearchComponent.searchName);
-    this.selectedAvailable.setValue(SearchComponent.available);
-    this.recipesSearchService = recipesSearchService;
-    this.searchService = searchService;
-    this.maxNameLength = Length.maxRecipeNameLength;
+    this.selectedTags = new FormControl(SearchComponent.searchTags);
+    this.selectedIngredients = new FormControl(SearchComponent.searchIngredients);
+    this.selectedName = new FormControl(SearchComponent.searchName);
+    this.selectedFavourite = new FormControl(SearchComponent.searchFavourite);
+    this.selectedToDo = new FormControl(SearchComponent.searchToDo);
+    this.selectedHasLink = new FormControl(SearchComponent.searchHasLink);
+    this.selectedAvailable = new FormControl(SearchComponent.available);
   }
 
   public ngOnInit(): void {
@@ -109,18 +86,14 @@ export class SearchComponent extends BaseComponent implements OnInit, OnDestroy 
     this.onSignalValue(
       (search: string) =>
         this.filteredIngredients.set(
-          ingredients().filter((ingredient: Ingredient) =>
-            StringUtils.stringIncludes(ingredient.name, search),
-          ),
+          ingredients().filter((ingredient: Ingredient) => StringUtils.stringIncludes(ingredient.name, search)),
         ),
       this.ingredientSearch,
     );
 
     this.onSignalValue(
       (search: string) =>
-        this.filteredTags.set(
-          tags().filter((tag: Tag) => StringUtils.stringIncludes(tag.name, search)),
-        ),
+        this.filteredTags.set(tags().filter((tag: Tag) => StringUtils.stringIncludes(tag.name, search))),
       this.tagSearch,
     );
 

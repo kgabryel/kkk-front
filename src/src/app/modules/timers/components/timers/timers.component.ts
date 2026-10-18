@@ -1,73 +1,55 @@
-import { NgClass } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  OnDestroy,
-  OnInit,
-  Signal,
-  signal,
-  WritableSignal,
-} from '@angular/core';
+import type { OnDestroy, OnInit, Signal, WritableSignal } from '@angular/core';
+import type { Event } from '@angular/router';
+
+import { ChangeDetectionStrategy, Component, DestroyRef, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
-import { Event, NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { interval, takeUntil } from 'rxjs';
 import { filter, map, take } from 'rxjs/operators';
 
-import { messages } from '../../../../core/messages/timers.messages';
-import { Time } from '../../../../core/models/time';
-import { FullTimer, Timer } from '../../../../core/models/timer';
-import { NotificationService } from '../../../../core/services/notification.service';
-import { TimersListService } from '../../../../core/services/timers-list.service';
-import { TimersTooltips, tooltips } from '../../../../core/tooltips/timers.tooltips';
-import { TimeUtils } from '../../../../core/utils/time.utils';
-import { BaseComponent } from '../../../base.component';
-import { AddDialogComponent } from '../add-dialog/add-dialog.component';
-import { AlarmDialogComponent } from '../alarm-dialog/alarm-dialog.component';
-import { TimerComponent } from '../timer/timer.component';
+import type { Time } from '@/app/core/models/time';
+import type { FullTimer, Timer } from '@/app/core/models/timer';
+import type { TimersTooltips } from '@/app/core/tooltips/timers.tooltips';
+
+import { messages } from '@/app/core/messages/timers.messages';
+import { NotificationService } from '@/app/core/services/notification.service';
+import { TimersListService } from '@/app/core/services/timers-list.service';
+import { tooltips } from '@/app/core/tooltips/timers.tooltips';
+import { TimeUtils } from '@/app/core/utils/time.utils';
+import { BaseComponent } from '@/app/modules/base.component';
+import { AddDialogComponent } from '@/app/modules/timers/components/add-dialog/add-dialog.component';
+import { AlarmDialogComponent } from '@/app/modules/timers/components/alarm-dialog/alarm-dialog.component';
+import { TimerComponent } from '@/app/modules/timers/components/timer/timer.component';
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.Default,
-  imports: [NgClass, MatIcon, MatButton, MatTooltip, TimerComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatIcon, MatButton, MatTooltip, TimerComponent],
   selector: 'timers-timers',
-  standalone: true,
-  styleUrls: ['./timers.component.scss'],
+  styleUrl: './timers.component.scss',
   templateUrl: './timers.component.html',
 })
 export class TimersComponent extends BaseComponent implements OnInit, OnDestroy {
   public step!: number;
   public timers: WritableSignal<FullTimer[]> = signal<FullTimer[]>([]);
-  public tooltips: TimersTooltips;
+  public tooltips: TimersTooltips = tooltips;
   public onRecipesPage!: Signal<boolean>;
   private activeAlarms: WritableSignal<number[]> = signal<number[]>([]);
   private audio: HTMLAudioElement;
-  private dialog: MatDialog;
-  private notificationService: NotificationService;
-  private timersListService: TimersListService;
-  private destroyRef: DestroyRef;
-  private router: Router;
-  public constructor(
-    timersListService: TimersListService,
-    dialog: MatDialog,
-    notificationService: NotificationService,
-    destroyRef: DestroyRef,
-    router: Router,
-  ) {
+  private dialog: MatDialog = inject(MatDialog);
+  private notificationService: NotificationService = inject(NotificationService);
+  private timersListService: TimersListService = inject(TimersListService);
+  private destroyRef: DestroyRef = inject(DestroyRef);
+  private router: Router = inject(Router);
+  public constructor() {
     super();
-    this.timersListService = timersListService;
-    this.dialog = dialog;
-    this.notificationService = notificationService;
     this.audio = new Audio();
     this.audio.loop = true;
     this.audio.src = 'assets/alarm.mp3';
     this.audio.load();
-    this.tooltips = tooltips;
-    this.destroyRef = destroyRef;
-    this.router = router;
   }
 
   public ngOnInit(): void {
@@ -81,8 +63,7 @@ export class TimersComponent extends BaseComponent implements OnInit, OnDestroy 
     );
 
     this.onSignalValue(
-      (alarms: number[]): void | Promise<void> =>
-        alarms.length === 0 ? this.audio.pause() : this.audio.play(),
+      (alarms: number[]): void | Promise<void> => (alarms.length === 0 ? this.audio.pause() : this.audio.play()),
       this.activeAlarms,
     );
     this.step = 2;
@@ -120,10 +101,14 @@ export class TimersComponent extends BaseComponent implements OnInit, OnDestroy 
   }
 
   public restart(id: number): void {
-    const timers = this.timers();
-    timers[id]!.running = false;
-    timers[id]!.leftTime = timers[id]!.time;
-    this.timers.set(timers);
+    const timer = this.timers()[id];
+
+    if (!timer) {
+      return;
+    }
+    timer.running = false;
+    timer.leftTime = timer.time;
+    this.timers.set(this.timers());
   }
 
   public setStep(step: number): void {
@@ -131,37 +116,50 @@ export class TimersComponent extends BaseComponent implements OnInit, OnDestroy 
   }
 
   public switch(id: number): void {
-    const timers = this.timers();
-    timers[id]!.running = !timers[id]!.running;
-    this.timers.set(timers);
+    const timer = this.timers()[id];
+
+    if (!timer) {
+      return;
+    }
+    timer.running = !timer.running;
+    this.timers.set(this.timers());
   }
 
   public updateName(id: number, name: string | null): void {
-    const timers = this.timers();
-    timers[id]!.name = name;
-    this.timers.set(timers);
+    const timer = this.timers()[id];
+
+    if (!timer) {
+      return;
+    }
+    timer.name = name;
+    this.timers.set(this.timers());
     this.notificationService.showMessage(messages.timerUpdated);
   }
 
   public updateTime(id: number, time: Time): void {
-    const timers = this.timers();
-    timers[id]!.time = TimeUtils.dateToTime(time);
-    timers[id]!.leftTime = TimeUtils.dateToTime(time);
-    this.timers.set(timers);
+    const timer = this.timers()[id];
+
+    if (!timer) {
+      return;
+    }
+    const newTime = TimeUtils.dateToTime(time);
+    timer.time = newTime;
+    timer.leftTime = newTime;
+    this.timers.set(this.timers());
     this.notificationService.showMessage(messages.timerUpdated);
   }
 
   private reduceTime(): void {
     const timers = this.timers();
-    timers.forEach((timer: FullTimer, key: number) => {
+    timers.forEach((timer: FullTimer) => {
       if (timer.leftTime <= 0 && timer.running) {
-        timers[key]!.running = false;
+        timer.running = false;
         const alarms = this.activeAlarms();
         alarms.push(timer.id);
         this.activeAlarms.set(alarms);
         const dialogRef = this.dialog.open(AlarmDialogComponent, {
           data: {
-            timer: timers[key],
+            timer,
           },
         });
 
@@ -193,7 +191,7 @@ export class TimersComponent extends BaseComponent implements OnInit, OnDestroy 
           });
       }
       if (timer.leftTime > 0 && timer.running) {
-        timers[key]!.leftTime -= 1;
+        timer.leftTime -= 1;
       }
     });
     this.timers.set(timers);

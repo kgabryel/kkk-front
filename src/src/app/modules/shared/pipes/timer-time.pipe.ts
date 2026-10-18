@@ -1,10 +1,11 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import type { PipeTransform } from '@angular/core';
 
-import { TimeUtils } from '../../../core/utils/time.utils';
+import { Pipe } from '@angular/core';
+
+import { TimeUtils } from '@/app/core/utils/time.utils';
 
 @Pipe({
   name: 'timerTime',
-  standalone: true,
 })
 export class TimerTimePipe implements PipeTransform {
   public transform(time: number): string {

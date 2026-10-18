@@ -1,31 +1,26 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { FormArray } from '@angular/forms';
+import type { OnInit } from '@angular/core';
+import type { FormArray } from '@angular/forms';
 
-import { formNames, RecipesFormNames } from '../../../../core/factories/recipe.factory';
-import {
-  imports,
-  providers,
-  RecipeFormService,
-} from '../../../../core/services/recipe-form.service';
-import { recipeAdd } from '../../../../core/store/recipes/actions';
-import { FormUtils } from '../../../../core/utils/form.utils';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+
+import type { RecipesFormNames } from '@/app/core/factories/recipe.factory';
+
+import { formNames } from '@/app/core/factories/recipe.factory';
+import { imports, providers, RecipeFormService } from '@/app/core/services/recipe-form.service';
+import { recipeAdd } from '@/app/core/store/recipes/actions';
+import { FormUtils } from '@/app/core/utils/form.utils';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: imports,
   providers: [...providers, RecipeFormService],
   selector: 'recipes-create',
-  standalone: true,
-  styleUrls: ['../form/form.component.scss'],
+  styleUrl: '../form/form.component.scss',
   templateUrl: '../form/form.component.html',
 })
 export class CreateComponent implements OnInit {
-  public formNames: RecipesFormNames;
-  public formService: RecipeFormService;
-  public constructor(formService: RecipeFormService) {
-    this.formService = formService;
-    this.formNames = formNames;
-  }
+  public formNames: RecipesFormNames = formNames;
+  public formService: RecipeFormService = inject(RecipeFormService);
 
   public ngOnInit(): void {
     this.formService.recipeModel = null;
@@ -34,12 +29,7 @@ export class CreateComponent implements OnInit {
   }
 
   public clearForm(): void {
-    FormUtils.clearInputs(
-      this.formService.descriptionGroup,
-      '',
-      this.formNames.name,
-      this.formNames.description,
-    );
+    FormUtils.clearInputs(this.formService.descriptionGroup, '', this.formNames.name, this.formNames.description);
     FormUtils.clearInputs(
       this.formService.detailsGroup,
       false,
@@ -49,13 +39,8 @@ export class CreateComponent implements OnInit {
     );
     FormUtils.clearInputs(this.formService.detailsGroup, 1, this.formNames.portions);
     FormUtils.clearInputs(this.formService.detailsGroup, '', this.formNames.url);
-    this.formService.detailsGroup
-      .get(this.formNames.tagsGroup)
-      ?.get(this.formNames.search)
-      ?.reset('');
-    const tags = this.formService.detailsGroup
-      .get(this.formNames.tagsGroup)
-      ?.get(this.formNames.tags) as FormArray;
+    this.formService.detailsGroup.get(this.formNames.tagsGroup)?.get(this.formNames.search)?.reset('');
+    const tags = this.formService.detailsGroup.get(this.formNames.tagsGroup)?.get(this.formNames.tags) as FormArray;
     tags.clear();
 
     this.formService.positions.clear();

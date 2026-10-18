@@ -1,6 +1,8 @@
-import { Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import type { Signal, WritableSignal } from '@angular/core';
 
-import { Photo } from '../models/photo';
+import { Injectable, signal } from '@angular/core';
+
+import type { Photo } from '@/app/core/models/photo';
 
 @Injectable({ providedIn: 'root' })
 export class PhotoService {

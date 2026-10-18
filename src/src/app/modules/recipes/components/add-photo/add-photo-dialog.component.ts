@@ -1,57 +1,49 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import type { OnInit } from '@angular/core';
+import type { ImageCroppedEvent } from 'ngx-image-cropper';
+
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogClose, MatDialogRef } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { ImageCroppedEvent, ImageCropperComponent } from 'ngx-image-cropper';
+import { ImageCropperComponent } from 'ngx-image-cropper';
 import { takeUntil } from 'rxjs';
 
-import { messages } from '../../../../core/messages/recipes.messages';
-import { NotificationService } from '../../../../core/services/notification.service';
-import { photoAdd, photoAddError, photoAddSuccess } from '../../../../core/store/recipes/actions';
-import { State } from '../../../../core/store/recipes/reducers';
-import { BaseComponent } from '../../../base.component';
+import type { State } from '@/app/core/store/recipes/reducers';
+
+import { messages } from '@/app/core/messages/recipes.messages';
+import { NotificationService } from '@/app/core/services/notification.service';
+import { photoAdd, photoAddError, photoAddSuccess } from '@/app/core/store/recipes/actions';
+import { BaseComponent } from '@/app/modules/base.component';
 
 @Component({
-  imports: [
-    MatIcon,
-    MatDialogClose,
-    MatIconButton,
-    MatProgressBar,
-    MatButton,
-    ImageCropperComponent,
-  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatIcon, MatDialogClose, MatIconButton, MatProgressBar, MatButton, ImageCropperComponent],
   selector: 'recipes-add-photo-dialog',
-  standalone: true,
-  styleUrls: ['./add-photo-dialog.component.scss'],
+  styleUrl: './add-photo-dialog.component.scss',
   templateUrl: './add-photo-dialog.component.html',
 })
 export class AddPhotoDialogComponent extends BaseComponent implements OnInit {
   public croppedImage: string | null | undefined;
   public imageChangedEvent: Event | null;
   public uploading: boolean;
-  private dialogRef: MatDialogRef<AddPhotoDialogComponent>;
+  private dialogRef: MatDialogRef<AddPhotoDialogComponent> =
+    inject<MatDialogRef<AddPhotoDialogComponent>>(MatDialogRef);
   private img!: HTMLImageElement;
-  private notificationService: NotificationService;
+  private notificationService: NotificationService = inject(NotificationService);
   private readonly recipeId: number;
-  private store: Store<State>;
-  public constructor(
-    @Inject(MAT_DIALOG_DATA) data: AddPhotoDialogInput,
-    notificationService: NotificationService,
-    store: Store<State>,
-    actions$: Actions,
-    dialogRef: MatDialogRef<AddPhotoDialogComponent>,
-  ) {
+  private store: Store<State> = inject<Store<State>>(Store);
+  public constructor() {
+    const data = inject<AddPhotoDialogInput>(MAT_DIALOG_DATA);
+    const actions$ = inject(Actions);
+
     super();
     this.recipeId = data.recipeId;
-    this.notificationService = notificationService;
     this.imageChangedEvent = null;
     this.croppedImage = null;
     this.uploading = false;
-    this.store = store;
-    this.dialogRef = dialogRef;
     this.onObservable(
       () => this.dialogRef.close(),
       actions$.pipe(ofType(photoAddSuccess), takeUntil(this.dialogRef.afterClosed())),
@@ -108,14 +100,12 @@ export class AddPhotoDialogComponent extends BaseComponent implements OnInit {
   }
 
   private blobToBase64(blob: Blob): Promise<string> {
-    return new Promise<string>(
-      (resolve: (value: string) => void, reject: (reason?: unknown) => void) => {
-        const reader = new FileReader();
-        reader.onloadend = (): void => resolve(reader.result as string);
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-      },
-    );
+    return new Promise<string>((resolve: (value: string) => void, reject: (reason?: unknown) => void) => {
+      const reader = new FileReader();
+      reader.onloadend = (): void => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
   }
 }
 

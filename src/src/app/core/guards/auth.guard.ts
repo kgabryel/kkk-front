@@ -1,11 +1,13 @@
+import type { CanActivateFn } from '@angular/router';
+
 import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { of } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 
-import { RoutingConfig } from '../../config/routing.config';
-import { AuthService } from '../services/auth.service';
-import { PathUtils } from '../utils/path.utils';
+import { RoutingConfig } from '@/app/config/routing.config';
+import { AuthService } from '@/app/core/services/auth.service';
+import { PathUtils } from '@/app/core/utils/path.utils';
 
 export const authGuard: CanActivateFn = () => {
   const authService = inject(AuthService);

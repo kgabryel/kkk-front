@@ -1,7 +1,10 @@
-import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
+import type { EntityAdapter, EntityState } from '@ngrx/entity';
+
+import { createEntityAdapter } from '@ngrx/entity';
 import { createReducer, on } from '@ngrx/store';
 
-import { ApiKey } from '../../models/api-key';
+import type { ApiKey } from '@/app/core/models/api-key';
+
 import {
   keyAdd,
   keyAddError,

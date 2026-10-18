@@ -1,6 +1,8 @@
-import { Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import type { Signal, WritableSignal } from '@angular/core';
 
-import { RoutingConfig } from '../../config/routing.config';
+import { Injectable, signal } from '@angular/core';
+
+import { RoutingConfig } from '@/app/config/routing.config';
 
 @Injectable({ providedIn: 'root' })
 export class SearchService {
