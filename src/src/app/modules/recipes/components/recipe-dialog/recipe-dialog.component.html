@@ -1,0 +1,3 @@
+<ng-container *ngIf='(recipe$ | async) as recipe'>
+  <recipes-recipe-preview [buttons]='false' [recipe]='recipe'></recipes-recipe-preview>
+</ng-container>

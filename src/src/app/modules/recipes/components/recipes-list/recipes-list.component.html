@@ -1,0 +1,6 @@
+<div class='masonry-wrapper'>
+  <ngx-masonry [options]=options>
+    <recipes-recipe-preview *ngFor='let recipe of recipes | async' [recipe]='recipe' ngxMasonryItem>
+    </recipes-recipe-preview>
+  </ngx-masonry>
+</div>

@@ -1,0 +1,22 @@
+<h2 class='d-flex justify-content-between' mat-dialog-title>
+  <button (click)='clear()' class='glassmorphism-button' mat-button type='button'>
+    Wyczyść
+  </button>
+  <button [mat-dialog-close]='true' class='glassmorphism-button close-btn' mat-button type='button'>
+    <mat-icon>
+      close
+    </mat-icon>
+  </button>
+</h2>
+<mat-form-field>
+  <mat-label>
+    Nazwa
+  </mat-label>
+  <input
+    [autocomplete]='null | autocomplete'
+    [formControl]='name'
+    [maxlength]='maxNameLength'
+    matInput
+    type='text' />
+</mat-form-field>
+

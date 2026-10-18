@@ -1,0 +1,15 @@
+<div [routerLink]='menuItem?.href'>
+  <div class='big c-pointer'>
+    <mat-icon aria-hidden='false'>
+      {{menuItem?.icon}}
+    </mat-icon>
+    <p>
+      {{menuItem?.name}}
+    </p>
+  </div>
+  <button class='small' mat-icon-button type='button'>
+    <mat-icon>
+      {{menuItem?.icon}}
+    </mat-icon>
+  </button>
+</div>

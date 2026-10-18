@@ -1,0 +1,3 @@
+<div *ngIf='recipe$ | async as recipe'>
+  <recipes-recipe-preview [previewAvailable]='false' [recipe]='recipe'></recipes-recipe-preview>
+</div>

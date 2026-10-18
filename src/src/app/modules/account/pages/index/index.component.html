@@ -1,0 +1,8 @@
+<div>
+  <account-logout-btn></account-logout-btn>
+  <account-settings></account-settings>
+  <account-timers></account-timers>
+  <account-keys></account-keys>
+  <account-generate-key-button></account-generate-key-button>
+  <account-change-password *ngIf='(userType$ | async) === "standard"'></account-change-password>
+</div>

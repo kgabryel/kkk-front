@@ -1,0 +1,2 @@
+<seasons-season-edit (edit)='changeEdit($event)' *ngIf='edit' [season]='season'></seasons-season-edit>
+<seasons-season-preview (edit)='changeEdit($event)' *ngIf='!edit' [season]='season'></seasons-season-preview>

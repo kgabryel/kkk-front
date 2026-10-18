@@ -1,0 +1,13 @@
+:host {
+  display: block;
+  padding-top: 5px;
+}
+
+button {
+  min-width: 36px;
+  padding: 0;
+}
+
+.key-field {
+  width: calc(100% - 48px);
+}

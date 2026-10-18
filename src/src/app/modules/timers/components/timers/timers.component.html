@@ -1,0 +1,72 @@
+<div [ngClass]="{'only-time': step === 1, 'all': step === 0}" class='timers d-flex'>
+  <div class='activator'>
+    <button class='glassmorphism-button' mat-button type='button'>
+      <mat-icon>
+        schedule
+      </mat-icon>
+    </button>
+  </div>
+  <div class='glassmorphism-content pa-1'>
+    <div>
+      <div class='buttons d-flex justify-content-between'>
+        <button
+          (click)='openAddDialog()'
+          [matTooltip]='tooltips.addTimer'
+          class='glassmorphism-button mr-2'
+          mat-button
+          type='button'>
+          <mat-icon>
+            add
+          </mat-icon>
+        </button>
+        <div>
+          <button
+            (click)='setStep(0)'
+            [matTooltip]='tooltips.open'
+            [ngClass]="{'active-step': step === 0}"
+            class='glassmorphism-button'
+            mat-button
+            type='button'>
+            <mat-icon>
+              rectangle
+            </mat-icon>
+          </button>
+          <button
+            (click)='setStep(1)'
+            [matTooltip]='tooltips.onlyTime'
+            [ngClass]="{'active-step': step === 1}"
+            class='glassmorphism-button'
+            mat-button
+            type='button'>
+            <mat-icon>
+              schedule
+            </mat-icon>
+          </button>
+          <button
+            (click)='setStep(2)'
+            [matTooltip]='tooltips.hidden'
+            [ngClass]="{'active-step': step === 2}"
+            class='glassmorphism-button'
+            mat-button
+            type='button'>
+            <mat-icon>
+              close
+            </mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+    <ng-container *ngFor='let timer of timers$ | async; let last = last; let index = index'>
+      <timers-timer
+        (delete)='delete(index)'
+        (nameUpdate)='updateName(index, $event)'
+        (restart)='restart(index)'
+        (switch)='switch(index)'
+        (timeUpdate)='updateTime(index, $event)'
+        [leftTime]='timer.leftTime'
+        [timer]='timer'>
+      </timers-timer>
+      <hr *ngIf='!last' />
+    </ng-container>
+  </div>
+</div>

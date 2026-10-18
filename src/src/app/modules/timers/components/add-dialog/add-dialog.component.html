@@ -1,0 +1,33 @@
+<h2 class='d-flex justify-flex-end' mat-dialog-title>
+  <button [mat-dialog-close]='true' class='glassmorphism-button close-btn' mat-button type='button'>
+    <mat-icon>
+      close
+    </mat-icon>
+  </button>
+</h2>
+<div *ngIf='timers$ | async as timers'>
+  <div *ngIf='timers.length > 0'>
+    <form (ngSubmit)='submitSelect()' [autocomplete]='null | autocomplete' [formGroup]='selectForm'>
+      <mat-form-field class='w-100'>
+        <mat-label>
+          Minutnik
+        </mat-label>
+        <mat-select [formControlName]='formNames.timer'>
+          <mat-option *ngFor='let timer of timers$ | async' [value]='timer'>
+            [{{timer.time | timerTime}}] {{timer.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button [disabled]='selectForm.invalid' class='glassmorphism-button w-100' mat-button type='submit'>
+        <mat-icon>
+          add_circle_outline
+        </mat-icon>
+        Dodaj
+      </button>
+    </form>
+  </div>
+  <hr />
+</div>
+<form (ngSubmit)='submitAdd()' [autocomplete]='null | autocomplete' [formGroup]='addForm'>
+  <timers-form [add]='true' [formPart]='addForm' addText='Dodaj'></timers-form>
+</form>

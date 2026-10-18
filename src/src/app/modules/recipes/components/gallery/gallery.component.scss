@@ -1,0 +1,11 @@
+.glassmorphism-button {
+  width: calc(100% - 10px);
+}
+
+.list-button:hover {
+  background-color: rgba(42, 212, 248, .3) !important;
+}
+
+.flex-column {
+  flex-direction: column;
+}

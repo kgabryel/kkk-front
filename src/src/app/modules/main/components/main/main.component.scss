@@ -1,0 +1,18 @@
+@media screen and (max-width: 947px) {
+  layout-upper-menu {
+    display: none;
+  }
+}
+
+.upper-divider {
+  padding-bottom: 100px;
+}
+
+@media screen and (min-width: 948px) {
+  layout-bottom-menu, layout-header {
+    display: none;
+  }
+  .upper-divider {
+    padding-top: 70px;
+  }
+}

@@ -1,0 +1,31 @@
+:host {
+  text-align: center;
+}
+
+button {
+  box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2);
+  background-color: rgba(255, 255, 255, .3);
+  color: black;
+}
+
+.small {
+  display: none;
+}
+
+.big {
+  border-radius: 5px;
+}
+
+.big .mat-icon {
+  position: relative;
+  top: 10px;
+}
+
+@media screen and (max-width: 430px) {
+  .big {
+    display: none;
+  }
+  .small {
+    display: inline-block;
+  }
+}

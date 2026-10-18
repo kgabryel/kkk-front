@@ -1,0 +1,8 @@
+<div *ngIf='(ingredients$ | async) as ingredients'>
+  <mat-list *ngIf='ingredients.length > 0' class='glassmorphism-list'>
+    <ingredients-ingredient-container
+      *ngFor='let ingredient of ingredients'
+      [ingredient]='ingredient' [ozaKey]='ozaKey$ | async'>
+    </ingredients-ingredient-container>
+  </mat-list>
+</div>

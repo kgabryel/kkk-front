@@ -1,0 +1,5 @@
+<div *ngIf='(tags$ | async) as tags'>
+  <mat-list *ngIf='tags.length > 0' class='glassmorphism-list'>
+    <tags-tag-container *ngFor='let tag of tags' [tag]='tag'></tags-tag-container>
+  </mat-list>
+</div>

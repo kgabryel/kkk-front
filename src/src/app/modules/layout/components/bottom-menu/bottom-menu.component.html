@@ -1,0 +1,11 @@
+<layout-search-button *ngIf='searchAvailable'></layout-search-button>
+<mat-toolbar>
+  <div class='part'>
+    <layout-bottom-menu-item [menuItem]='menuItems.get(menuNames.recipes)'></layout-bottom-menu-item>
+    <layout-bottom-menu-item [menuItem]='menuItems.get(menuNames.seasons)'></layout-bottom-menu-item>
+  </div>
+  <div class='part'>
+    <layout-bottom-menu-item [menuItem]='menuItems.get(menuNames.ingredients)'></layout-bottom-menu-item>
+    <layout-bottom-menu-item [menuItem]='menuItems.get(menuNames.tags)'></layout-bottom-menu-item>
+  </div>
+</mat-toolbar>

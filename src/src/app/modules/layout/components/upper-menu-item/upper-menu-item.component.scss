@@ -1,0 +1,18 @@
+button {
+  width: 150px;
+}
+
+button:hover {
+  background-color: rgba(42, 212, 248, .3);
+}
+
+@media screen and (max-width: 1247px) {
+  button mat-icon {
+    display: none;
+  }
+  button {
+    width: 100px;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+}

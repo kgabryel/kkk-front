@@ -1,0 +1,10 @@
+<ingredients-ingredient-edit (edit)='changeEdit($event)' *ngIf='edit && !oza' [ingredient]='ingredient'>
+</ingredients-ingredient-edit>
+<ingredients-ingredient-preview
+  (edit)='changeEdit($event)'
+  *ngIf='!edit'
+  [ingredient]='ingredient'
+  [ozaKey]='ozaKey'>
+</ingredients-ingredient-preview>
+<ingredients-oza-edit (edit)='changeEdit($event)' *ngIf='edit && oza' [ingredient]='ingredient'>
+</ingredients-oza-edit>
